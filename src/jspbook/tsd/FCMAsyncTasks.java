@@ -45,7 +45,6 @@ public class FCMAsyncTasks {
 
     	 CompletableFuture<Void> task1 = fcmNotification
                  .thenCompose(notId -> waitForAndroidResponse(notId))
-                 /**/ .orTimeout(5, TimeUnit.SECONDS) // Set timeout for 5 seconds
                  .handle((response, throwable) -> {
                      if (throwable != null) {
                          // Timeout or other exception occurred
