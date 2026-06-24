@@ -1,0 +1,65 @@
+
+
+<html ng-app="firstAPP">
+<head>
+    <title>OMMS|Home</title>
+    
+   <script src="../Omms/js/angular.min.js"></script>
+   <script src="../Omms/js/moment.min.js" type="text/javascript"></script>
+ <script src="../Omms/js/Chart.js"></script>
+  <script src="../Omms/js/angular-chart.min.js"></script>
+	
+	<script type="text/javascript"  src="../Omms/js/dashboard1.1.js"></script>
+	<link href="../Omms/css/heading1.0.3.css" rel="stylesheet" type="text/css">
+	<link href="../Omms/css/dashboard.css"  rel="stylesheet" type="text/css">
+	<link rel="shortcut icon" href="../Omms/img/logo.png"/>
+	
+</head>
+
+<body>
+			
+
+<div id ="ID1" ng-app="firstAPP" ng-controller="myCtrl1">
+		<div class="searches">
+	
+			<select class="status" ng-model="Status" ng-change="testRun(-1,$index)" ng-options="x.value for x in test1| filter: {category:'status'}" >
+			</select>
+			
+			<select class="town" ng-model="Towns" ng-change="testRun(0,$index)" ng-options="x.value for x in test1| filter: {category:'town'}" >
+			</select>
+			
+			<select class="brgy" ng-model="Brgys" ng-change="testRun(1,$index)" ng-options="x.value for x in test1| filter: myBrgy">
+			</select>
+			
+			<select class="crew" ng-model="Crews" ng-change="testRun(2,$index)" ng-options="x.value for x in test1| filter: myCrew">
+			</select>
+			
+			 <select class="freq" ng-model="Period"  ng-change="testRun(5,$index)" ng-options="y for 	y in Period1">
+			</select>
+			<input class="cal" ng-model="Date" ng-change= "testRun(0,0)" type="date">
+			</div>	
+		<div class="row1" ng-if="ShowCharts">		
+			<div class="col1" id=Bar-chart>
+	 		   	<canvas id= "line" class="chart chart-line" chart-data="data_line" chart-labels="labels_line"
+                 chart-colours="colours"  chart-series="series_line">
+        		</canvas>
+			</div>
+			<div class="col2" id=Pie-chart>
+	 		   	<canvas id= "pie" class="chart chart-pie" chart-colours="colours"
+		 				chart-data="data" chart-labels="labels" chart-options="options">
+				</canvas> 
+			</div>
+			
+			
+		</div>
+		
+		<div class="row2" ng-if="ShowCharts">
+ 		   	
+        	<canvas id= "bar" height="50" width="100" class="chart chart-bar" chart-data="data_bar" chart-labels="labels_bar"
+	                 chart-colours="colours" chart-options="options_bar" chart-series="series_bar">
+	        	</canvas>
+	        
+		</div>
+</div>
+ 
+</body>

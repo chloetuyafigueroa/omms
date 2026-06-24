@@ -1,0 +1,86 @@
+
+
+<html ng-app="firstAPP">
+<head>
+    <title>OMMS|Home</title>
+    
+   <script src="../Omms/js/angular.min.js"></script>
+   <script src="../Omms/js/moment.min.js" type="text/javascript"></script>
+ <script src="../Omms/js/Chart.js"></script>
+  <script src="../Omms/js/angular-chart.min.js"></script>
+	
+	<script type="text/javascript"  src="../Omms/js/home1.0.1.js"></script>
+	
+	
+
+	<link href="../Omms/css/heading1.0.3.css" rel="stylesheet" type="text/css">
+	<link href="../Omms/css/home1.0.0.css"  rel="stylesheet" type="text/css">
+	<link rel="shortcut icon" href="../Omms/img/logo.png"/>
+	
+</head>
+
+<body>
+	
+
+<div id ="ID1" ng-app="firstAPP" ng-controller="myCtrl1">
+	<ul id="button">
+	
+	<li> <form  method="post"  action="Main?action=home"> <button class="mint-green" type="submit">HOME</button> </form> </li>
+	<li> <form  method="post"  action="Main?action=table"> <button class="gray" type="submit">TABLE</button> </form> </li>
+	<li> <form  method="post"  action="Main?action=line"> <button class="gray" type="submit">LINE-CHART</button> </form> </li>
+	<li> <form  method="post"  action="Main?action=map"> <button class="gray" type="submit">MAP</button> </form> </li>
+	<li> <form  method="post"  action="Main?action=planner"> <button class="gray" type="submit">PLANNER</button> </form> </li>
+	<li> <form  method="post"  action="Main?action=report"> <button class="gray" type="submit">REPORTS</button> </form> </li>
+	</ul>
+	
+	<br> 
+
+	<br>
+
+	
+		<div id=searches>
+	
+			<select class="search" ng-model="Status" ng-change="testRun(-1,$index)" ng-options="x.value for x in test1| filter: {category:'status'}" >
+			</select>
+			
+			<select class="search" ng-model="Towns" ng-change="testRun(0,$index)" ng-options="x.value for x in test1| filter: {category:'town'}" >
+			</select>
+			
+			<select class="search" ng-model="Brgys" ng-change="testRun(1,$index)" ng-options="x.value for x in test1| filter: myBrgy">
+			</select>
+			
+			<select class="search" ng-model="Crews" ng-change="testRun(2,$index)" ng-options="x.value for x in test1| filter: myCrew">
+			</select>
+			
+			<select class="search" ng-model="Days" ng-change="testRun(3,Days)" ng-options="idx as choice for (idx, choice) in Day1">
+			</select>
+			
+			<select class="search" ng-model="Months" ng-change="testRun(4,Months)" ng-options="idx as choice for (idx, choice) in Month1">
+			</select>
+			 
+			 <select class="search" ng-model="Years"  ng-change="testRun(5,Years)" ng-options="y for 	y in Year1">
+			</select>
+			<button type="button" ng-click="testRun()"></button>
+		</div>	
+	<br>
+	
+	<br>
+	{{resultxx}}
+		<div ng-if="ShowSpinnerStatus" class="loader"></div>
+		<div class="row" ng-if="ShowCharts">
+			
+			<div class="col" id=Bar-chart>
+	 		   	<canvas id= "bar" class="chart chart-bar" chart-data="data_bar" chart-labels="labels_bar"
+	                 chart-colours="colours" chart-options="options_bar" chart-series="series_bar">
+	        	</canvas>
+			</div>
+			<div class="col" id=Pie-chart>
+	 		   	<canvas id= "pie" class="chart chart-pie" chart-colours="colours"
+		 				chart-data="data" chart-labels="labels" chart-options="options">
+				</canvas> 
+			</div>
+	</div>
+	
+</div>
+ 
+</body>

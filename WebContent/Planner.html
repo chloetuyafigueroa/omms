@@ -1,0 +1,223 @@
+
+
+<html ng-app="firstAPP">
+<head>
+    <title>OMMS|Planner</title>
+  <script src="../Omms/js/jquery-2.1.4.min.js"></script> 
+ <script src="../Omms/js/angular.min.js"></script>
+  <script src="../Omms/js/moment.min.js" type="text/javascript"></script>
+  <script type="text/javascript" src="../Omms/js/ng-pattern-restrict.min.js"></script>
+	<script type="text/javascript"  src="../Omms/js/angular-gridster.js"></script>
+	<script type="text/javascript"  src="../Omms/js/planner1.0.1.js"></script>
+	
+	
+	<link href="../Omms/css/planner1.0.0.css"  rel="stylesheet" type="text/css">
+	<link href="../Omms/css/heading_new1.0.5.css" rel="stylesheet" type="text/css">
+	<link href="../Omms/css/all-chart.css"  rel="stylesheet" type="text/css">
+	<link href="../Omms/css/planner-grid1.0.4.css" rel="stylesheet" type="text/css"/>
+	<link href="../Omms/css/modal.css" rel="stylesheet" type="text/css">
+	<link rel="shortcut icon" href="../Omms/img/logo.png"/>
+</head>
+
+<body>
+
+
+<div id ="ID1" ng-app="firstAPP" ng-controller="myCtrl1">
+		<div class="searches">
+			<select class="town" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Towns" ng-change="testRun(0,$index)" ng-options="x.value for x in test1| filter: {category:'town'}" >
+			</select>
+			
+			<select class="brgy" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Brgys" ng-change="testRun(1,$index)" ng-options="x.value for x in test1| filter: myBrgy">
+			</select>
+			
+			<select class="crew" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Crews" ng-change="testRun(2,$index)" ng-options="x.value for x in test1| filter: myCrew">
+			</select>
+			
+			<input class="cal" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Date" ng-change= "Month_Year()" type="date">
+					
+		</div>
+		<script type="text/javascript">
+			var zIndex=function(z){
+			document.getElementById("HD").style.zIndex=z;
+			}
+		</script>
+		<div id=searches>
+				<br>
+				   <div id="modals2" ng-show="showContacts" > 
+			   <form>
+			   		CONTACTS:
+		       	     <input id=creator ng-model="Contact_Name"  placeholder= "Name" type="text" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict> <br>
+		             <input id=creator ng-model="Contact_Phone"  placeholder= "Phone Number" type="text" ng-minlength="11" ng-maxlength="11" required pattern="^[0-9]*$" ng-pattern-restrict > <br>
+		       		<select id=town ng-model="Contact_Crew" ng-change="filterCrew()" ng-options="y.value for y in test1| filter: {category:'crew'}" ></select>
+					
+				<div id="Contacts_table">
+						<table id="myTable" buffered-scroll="increaseLimit();" >
+						 <tr >
+						    <th ng-repeat="x in contacts_column">
+						    	<a > {{x}} </a>
+						     </th>
+						  </tr>
+						  <tr  ng-repeat="row2 in Contact_JSON| limitTo: limit" ng-init="limit=10">
+						    <td ng-repeat="column in row2">
+						      <a  ng-click="selectContact(row2.name, row2.crew)">{{ column }}</a> 
+						    </td>
+						  </tr>
+						</table>
+					</div>
+					<div class=row3>
+			         	<button class=col3 id="save" type="button" ng-click="save_contact()" class="btn btn-primary">SAVE</button>
+						<button class=col3 id="delete" type="button" ng-click="delete_contact()" class="btn btn-primary">DELETE</button>
+						<button class=col3 id="exit" type="button" ng-click="open2()" class="btn btn-primary">EXIT</button>
+					</div>
+				 
+		           </form>  
+		       	 </div>
+		       	 
+		       	 
+			   <div id="modals" ng-show="showModal"> 
+			   <!--  form method="post"  action="Main?action=map">-->
+			   		J.O.#:{{Jo}}<br>
+		       	     <input id=creator ng-model="Name" ng-change= "itemChange(0)" placeholder= "Created/Reported by" type="text" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict> <br>
+		             <select id=town ng-model="newTown" ng-change= "gpsChange(1)" ng-options="y.value for y in test1| filter: {category:'town'}" ></select>
+					<select id=brgy ng-model="newBrgys" ng-change= "gpsChange(0)" ng-options="y.value for y in test1| filter: newBrgy"></select>
+		            <input  id=landmark ng-model="Landmark" placeholder= "Landmark/Specific location" pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict><br>
+		           <div >
+					  <input ng-model="getType" ng-change= "itemChange(2)" type="radio" name="type" ng-value="'high'">Power Interruption<br>
+					  <input ng-model="getType" ng-change= "itemChange(2)" type="radio" name="type" ng-value="'medium'">O & M<br>
+					  <input ng-model="getType" ng-change= "itemChange(2)" type="radio" name="type" ng-value="'low'">Inspection/Verification
+					</div>
+						
+					 <input  id=contact ng-model="Phone" placeholder= "Cellphone Number Only" maxlength="11" pattern="^[0-9]*$" ng-pattern-restrict><br>
+		            <textarea id=particulars ng-model="Notes" placeholder= "Particulars" pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict wrap="soft"></textarea><br>
+		         
+		         <div class=row>
+		           	<select class=col id=assignedto ng-model="Crews1" ng-change= "itemChange(0)" ng-options="y.value for y in test1| filter: {category:'crew'}" ></select>
+					<select class=col id=status ng-model="Status1" ng-change= "itemChange(0)" ng-options="y.value for y in test1| filter: {category:'status'}"></select>
+		         </div>
+		         <div class=row>
+		            <select class=col id=substation ng-model="Substation" ng-change= "itemChange(3)" ng-options="y.value for y in test1| filter: {category:'substation'}" ></select>
+					<select class=col id=feeder ng-model="Feeder" ng-change= "itemChange(0)" ng-options="y.value for y in test1| filter: newFeeder"></select>
+		          </div>  
+		         <div class=row>
+		           	<select class=col id=category ng-model="Category" ng-change= "itemChange(0)" ng-options="y.value for y in test1| filter: {category:'category'}" ></select>
+					<select class=col id=equipment ng-model="Equipment" ng-change= "itemChange(0)" ng-options="y.value for y in test1| filter: {category:'equipment'}"></select>
+		         </div>
+		         
+	         	<div class=row2>
+				<div class="col2">
+				<button  class="left" type="button" ng-click="Hist(0)"></button>
+				history
+				<button  class="right" type="button" ng-click="Hist(1)"></button>
+				</div>
+				</div>
+		         LINE COVERAGE:
+		         <div class=row>
+		            <select class=col id=town1 ng-model="Towns1" ng-change= "itemChange(4)" ng-options="y.value for y in test1| filter: {category:'town'}" ></select>
+					<select class=col id=brgy1 ng-model="Brgys1" ng-change= "itemChange(0)" ng-options="y.value for y in test1| filter: newBrgy1"></select>
+		          </div> 
+		          <div class=row>
+		            <div class=col1>From-Town</div>
+					<div class=col1>From-Brgy</div>
+				  </div> 
+		          <div class=row>
+		            <select class=col id=town2 ng-model="Towns2" ng-change= "itemChange(5)" ng-options="y.value for y in test1| filter: {category:'town'}" ></select>
+					<select class=col id=brgy2 ng-model="Brgys2" ng-change= "itemChange(0)" ng-options="y.value for y in test1| filter: newBrgy2"></select>
+		          </div> 
+		          <div class=row>
+		            <div class=col1>To-Town</div>
+					<div class=col1>To-Brgy</div>
+				  </div> 
+		            <input id=section ng-model="Location" placeholder= "Please specify line section if any" type="text" pattern="^[A-Za-z0-9- !-):?@*^+./]*$" ng-pattern-restrict > <br>
+		        <div id=map ><button class="gray" ng-click="navMap()">MAP</button> <input name="gps" value={{Gps}}></div> 
+		    		       
+		         <div class=row>
+		          <div>ACTION TAKEN:</div> 
+		          <select class=col2 ng-model="Cause" ng-change= "itemChange(0)" ng-options="y.value for y in test1| filter: newType"></select>
+		         </div>
+		         <div>
+		          <textarea id=actiontaken ng-model="ActionTaken" ng-change= "itemChange(0)" placeholder= "Others(Please specify)" pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict wrap="soft"></textarea><br>
+		         </div>
+		             Schedule:<br>
+		         <div class=row>
+		             <input class=col5 ng-model="Followed1" ng-change= "itemChange(0)" type="date">
+		             <input class=col6 ng-model="Time1" ng-change= "itemChange(0)" type="time"> <br>
+		       	</div>
+		         <div class=row3>
+		         	<button class=col3 id="save" type="button" ng-click="postRun()" class="btn btn-primary">SAVE</button>
+					<button class=col3 id="delete" type="button" ng-click="deLete()" class="btn btn-primary">DELETE</button>
+					<button class=col3 id="exit" type="button" ng-click="open()" class="btn btn-primary">EXIT</button>
+				
+				</div>
+			
+				
+		            <div class=label1>Creator:{{Creator}}  {{Created}}</div>
+					<div class=label1>Follower:{{Follower}}  {{Followed}}</div>
+					<div class=label1>Team/Members:{{Members}}</div>
+				 
+		        <!--  /form>-->  
+		       	 </div> 
+	    		
+		
+		<div class=row4>
+			<div class="col4">
+			<button  class="left" type="button" ng-click="nWeeklog()"></button>
+			w{{Week_Log}}
+			<button  class="right" type="button" ng-click="pWeeklog()"></button>
+			</div>
+			<div class=col4>
+			<button class="left" type="button" ng-click="nWeek()"></button>
+			w{{WeekS}}
+			<button  class="right" type="button" ng-click="pWeek()"></button>
+			</div>
+			<div class=col4>
+			<button class="create" type="button" ng-click="open()" class="btn btn-primary"></button>
+			<button	class="contacts1" type="button" ng-click="open2()" class="btn btn-primary"></button>
+			</div>		
+		
+		</div>
+	<div style="margin-left:10px;">
+		<table id="tablox" border="1" >
+			<tr>
+			<th id="ddxs" ng-repeat="dater in daters" >
+			    	<div > 
+			    	{{dater}} 
+			    	</div>
+			</th>
+			</tr>
+			<tr>
+			<th id="ddx" ng-repeat="user in users" >
+			    	<div > 
+			    	{{user}} 
+			    	</div>
+			</th>
+			</tr>
+		</table>	
+	
+		<div id="HD" gridster="gridsterOpts" style="overflow-y:auto;max-height: 100%;">
+		<table  border="1" >
+			 <tr>
+			    <td id="ddd"  ng-class="{'color-green': item.status === 'Accomplished','color-yellow': item.status === 'On-going','color-red': item.status === 'Cancelled', 'color-blue': item.status == 'Select Status'||item.status ==''||item.status =='STATUS'}" gridster-item="item" ng-repeat="item in standardItems" >
+			      <div  ng-dblclick="selectItem(item.unique_id,item.jo)" class="job">
+			     	<img class="type" ng-class="{'interruption': item.type === 'high', 'om': item.type === 'medium', 'inspection': item.type === 'low'}">
+		           	<div class="name">{{item.name}} </div> 
+		           	<div class="cause">{{item.cause}} </div> 
+		           	<div class="address">{{item.brgy}}, {{item.town}} </div>
+		           	<div class="time">{{item.time}} </div>
+		           	<div class="jo">#{{item.jo}} </div>  
+		            </div>
+		            
+			    </td>
+			 </tr>
+		</table>
+		
+		</div>
+	</div>
+	 <br> 
+	<br>
+
+	</div>
+ 	
+    
+</div>
+ 
+</body>

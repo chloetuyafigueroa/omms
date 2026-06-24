@@ -1,0 +1,287 @@
+
+#tablox {
+		width: 100%; 
+			
+		}
+#ddxs {background-color: #aeffae;
+		width: 12.5%; 
+		 border-collapse: collapse;
+			
+		}
+#ddx {background-color: #ffffac;
+	width: 12.5%;  
+	 border-collapse: collapse;
+	
+}
+#ddd {	
+		width: 90%; 
+		position:absolute;
+		text-align: center;
+		border: 500px 10px 500px 15px;
+		 border-collapse: collapse;
+		padding: 1px auto 8px auto;
+		z-index:1;
+		}
+.color-green{background-color: #a7fcab;}
+.color-yellow{background-color: #ffffa8;}
+.color-red{background-color: #ffaeae;}
+.color-blue{background-color: #a8d3ff;}
+/* The Modal (background) */
+	#modals {
+		position: fixed;
+	 	background-color: #93ff93; 
+	 	margin-top:0% ;
+ 		border: 5px solid #008000; width: 50%; 
+		padding: 5px 10px 5px 5px;
+		columns: 2;
+		left: 50%;
+		margin-left:-25% ;
+		z-index:2;
+	
+		}
+	#map {
+  		 color:#0000ff; 		 
+   		 	
+  }
+	#modals2 {
+		position: fixed;
+	 	background-color: #93ff93; 
+	 	margin-top:0% ;
+ 		border: 5px solid #008000; width: 25%; height:80%;
+ 		padding: 5px 10px 5px 5px;
+		left: 50%;
+		margin-left:-25% ;
+		z-index:2;
+		
+		} 
+
+#Contacts_table {
+	height:67%;
+ 	overflow-y: scroll;
+ }
+#Contacts_table table {
+  font-family: 'Calibri';
+  margin: 1px auto;
+  border-collapse: collapse;
+  border: 1px solid #eee;
+  border-bottom: 2px solid #ffff00;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1), 0px 10px 20px rgba(0, 0, 0, 0.05), 0px 20px 20px rgba(0, 0, 0, 0.05), 0px 30px 20px rgba(0, 0, 0, 0.05);
+}
+#Contacts_table table tr:hover {
+  background: #c0c0c0;
+}
+
+#Contacts_table table tr:hover td {
+  color: #ffff00;
+}
+#Contacts_table table th,#Contacts_table table td {
+  color: #000000;
+  border: 1px solid #eee;
+  padding: 5px 10px;
+ 
+  width: 10%; 
+}
+#Contacts_table table th {
+  background: #ffff7d;
+  color: #000000;
+  text-transform: uppercase;
+  font-size: 16px;
+ /* overflow-wrap:break-word;*/
+ 
+}
+#Contacts_table table th.last {
+  border-right: none;
+}
+		#creator {
+		width: 100%; 
+		padding: 5px 10px;	
+		margin: .05% auto 1% auto;
+		border: 1px solid #008000; 
+		border-spacing: 12px; /*Optional*/
+		}
+		#town {
+		width: 100%; 
+		padding: 5px 10px;	
+		margin: .05% auto 1% auto;
+		border: 1px solid #008000;
+		background-color: #ffff80; /*Optional*/ 
+		border-spacing: 12px; /*Optional*/
+		}
+		#brgy {
+		width: 100%; 
+		padding: 5px 10px;	
+		margin: .05% auto 1% auto;
+		background-color: #ffff80; /*Optional*/
+		border: 1px solid #008000; 
+		}
+		#landmark {
+		width: 100%; 
+		height:40px;
+		padding: 5px 10px;	
+		margin: .05% auto 1% auto;
+		border: 1px solid #008000; 
+		} 
+		#section {
+		width: 100%; 
+		height:40px;
+		padding: 5px 10px;	
+		margin: .05% auto 1% auto;
+		border: 1px solid #008000; 
+		} 
+		#contact {
+		width: 100%; 
+		padding: 5px 10px;	
+		margin: .05% auto 1% auto;
+		border: 1px solid #008000; 
+		}
+		#particulars {
+		width: 100%; 
+		height: 120px;
+		padding: 5px 10px;	
+		margin: .05% auto 1% auto;
+		border: 1px solid #008000;
+		text-align: left;
+		vertical-align: top;
+		overflow-wrap:break-word;
+		resize:none;
+		font: 400 20px Arial}
+		#actiontaken {
+		width: 100%; 
+		height: 100px;
+		padding: 5px 10px;	
+		margin: .05% auto 1% auto;
+		border: 1px solid #008000;
+		text-align: left;
+		vertical-align: top;
+		overflow-wrap:break-word;
+		resize:none;
+		font: 400 20px Arial}
+		#type {
+		width: 100%; 
+		padding: 5px 10px;	
+		margin: 10% auto 10% auto;
+		border: 1px solid #008000; } 
+		#town {
+		width: 100%; 
+		padding: 5px 10px;	
+		margin: .05% auto 1% auto;
+		background-color: #ffff80; /*Optional*/
+		border: 1px solid #008000; 
+		}
+		.row {
+	    display: table;
+	    width: 100%; /*Optional*/
+	   
+	    table-layout: fixed; /*Optional*/
+	    border-spacing: 2px; /*Optional*/
+		}
+		.col {
+		    display: table-cell;
+		    background-color: #ffff80; /*Optional*/
+		    width: 50%; 
+		    height:30px;
+			padding: 1px 1px;	
+			margin: 1px auto 1px auto;
+			border: 1px solid #008000;}
+			
+		.row1 {
+	    display: table;
+	    width: 100%; /*Optional*/
+	    table-layout: fixed; /*Optional*/
+	    border-spacing: 2px; /*Optional*/
+		}
+		.col1 {
+		    display: table-cell;
+		    width: 50%; 
+			height:30px;
+			padding: 1px 1px;	
+			margin: 1px auto 1px auto;}
+		
+		.col2 {
+		    display: table-cell;
+		  	width: 100%; 
+			height:30px;
+			padding: 1px 1px;	
+			margin: 1px auto 1px auto;
+			}
+		.row3 {
+	    display: table;
+	    width: 100%; /*Optional*/
+	    table-layout: fixed; /*Optional*/
+	    border-spacing: 2px; /*Optional*/
+		}
+		.col3 {
+		    display: table-cell;
+		    background-color: #ffff00; /*Optional*/
+		    width: 33.333%; 
+			height:30px;
+			padding: 1px 1px;	
+			margin: 1px auto 1px auto;
+			border: 2px solid #008000;}
+			
+		.row4 {
+	    display: table;
+	    width: 38%;
+		text-align: center;
+		table-layout: fixed; /*Optional*/
+	    border-spacing: 1px; /*Optional*/
+		}
+		.col4 {
+		    display: table-cell;
+		    width: 50%; 
+			height:30px;
+			padding: 10px 0px 0px 0px;	
+			}
+		.col5 {
+		    width: 55%; 
+		 	text-align: center;
+			margin: .05% auto 1% auto;
+			border: 1px solid #008000;
+			}
+		.col6 {
+		    width: 45%; 
+		 	text-align: center;
+			margin: .05% auto 1% auto;
+			border: 1px solid #008000;
+			}
+		
+	
+		.left {
+		background-color: #008000;
+		width: 25px;height: 25px;
+			padding: 5px 0px 5px 0px;
+		background: url(../img/left.png);
+		background-size: 100%;
+		}
+		
+		.right {
+		background-color: #80ff00;
+		width: 25px;height: 25px;
+		padding: 5px 0px 5px 0px;
+		background: url(../img/right.png);
+		background-size: 100%;
+		}
+		.create  { background-color: #00cccc; color: #a8ffa8;
+		width: 25px;height: 25px;
+		position:relative;
+		right:10%;
+		padding: 5px 0px 5px 0px;
+		background: url(../img/create.png);
+		background-size: 100%}
+		.contacts1  { background-color: #00cccc; color: #a8ffa8;
+		width: 25px;height: 25px;
+		position:relative;
+		right:10%;
+		padding: 5px 0px 5px 0px;
+		background: url(../img/contacts2.png);
+		background-size: 100%}
+		
+		.label1 {
+		height:10px;
+		font: 400 12px Arial;
+		}
+	
+			
+	
+		
+	

@@ -1,0 +1,358 @@
+
+<html ng-app="firstAPP">
+  <head>
+    <title>OMMS|Map</title>
+   
+
+	<script type="text/javascript"  src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+	<script type="text/javascript"  src="../Omms/js/angular.min.js"></script>
+	<!--script src="https://cdnjs.cloudflare.com/ajax/libs/angular-leaflet-directive/0.10.0/angular-leaflet-directive.min.js"></script>-->
+	<script src="https://momentjs.com/downloads/moment.js"></script>
+	<script type="text/javascript"  src="../Omms/js/angular-leaflet-directive.min.js"></script>
+	<script type="text/javascript"  src="../Omms/js/wkt.js"></script>
+	<script type="text/javascript"  src="../Omms/js/proj4.js"></script>
+	<script type="text/javascript"  src="../Omms/js/leaflet.rotatedMarker.js"></script>
+	<script type="text/javascript"  src="../Omms/js/map1.0.1.js"></script>
+	<script type="text/javascript"  src="../Omms/js/jquery-2.1.4.min.js"></script>
+    
+    <link rel="shortcut icon" href="../Omms/img/logo.png"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css">
+    <link href="../Omms/css/heading1.0.3.css" rel="stylesheet" type="text/css">
+    <link href="../Omms/css/modal.css" rel="stylesheet" type="text/css">
+    <link href="../Omms/css/ldetails.css" rel="stylesheet" type="text/css">
+    <link href="../Omms/css/pdetails.css" rel="stylesheet" type="text/css">
+    <link href="../Omms/css/cdetails.css" rel="stylesheet" type="text/css">
+    <link href="../Omms/css/map1.0.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  	<style>
+        /* Set the size of the map */
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+
+        /* Define custom marker */
+        #custom-marker {
+            width: 300px;
+            height: 30px;
+            background-color: #FF5733; /* Custom color */
+            border-radius: 500%;
+            border: 2px solid #FFF;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+  </head>
+  <body >
+  <div id ="ID1" ng-app="firstAPP" ng-controller="GISController">
+  <leaflet id="map" style="position:fixed;left: 20px;top:5px;" lf-center="headquarter"  layers="layers"  markers="markers" defaults="defaults" height="99%" width="98%"></leaflet>
+  
+  		<div class="draw" >
+			<button id="addpole" ng-click="addPole()"><img src="../Omms/img/new_pole.png" style="width:20px;transform: scale(1.5);"></button>
+			<button id="addbuilding" ng-click="addBuilding()"><img src="../Omms/img/new_building.png" style="width:20px"></button>
+			<button id="updateGPS" click-and-long-press click="updateGPS(true,0,100,20000)" long-press="updateGPS(false,0,100,20000)"><img src="../Omms/img/crew.png" style="width:20px;transform: scale(1.5);"></button>
+			<input id="phoneGPS" ng-model="phoneGPS" placeholder= "Phone No/Crew" type="text" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict> <br>
+			<!--button id="updateIconProperty" ng-click="updateIconProperty()"><img src="../Omms/img/new_pole.png" style="width:20px;transform: scale(1.5);"></button>
+        	<button id="upsertnewGPS" ng-click="upsertnewGPS()"><img src="../Omms/img/new_pole.png" style="width:20px;transform: scale(1.5);"></button>-->
+        </div>
+        <div id="polemodals"  ng-show="showPoleDetails"> 
+        <div style="font-weight: bold" >POLE DETAILS:</div>
+       	<div class=prow>
+       		<div  class="w50 nc" id=poleno ng-model="poleNo">Pole ID: {{poleno}}</div>
+        	<input class="w50 field" id=oldpoleno ng-model="oldPoleno" ng-change= "oldpolenoChange()" placeholder= "Add Pole No." type="text" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict> 
+           </div>
+        <div class=prow>				   
+			<select class="w30 field" id=ptype ng-model="ptype" ng-change= "typeChange()" ng-options="y for y in pType" > </select>
+			<select class="w20 field" id=pheight ng-model="pheight" ng-change= "heightChange()" ng-options="y for y in pHeight" ></select>
+			<select class="w50 field" id=pclass ng-model="pclass" ng-change= "classChange()" ng-options="y.class for y in pClass| filter: {type: ptype}" > </select>
+		</div>
+           <div class=prow>				   
+			<select class="w20 field" id=phases ng-model="Phases" ng-change= "phaseSelected()" ng-options="y for y in pPhases" > </select>
+			<select class="w80 field" id=category ng-model="Category" ng-change= "catChange()" ng-options="y for y in pCategory" ></select>
+		</div>
+		<div class=prow>
+			<select class="w20 field" id=qty ng-model="Qty" ng-change= "" ng-options="y for y in pQty" ></select>
+			<select class="w80 field" id=pole_details ng-model="pDtails" ng-change= "pdtlsChange()" ng-options="y.code for y in pDetails| filter: categoryPhaseFilter" ></select>
+		</div>
+		<textarea class=premarks id=premarks ng-model="pRemarks" ng-change= "premChange()" placeholder= "Remarks" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict wrap="soft"></textarea><br>
+		<div class=prow>
+       		<input type="checkbox" ng-model="existPole" ng-change= "existChange()"> Existing Pole
+       		<input type="checkbox" ng-model="existLine" > Existing Line
+	        <input type="checkbox" ng-model="existAssy" > Existing Assembly
+	    </div>
+		<div class=prow>
+         	<button class="w33 button" id="addpriline" type="button" ng-click="AddLine('prilines')" class="btn btn-primary">ADD PRI</button>
+			<button class="w33 button"  id="addsecline" type="button" ng-click="AddLine('seclines')" class="btn btn-primary">ADD SEC</button>
+			<button class="w33 button"  id="addassembly" type="button" ng-click="addDtails()" class="btn btn-primary">ASSEMBLY/ MISC</button>
+		</div>
+		<div >
+			<input class=assembly id=priassembly ng-model="priassembly" ng-change= "priasChange()" placeholder= "Primary Assembly" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict wrap="soft"><br>
+			<input class=assembly id=secassembly ng-model="secassembly" ng-change= "secasChange()" placeholder= "Secondary Assembly" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict wrap="soft"><br>
+			<input class=assembly id=misc ng-model="misc" ng-change= "miscChange()" placeholder= "Miscellaneous" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict wrap="soft"><br>
+		</div>
+		
+		<div class=prow>
+         	<button class="w25 button"  id="save" type="button" ng-click="savePole()" class="btn btn-primary">SAVE</button>
+			<button class="w25 button" id="delete" type="button" ng-click="deletePole()" class="btn btn-primary">DELETE</button>
+			<button class="w25 button" id="clear" type="button" ng-click="clearDtails()" class="btn btn-primary">CLEAR</button>
+			<button class="w25 button" id="exit" type="button" ng-click="openDtails('pole')" class="btn btn-primary">EXIT</button>
+			</div>
+		</div>
+		<div id="custmodals"  ng-show="showCustDetails"> 
+        	<div style="font-weight: bold" >CUSTOMER DETAILS:</div>
+        	<div class=prow>
+        	 	<div class="w30 checkbox-left">
+        			<input  type="checkbox" ng-model="existBldg">Existing
+        		</div>
+        		<input class="w70 field" id=account_no placeholder= "Account No." type="text" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict> <br>
+	        </div>
+	        <input class="w100 field" id=account_name placeholder= "Account Name" ng-model="Name" type="text" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict> <br>
+        	<div class=prow>
+        		<input class="w70 field" id=meter_no  placeholder= "Meter No." type="text" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict> <br>
+            	<input class="w30 field" id=multiplier placeholder= "Multiplier" type="number"> <br>
+            </div>
+            <div class=prow>
+        		<select  class="w50 field" id=cust_class ng-model="CustClass" ng-options="y for y in cCategory"></select>
+		    	<select  class="w50 field" id=cust_type ng-model="CustType"  ng-options="y for y in cType"></select>
+			</div>
+			<div class=prow>
+        		<select  class="w50 field" id=phase ng-model="meterPhase"  ng-options="y for y in pPhases"></select>
+		    	<select  class="w50 field" id=brand ng-model="meterBrand" ng-options="y for y in mBrand" ></select>
+			</div>
+			<div class=prow>
+        		<select  class="w50 field" id=model ng-model="meterModel"  ng-options="y for y in mModel"></select>
+		    	<select  class="w50 field" id=rating ng-model="meterRating" ng-options="y for y in mRating" ></select>
+			</div>
+			<div class=prow>
+				<label class="w30 nc" >WIRE SIZE:</label>
+				<select  class="w70 field" id=wire ng-model="cWire" ng-options="y.wire_size for y in wDetails" ></select>
+			</div>
+			<textarea class=cremarks id=cremarks ng-model="cRemarks" ng-change= "cremChange()" placeholder= "Remarks" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict wrap="soft"></textarea><br>
+			<button class="w100 button" id="addsdiline" type="button" ng-click="AddLine('sdilines')" class="btn btn-primary">ADD SDI</button>
+        	<div class=prow>
+	         	<button class="w25 button" id="save" type="button" ng-click="savePole()" class="btn btn-primary">SAVE</button>
+				<button class="w25 button"  id="bksp" type="button" ng-click="backSpace()" class="btn btn-primary">BKSP</button>
+				<button class="w25 button"  id="clear" type="button" ng-click="clearDtails()" class="btn btn-primary">CLEAR</button>
+				<button class="w25 button"  id="exit" type="button" ng-click="openDtails('cust')" class="btn btn-primary">EXIT</button>
+			</div>
+		</div>
+		
+		<div id="linemodals"  ng-show="showLineDetails"> 
+        	<div style="font-weight: bold" >LINE DETAILS:</div>
+        	<div  style="padding: 5px 10px 5px 5px;" id=sectionid ng-model="Name">SECTION ID: {{currentSectionid}}</div>
+        	<div class=prow>
+	        	<div class="checkbox-group">
+			    <label><input type="radio" ng-model="linetype" ng-change="linetypeChange()" value="A">PUB </label>
+			    <label><input type="radio" ng-model="linetype" ng-change="linetypeChange()" value="B">SS </label>
+			    <label><input type="radio" ng-model="linetype" ng-change="linetypeChange()" value="C">N/A (primary line only) </label>
+			  	</div>
+		  	</div>
+		  	<div class=prow>
+       			<input type="checkbox" ng-model="existPri" ng-change= "lineexistChange()"> Existing PriLine
+       			<input type="checkbox" ng-model="existSec" ng-change= "lineexistChange()"> Existing SecLine
+       		</div>
+		  	<div class=prow><span class="w50 nc">phase:</span><span class="w50 nc">primary line:</span></div>
+       		<div class=prow>
+        		<div class="w50 checkbox-group">
+		            <input type="checkbox" ng-model="chkPh1" ng-change= "priPhChange()" value="A"> A
+		            <input type="checkbox" ng-model="chkPh2" ng-change= "priPhChange()" value="B"> B
+		            <input type="checkbox" ng-model="chkPh3" ng-change= "priPhChange()" value="C"> C
+		        </div >
+		    	<select  class="w50 field" id=prisize ng-model="priSize" ng-change= "priChange()" ng-options="y.wire_size for y in wDetails" ></select>
+				
+			</div>
+			<div class=prow><span class="w50 nc">neutral line:</span><span class="w50 nc">secondary line:</span></div>
+       		<div class=prow>
+        		<select  class="w50 field" id=neusize ng-model="neuSize" ng-change= "neuChange()" ng-options="y.wire_size for y in wDetails" ></select>
+		    	<select  class="w50 field" id=secsize ng-model="secSize" ng-change= "secChange()" ng-options="y.wire_size for y in wDetails" ></select>
+			</div>
+			<div class=prow style="padding: 5px 10px 5px 5px">
+			<span class="w50 nc" id="len">LENGTH (mtrs):</span>
+			<input  id=conlength ng-model="conLength" placeholder= "Length in meters" type=number> 
+			
+			</div>
+			<div  id=wirelen>Angle of Inclination: </div>
+       		<div class="angle-container">
+			  <div  class="slider-box">
+			    <input ng-model="anglechange" ng-change= "angleChange()"
+			      type="range" 
+			      id="angleSlider" 
+			      min=0 
+			      max=90 
+			      value=0
+			    >
+			    <span id="angleValue">{{anglechange}}</span>
+			    <span id="angleSym">&#176</span>
+			  </div>
+			
+			</div>
+			
+        	<div class=prow>
+	         	<button class="w25 button" id="save" type="button" ng-click="savePole()" class="btn btn-primary">SAVE</button>
+				<button class="w25 button" id="bksp" type="button" ng-click="deleteLine()" class="btn btn-primary">DELETE</button>
+				<button class="w25 button" id="clear" type="button" ng-click="clearDtails()" class="btn btn-primary">CLEAR</button>
+				<button class="w25 button" id="exit" type="button" ng-click="openDtails('line')" class="btn btn-primary">EXIT</button>
+			</div>
+		</div>
+        <div id="sdimodals"  ng-show="showSdiDetails"> 
+        	<div style="font-weight: bold" >LINE DETAILS:</div>
+        	<div  style="padding: 5px 10px 5px 5px;" id=sectionid ng-model="Name">SECTION ID: {{currentSectionid}}</div>
+        	<input type="checkbox" ng-model="existSDI" ng-change= "sdiexistChange()"> Existing
+		  	
+			<div class=prow><span class="w50 nc">phase:</span><span class="w50 nc">sdi line:</span></div>
+       		
+			<div class=prow>
+        		<div class="w50 checkbox-group">
+		            <input type="checkbox" ng-model="sdiPh1" ng-change= "sdiPhChange()" value="A"> A
+		            <input type="checkbox" ng-model="sdiPh2" ng-change= "sdiPhChange()" value="B"> B
+		            <input type="checkbox" ng-model="sdiPh3" ng-change= "sdiPhChange()" value="C"> C
+		        </div >
+		    	<select  class="w50 field" id=sdisize ng-model="sdiSize" ng-change= "sdiChange()" ng-options="y.wire_size for y in wDetails" ></select>
+				
+			</div>
+       		<div class=prow style="padding: 5px 10px 5px 5px">
+				<span class="w50 nc" id="len">LENGTH (mtrs):</span>
+				<input  id=sdilength ng-model="sdiLength" placeholder= "Length in meters" type=number> 
+			</div>
+			<div class=prow>
+	         	<button class="w25 button" id="save" type="button" ng-click="savePole()" class="btn btn-primary">SAVE</button>
+				<button class="w25 button" id="bksp" type="button" ng-click="deleteLine()" class="btn btn-primary">DELETE</button>
+				<button class="w25 button" id="clear" type="button" ng-click="clearDtails()" class="btn btn-primary">CLEAR</button>
+				<button class="w25 button" id="exit" type="button" ng-click="openDtails('sdi')" class="btn btn-primary">EXIT</button>
+			</div>
+		</div>
+	   	<div id="modals" ng-show="showModal"> 				   
+	   		J.O.#:{{Jo}}<br>
+       	    <input id=creator ng-model="Name" ng-change= "itemChange(0)" placeholder= "Created/Reported by" type="text" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict> <br>
+            <select id=town ng-model="newTown" ng-change= "itemChange(1)" ng-options="y.value for y in test1| filter: {category:'town'}" ></select>
+			<select id=brgy ng-model="newBrgys" ng-change= "itemChange(0)" ng-options="y.value for y in test1| filter: newBrgy"></select>
+            <input  id=landmark ng-model="Landmark" placeholder= "Landmark/Specific location" pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict><br>
+           <div >
+			  <input ng-model="getType" ng-change= "itemChange(2)" type="radio" name="type" ng-value="'high'">Power Interruption<br>
+			  <input ng-model="getType" ng-change= "itemChange(2)" type="radio" name="type" ng-value="'medium'">O & M<br>
+			  <input ng-model="getType" ng-change= "itemChange(2)" type="radio" name="type" ng-value="'low'">Inspection/Verification
+			</div>
+				
+			 <input  id=contact ng-model="Phone" placeholder= "Cellphone Number Only" maxlength="11" pattern="^[0-9]*$" ng-pattern-restrict><br>
+            <textarea id=particulars ng-model="Notes" placeholder= "Particulars" pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict wrap="soft"></textarea><br>
+         
+         <div class=row>
+           	<select class=col id=assignedto ng-model="Crews1" ng-change= "itemChange(0)" ng-options="y.value for y in test1| filter: {category:'crew'}" ></select>
+			<select class=col id=status ng-model="Status1" ng-change= "itemChange(0)" ng-options="y.value for y in test1| filter: {category:'status'}"></select>
+         </div>
+         <div class=row>
+            <select class=col id=substation ng-model="Substation" ng-change= "itemChange(3)" ng-options="y.value for y in test1| filter: {category:'substation'}" ></select>
+			<select class=col id=feeder ng-model="Feeder" ng-change= "itemChange(0)" ng-options="y.value for y in test1| filter: newFeeder"></select>
+         </div>  
+         <div class=row>
+           	<select class=col id=category ng-model="Category" ng-change= "itemChange(0)" ng-options="y.value for y in test1| filter: {category:'category'}" ></select>
+			<select class=col id=equipment ng-model="Equipment" ng-change= "itemChange(0)" ng-options="y.value for y in test1| filter: {category:'equipment'}"></select>
+         </div>
+         
+        	<div class=row2>
+			<div class="col2">
+			<button  class="left" type="button" ng-click="Hist(0)"></button>
+			history
+			<button  class="right" type="button" ng-click="Hist(1)"></button>
+			</div>
+		</div>
+         LINE COVERAGE:
+         <div class=row>
+            <select class=col id=town1 ng-model="Towns1" ng-change= "itemChange(4)" ng-options="y.value for y in test1| filter: {category:'town'}" ></select>
+			<select class=col id=brgy1 ng-model="Brgys1" ng-change= "itemChange(0)" ng-options="y.value for y in test1| filter: newBrgy1"></select>
+          </div> 
+          <div class=row>
+            <div class=col1>From-Town</div>
+			<div class=col1>From-Brgy</div>
+		  </div> 
+          <div class=row>
+            <select class=col id=town2 ng-model="Towns2" ng-change= "itemChange(5)" ng-options="y.value for y in test1| filter: {category:'town'}" ></select>
+			<select class=col id=brgy2 ng-model="Brgys2" ng-change= "itemChange(0)" ng-options="y.value for y in test1| filter: newBrgy2"></select>
+          </div> 
+          <div class=row>
+            <div class=col1>To-Town</div>
+			<div class=col1>To-Brgy</div>
+		  </div> 
+            <input id=section ng-model="Location" placeholder= "Please specify line section if any" type="text" pattern="^[A-Za-z0-9- !-):?@*^+./]*$" ng-pattern-restrict > <br>
+         <div id=gps ><input name="gps" value={{Gps}}></div> 
+    		       
+         <div class=row>
+          <div>ACTION TAKEN:</div> 
+          <select class=col2 ng-model="Cause" ng-change= "itemChange(0)" ng-options="y.value for y in test1| filter: newType"></select>
+         </div>
+         <div>
+          <textarea id=actiontaken ng-model="ActionTaken" ng-change= "itemChange(0)" placeholder= "Others(Please specify)" pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict wrap="soft"></textarea><br>
+         </div>
+             Schedule:<br>
+         <div class=row>
+             <input class=col5 ng-model="Followed1" ng-change= "itemChange(0)" type="date">
+             <input class=col6 ng-model="Time1" ng-change= "itemChange(0)" type="time"> <br>
+       	</div>
+         <div class=row3>
+         	<button class=col3 id="save" type="button" ng-click="postRun()" class="btn btn-primary">SAVE</button>
+			<button class=col3 id="delete" type="button" ng-click="deLete()" class="btn btn-primary">DELETE</button>
+			<button class=col3 id="exit" type="button" ng-click="open()" class="btn btn-primary">EXIT</button>
+		
+		</div>
+	
+		
+            <div class=label1>Creator:{{Creator}}  {{Created}}</div>
+			<div class=label1>Follower:{{Follower}}  {{Followed}}</div>
+	 		<div class=label1>Team/Members:{{Members}}</div>
+		</div> 
+		
+	   	
+		<div id=searches>
+		<select class="status" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Status" ng-change="testRun(-1,0)" ng-options="x.value for x in test1| filter: {category:'status'}" >
+		</select>
+		
+		<select class="town"  onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Towns" ng-change="testRun(0,0)" ng-options="x.value for x in test1| filter: {category:'town'}" >
+		</select>
+		
+		<select class="brgy" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Brgys" ng-change="testRun(1,0)" ng-options="x.value for x in test1| filter: myBrgy">
+		</select>
+		
+		<select class="crew" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Crews" ng-change="testRun(2,3)" ng-options="x.value for x in test1| filter: myCrew">
+		</select>
+		
+		 <select class="freq" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Period"  ng-change="testRun(5,0)" ng-options="y for 	y in Period1">
+		</select>
+		<input class="cal" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Date" ng-change= "testRun(2,2)" type="date">
+		<div class="duration" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)">
+		<input ng-model="Start" ng-change= "getTime()" type="time">
+		<input ng-model="End" ng-change= "getTime()" type="time">
+		</div>
+		
+			<div ng-if="showSearch">
+			<button type="button" ng-click="addr_search3()">Search</button>
+			<button type="button" ng-click="addr_save()">Save</button>
+			</div>
+		
+		</div>	
+		
+		<script type="text/javascript">
+			var zIndex=function(z){
+			document.getElementById("map").style.zIndex=z;
+			}
+		</script>
+{{result1}}
+			
+		    
+		    	
+	  		<div id="search" ng-if="showSearch">
+		  		<b>Coordinates</b>
+		
+				<input type="text" ng-model ="lat" id="lat" size=12 value="">
+				<input type="text" ng-model ="lon" id="lon" size=12 value="">
+				<button type="button" ng-click="addr_search2()">Search</button>
+				<br>
+				<br>
+				<b>Address</b>
+				
+				<input ng-model ="addrey" type="text" value="" id="addrey" size="58" />
+				<button type="button" ng-click="addr_search()">Search</button>
+			</div>
+   		
+   </div>
+   
+  </body>
+</html>

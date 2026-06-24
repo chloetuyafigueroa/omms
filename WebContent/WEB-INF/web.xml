@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	<display-name>
+		Omms</display-name>
+	<welcome-file-list>
+		<welcome-file>login.html</welcome-file>
+
+	</welcome-file-list>
+	
+    <servlet>
+        <servlet-name>
+            someservlet
+        </servlet-name>
+        <servlet-class>
+            jspbook.tsd.someservlet
+        </servlet-class>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>
+            someservlet
+        </servlet-name>
+        <url-pattern>
+            /someservlet
+        </url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>
+            someservlet1
+        </servlet-name>
+        <servlet-class>
+            jspbook.tsd.someservlet1
+        </servlet-class>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>
+            someservlet1
+        </servlet-name>
+        <url-pattern>
+            /someservlet1
+        </url-pattern>
+    </servlet-mapping>	
+    
+    <servlet>
+        <servlet-name>
+            Contacts
+        </servlet-name>
+        <servlet-class>
+            jspbook.tsd.Contacts
+        </servlet-class>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>
+            Contacts
+        </servlet-name>
+        <url-pattern>
+            /Contacts
+        </url-pattern>
+    </servlet-mapping>	
+    
+    <servlet>
+        <servlet-name>
+            someservlet2
+        </servlet-name>
+        <servlet-class>
+            jspbook.tsd.someservlet2
+        </servlet-class>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>
+            someservlet2
+        </servlet-name>
+        <url-pattern>
+            /someservlet2
+        </url-pattern>
+    </servlet-mapping>
+    
+         <servlet>
+        <servlet-name>
+            someservlet5
+        </servlet-name>
+        <servlet-class>
+            jspbook.tsd.someservlet5
+        </servlet-class>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>
+            someservlet5
+        </servlet-name>
+        <url-pattern>
+            /someservlet5
+        </url-pattern>
+    </servlet-mapping>
+    
+         <servlet>
+        <servlet-name>
+            someservlet6
+        </servlet-name>
+        <servlet-class>
+            jspbook.tsd.someservlet6
+        </servlet-class>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>
+            someservlet6
+        </servlet-name>
+        <url-pattern>
+            /someservlet6
+        </url-pattern>
+    </servlet-mapping>
+    
+             <servlet>
+        <servlet-name>
+            someservlet7
+        </servlet-name>
+        <servlet-class>
+            jspbook.tsd.someservlet7
+        </servlet-class>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>
+            someservlet7
+        </servlet-name>
+        <url-pattern>
+            /someservlet7
+        </url-pattern>
+    </servlet-mapping>
+    
+      <servlet>
+        <servlet-name>
+            someservlet4
+        </servlet-name>
+        <servlet-class>
+            jspbook.tsd.someservlet4
+        </servlet-class>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>
+            someservlet4
+        </servlet-name>
+        <url-pattern>
+            /someservlet4
+        </url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>
+            someservlet3
+        </servlet-name>
+        <servlet-class>
+            jspbook.tsd.someservlet3
+        </servlet-class>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>
+            someservlet3
+        </servlet-name>
+        <url-pattern>
+            /someservlet3
+        </url-pattern>
+    </servlet-mapping>
+    
+	<servlet>
+        <servlet-name>
+            Main
+        </servlet-name>
+        <servlet-class>
+            jspbook.tsd.Main
+        </servlet-class>
+        <load-on-startup>1</load-on-startup>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>
+            Main
+        </servlet-name>
+        <url-pattern>
+            /Main
+        </url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>
+            FCMServlet
+        </servlet-name>
+        <servlet-class>
+            jspbook.tsd.FCMServlet
+        </servlet-class>
+        <load-on-startup>1</load-on-startup>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>
+            FCMServlet
+        </servlet-name>
+        <url-pattern>
+            /FCMServlet
+        </url-pattern>
+    </servlet-mapping>
+   
+   
+    
+    <filter>
+	    <filter-name>InvalidRequestFilter</filter-name>
+	    <filter-class>jspbook.tsd.InvalidRequestFilter</filter-class>
+	</filter>
+	<filter-mapping>
+	    <filter-name>InvalidRequestFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+	</filter-mapping>
+	    
+   
+</web-app>
+

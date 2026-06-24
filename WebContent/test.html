@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script src="../Omms/js/angular.min.js"></script>
+    <script type="text/javascript">
+        var app = angular.module('myApp', []);
+        app.controller('myCtrl2', function ($scope) {
+            $scope.firstName = "John";
+            $scope.lastName = "Doe";
+            $scope.submit = function () {
+                alert($scope.firstName + " " + $scope.lastName);
+            };
+        });
+    </script>
+</head>
+<body>
+    <div ng-app="myApp" ng-controller="myCtrl2" id="myCtrl">
+        First Name: <input type="text" ng-model="firstName"><br>
+        Last Name: <input type="text" ng-model="lastName"><br>
+    </div>
+    <!--button outside of control-->
+    <!--Invoke submit method of myCtrl-->
+    <button id="submit" onclick="angular.element(document.getElementById('myCtrl')).scope().submit()">Submit</button>
+</body>
+</html>

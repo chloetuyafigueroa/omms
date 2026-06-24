@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>OMMS|REPORT </title>
+         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
+		 <link href="../Omms/css/heading1.0.3.css" rel="stylesheet" type="text/css">
+		  
+		
+    </head>
+    <body ng-app="changeExample">
+        <div id ="ID1" class="container" ng-controller="ExampleController">
+        	<ul id="button">
+	
+			<li> <form  method="post"  action="Main?action=home"> <button class="gray" type="submit">HOME</button> </form> </li>
+			<li> <form  method="post"  action="Main?action=table"> <button class="gray" type="submit">TABLE</button> </form> </li>
+			<li> <form  method="post"  action="Main?action=line"> <button class="gray" type="submit">LINE-CHART</button> </form> </li>
+			<li> <form  method="post"  action="Main?action=map"> <button class="gray" type="submit">MAP</button> </form> </li>
+			<li> <form  method="post"  action="Main?action=planner"> <button class="gray" type="submit">PLANNER</button> </form> </li>
+			<li> <form  method="post"  action="Main?action=report"> <button class="mint-green" type="submit">REPORTS</button> </form> </li>
+			</ul>
+			<br>
+			<br><br>
+			<h>.    .       .      ....SORRY THIS PAGE IS UNDER DEVELOPMENT!</h>
+			  <div ng-if="ShowSpinnerStatus" class="loader"></div>
+        </div>
+        <script>
+			var app = angular.module("changeExample", []);
+			app.controller('ExampleController', ['$scope', function ($scope) {
+				$scope.ShowSpinnerStatus = true;
+				
+				$scope.ShowSpinner = function(){
+					$scope.ShowSpinnerStatus = true;
+				};
+				$scope.HideSpinner = function(){
+					$scope.ShowSpinnerStatus = false;
+				};
+			}]);
+		</script>
+    </body>
+    </html>

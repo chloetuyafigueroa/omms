@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html ng-app="demoapp">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript"  src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+	<script type="text/javascript"  src="../Omms/js/angular.min.js"></script>
+   <script type="text/javascript"  src="../Omms/js/angular-leaflet-directive.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css">
+    
+  </head>
+
+  <body ng-controller="BasicFirstController">
+    <leaflet id="map" markers="markers" style="position:fixed;left: 20px;top:5px;" width="100%" height="480px"></leaflet>
+   
+    <script>
+        var app = angular.module("demoapp", ['leaflet-directive']);
+        app.controller("BasicFirstController", function($scope, leafletData) {
+        	$scope.markers = {
+                    marker1: {
+                        lat: 51.505,
+                        lng: -0.09,
+                        message: "Marker 1",
+                        icon: customIcon // use the custom icon here
+                    }
+                };
+        });
+        var customIcon = {
+            //iconUrl: '../Omms/img/tracker.png',
+            type: 'div',
+            html: '<div style="position:relative;"><img src="../Omms/img/tracker.png" style="width: 45px; height: 45px;"><div class="icon-text" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);">Your text here</div></div>',
+        	
+          };
+    </script>
+    
+
+    <!-- leaflet id="map" style="position:fixed;left: 20px;top:5px;" lf-center="headquarter"  layers="layers"  markers="markers" defaults="defaults" height="99%" width="98%"></leaflet!-->
+  <!-- src="../Omms/img/tracker.png"  -->
+    <h1>First steps, basic example</h1>
+  </body>
+</html>

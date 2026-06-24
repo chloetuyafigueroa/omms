@@ -1,0 +1,68 @@
+#HD table {
+  position:relative;
+  font-family: 'Calibri';
+  border-collapse: collapse;
+  border-bottom: 2px solid rgb(0, 128, 64);
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1), 0px 10px 20px rgba(0, 0, 0, 0.05), 0px 20px 20px rgba(0, 0, 0, 0.05), 0px 30px 20px rgba(0, 0, 0, 0.05);
+}
+#HD table tr:hover {
+  background: #c0c0c0;
+}
+#HD table tr:hover td {
+  color: #008040;
+}
+#HD table .active {
+  background: #ffff80;
+  color: #008040;
+}
+
+#HD table th,#HD table td {
+  color: #000000;
+  border: 1px solid #eee;
+  padding: 5px 10px;
+  border-collapse: collapse;
+ 
+}
+#HD table th {
+  background: #007900;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 16px;
+  position:sticky;
+  top:-1;
+}
+
+#HD table th.last {
+  border-right: none;
+}
+
+
+.header{
+	position:fixed;
+	padding-top: 1000px;
+	}
+.checkboxes1 {
+	font: 18px Arial;
+}
+.checkboxes {
+	float: left;
+	font: 18px Arial;
+}
+.colnames{
+	position:absolute;
+	margin-left:20px;	
+	margin-top:-10px;
+	opacity:0;
+	z-index:1;
+	background:#ffff80;
+	border-style: solid;
+  	border-color: #008000;
+  	border-width: 3px;
+}
+.searches{
+	font: 18px Arial;
+}
+.searchName{
+	font: 18px Arial;margin-left:50px;
+}
+.colnames:hover{opacity:1;}

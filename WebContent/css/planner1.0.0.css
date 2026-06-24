@@ -1,0 +1,88 @@
+
+#tablox {
+		width: 100%; 
+			
+		}
+#ddxs {background-color: rgb(0, 128, 64);
+		width: 12.5%; 
+		border-collapse: collapse;
+		color:#ffff37;	
+		}
+#ddx {background-color: rgb(0, 255, 0);
+		width: 12.5%;  
+	 	border-collapse: collapse;
+	 	color:#b95c00;	
+}
+#ddd {	
+		width: 90%; 
+		position:absolute;
+		text-align: center;
+		border: 500px 10px 500px 15px;
+		border-collapse: collapse;
+		padding: 1px auto 8px auto;
+		z-index:0;
+		}
+.color-green{background-color: #a7fcab;}
+.color-yellow{background-color: #ffffa8;}
+.color-red{background-color: #ffaeae;}
+.color-blue{background-color: #a8d3ff;}
+/* The Modal (background) */
+	
+	#map {
+  		 color:#0000ff; 		 
+   		 	
+  }
+	#modals2 {
+		position: fixed;
+	 	background-color: #93ff93; 
+	 	margin-top:0% ;
+ 		border: 5px solid #008000; width: 400px; height:60%;
+ 		padding: 5px 10px 5px 5px;
+		left: 50%;
+		z-index:2;
+		cursor: grab;
+    	position: absolute;
+		} 
+
+#Contacts_table {
+	height:67%;
+ 	overflow-y: scroll;
+ }
+#Contacts_table table {
+  font-family: 'Calibri';
+  margin: 1px auto;
+  border-collapse: collapse;
+  border: 1px solid #eee;
+  border-bottom: 2px solid #ffff00;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1), 0px 10px 20px rgba(0, 0, 0, 0.05), 0px 20px 20px rgba(0, 0, 0, 0.05), 0px 30px 20px rgba(0, 0, 0, 0.05);
+}
+#Contacts_table table tr:hover {
+  background: #c0c0c0;
+}
+
+#Contacts_table table tr:hover td {
+  color: #ffff00;
+}
+#Contacts_table table th,#Contacts_table table td {
+  color: #000000;
+  border: 1px solid #eee;
+  padding: 5px 10px;
+ 
+  width: 10%; 
+}
+#Contacts_table table th {
+  background: #ffff7d;
+  color: #000000;
+  text-transform: uppercase;
+  font-size: 16px;
+ /* overflow-wrap:break-word;*/
+ 
+}
+#Contacts_table table th.last {
+  border-right: none;
+}
+		
+			
+	
+		
+	

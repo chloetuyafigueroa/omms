@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet" type="text/css">
+<link rel="shortcut icon" href="../Omms/img/logo.png"/>
+<style>
+
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.sidepanel  {
+  width:250px;
+  height:100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+.sidepanel:hover{
+	width:250px;
+	height:100%;
+}
+.sidepanel a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s; 
+}
+
+.sidepanel a:hover {
+  color:green;
+  width:250px;
+}
+.sidepanel .active {
+  color:green;
+  width:250px;
+}
+
+.container {
+  position:fixed;
+  font-size: 20px;
+  cursor: pointer;
+  margin-left:250px;
+  display: inline-block;
+  color:blue;
+}
+
+.container:hover {
+  background-color:yellow;
+}
+
+.bar1, .bar2, .bar3 {
+  width: 35px;
+  height: 5px;
+  background-color: green;
+  margin: 6px 0;
+  transition: 0.4s;
+}
+.row {
+     display: flex;
+     height:500px;
+   }
+.col {
+    flex: 50%;
+  	padding: 5px;
+  	}
+.col1 {
+    display: table-cell;
+    width: 50%; 
+	height:100%;
+	position:relative;
+	}
+			
+
+.row1 {
+	
+   display: table;
+   width: 100%;
+   height:50%;
+   table-layout: fixed; /*Optional*/
+   border-spacing: 2px; /*Optional*/
+		}
+iframe {
+   position:absolute;
+   top:40px;
+		
+   }
+.sidepanel .avatar { padding-left:60px; width: 40%; } 
+.active {color:green;}
+.tabmenu{
+	padding-left:250px;
+	width: 100%;
+    height:auto; 
+}
+
+</style>
+<script src="../Omms/js/angular.min.js"></script>
+</head>
+<body>
+
+<div id="mySidepanel" class="sidepanel">
+  <img src="../Omms/img/logo.png" alt="Avatar" class="avatar">
+
+  <a href="#dashboard" class="tablinks" onclick="selectTab(event, 'DashBoard')" id="defaultOpen"><i class="fa-solid fa-chart-line"></i> Dash Board</a>
+  <a href="#table" class="tablinks" onclick="selectTab(event, 'Table')" id="table"><i class="fa-solid fa-table-list"></i> Table</a>
+  <a href="#planner" class="tablinks" onclick="selectTab(event, 'Planner')"><i class="fa-regular fa-pen-to-square"></i> Planner</a>
+  <a href="#map" class="tablinks" onclick="selectTab(event, 'Map')"><i id="map" class="fa-solid fa-earth-asia"></i> Map</a>
+  <a href="#chatbot" class="tablinks" onclick="selectTab(event, 'Chatbot')" id="chatbot"><i class="fa-solid fa-robot"></i> Chatbot</a>
+</div>
+
+
+<div id="menu" class="container" onclick="openNav()">
+  <div class="bar1"></div>
+  <div class="bar2"></div>
+  <div class="bar3"></div>
+</div>
+<form method="post" action="Main?action=logout" style="float:right; display:flex; flex-direction:row; padding-top:5px; padding:10px; ">
+	<div id="version" style="margin-right:30px; font-size:12px; color:yellow; padding:3px; background:green;border-radius: 5px;" >OMMS v2.0</div>
+	<button id="logout" style="border: none; font-weight: bold; color:green;background: none;" type="submit"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
+</form>
+<!-- <button onclick="clearLS()" style="float:right; display:flex; flex-direction:row; padding-top:5px; padding:10px;">test</button>
+ --><div id="tabmenu" class="tabmenu">
+	
+	  <iframe id="DashBoard" class="tabcontent" height="80%" width="80%" src="../Omms/Dashboard.html" name="targetframe" allowTransparency="true" scrolling="no" frameborder="0" ></iframe>
+
+	  <iframe id="Table" class="tabcontent" height="90%" width="82%" src="../Omms/Table.html" name="targetframe" allowTransparency="true" scrolling="no" frameborder="0" ></iframe>
+	
+	  <iframe id="Planner" class="tabcontent" height="99%" width="80%"  src="../Omms/Planner.html" name="targetframe" allowTransparency="true" scrolling="no" frameborder="0" ></iframe>
+	
+	  <iframe id="Map"  class="tabcontent" height="90%" width="80%" src="../Omms/Maps.html" name="targetframe" allowTransparency="true" scrolling="no" frameborder="0" ></iframe>
+	  
+	  <iframe id="Chatbot" class="tabcontent" height="90%" width="82%" src="../Omms/Chatbot.html" name="targetframe" allowTransparency="true" scrolling="no" frameborder="0" ></iframe>
+
+</div>
+<script>
+function clearLS() {
+	window.localStorage.removeItem('Towns');
+	window.localStorage.removeItem('Status');
+	window.localStorage.removeItem('gps_lat');
+	window.localStorage.removeItem('gps_lon');
+}
+
+var flag=0;
+function openNav() {
+	if(flag==0){
+		document.getElementById("mySidepanel").style.width = "0px";
+		document.getElementById("menu").style.marginLeft = "0px";
+		document.getElementById("tabmenu").style.paddingLeft = "0px";
+		document.getElementById("DashBoard").width = "99%";
+		document.getElementById("Table").width = "102%";
+		document.getElementById("Planner").width = "99%";
+		document.getElementById("Map").width = "99%";
+		document.getElementById("Chatbot").width = "102%";
+		flag=1
+	}
+	else{
+		document.getElementById("mySidepanel").style.width = "250px";
+		document.getElementById("menu").style.marginLeft = "250px";
+		document.getElementById("tabmenu").style.paddingLeft = "250px";
+		document.getElementById("DashBoard").width = "80%";
+		document.getElementById("Table").width = "82%";
+		document.getElementById("Planner").width = "80%";
+		document.getElementById("Map").width = "80%";
+		document.getElementById("Chatbot").width = "82%";
+		//document.getElementById("myFrame").style.setProperty('width', 'calc(100% - 0px)');
+		flag=0;
+	}
+  
+  //document.getElementById("mySidepanel").onmouseover= function(){this.style.width="250px"};
+}
+
+
+
+function selectTab(evt, tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+    console.log(tabcontent[i].id);
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+	  console.log(tablinks[i].className);
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  //document.getElementById(tabName).contentWindow.updatedata();
+  document.getElementById(tabName).style.display = "block";  
+   evt.currentTarget.className += " active";
+   document.getElementById(tabName).contentWindow.updatedata();
+}
+
+// Get the element with id="defaultOpen" and click on it
+	setTimeout(function() {
+		document.getElementById("defaultOpen").click();
+	}, 100);
+
+</script> 
+</body>
+</html> 

@@ -1,0 +1,85 @@
+	#ID1 ul{
+	list-style-type:none;
+	margin:0px;
+	padding:0px;
+	overflow: hidden;
+	background-color: #bdbdbd;
+	position: fixed;
+	top: 1;
+	width:100%;
+	height:49px;
+	}
+	
+	#ID1 li{
+		float: left;
+	}
+	
+	#ID1 li {
+		display:block;
+		color:pink;
+		text-align: center;
+		padding:1px 1px;
+		height:50px;
+		text-decoration:none;
+		
+		
+		
+	}
+	#ID1 li :hover:not(.active){
+		background-color:#8cffff;
+	}
+	#button button {  
+			padding: 14px 20px;margin:2px 0px;  border: none; cursor: pointer; width: 100%; 
+			font: 400 18px Georgia;} 
+	#button .gray {
+			background-color: #ababab;
+		}
+	#button .mint-green {
+		background-color:#00cccc;
+	}
+	#Checkboxes {
+		float: left;
+		font: 400 18px Arial;
+	}
+	#searches {
+		font: 400 18px Arial;
+		padding: 0px 0px 5px 0px;
+	}
+	select {
+    
+	    font: 400 18px Arial;
+	    border-radius: 0px;
+	    border-width: 1px;
+	    border-style: solid;
+	    border-color: rgb(169, 169, 169);
+	    border-image: initial;
+	}
+	#searches button {	width: 25px;height: 25px;
+			padding: 5px 0px 5px 0px;
+			background: url(../img/refresh.png);
+			background-size: 115%}
+	input {
+	    
+	    font: 400 18px Arial;
+	    
+	}
+	.loader {
+				border: 16px solid #f3f3f3; /* Light grey */
+				border-top: 16px solid #3498db; /* Blue */
+				border-radius: 50%;
+				width: 120px;
+				height: 120px;
+				animation: spin 2s linear infinite;
+				margin: 0 auto;
+			}
+
+			@keyframes spin {
+				0% { transform: rotate(0deg); }
+				100% { transform: rotate(360deg); }
+			}
+			html, body, container {
+				height: 100%;
+				width: 100%;
+				margin: 0;
+			}
+	

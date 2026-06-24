@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<table class="table table-hover grid">
+    <thead class="tableheader">
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Payment</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="item in items" ng-click="selected.item = item">
+            <td>{{item.Name}}</td>
+            <td>{{item.Type}}</td>
+            <td>{{item.Payment}}</td>
+
+        </tr>
+    </tbody>
+</table>
+Selected:
+<b>{{ selected.item.Name }} </b>
+
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
+</body>
+</html>

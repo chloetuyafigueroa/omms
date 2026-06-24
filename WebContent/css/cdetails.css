@@ -1,0 +1,17 @@
+#custmodals,#sdimodals {
+background-color: #93ff93; 
+top:10% ;
+border: 5px solid #008000; width: 350px; 
+padding: 5px 10px 5px 5px;
+columns: 1;
+left: 50%;
+z-index:3;
+font: 500 15px Arial;	
+cursor: grab;
+position: absolute;
+}
+
+
+
+
+	

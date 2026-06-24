@@ -1,0 +1,179 @@
+	#ID1 ul{
+	list-style-type:none;
+	margin:0px;
+	padding:0px;
+	overflow: hidden;
+	background-color: #b1b1b1;
+	position: fixed;
+	top: 1;
+	width:100%;
+	height:40px;
+	z-index:6;
+	}
+	#ID1 li{
+		float: left;
+		display:block;
+		color:pink;
+		text-align: center;
+		padding:1px 1px;
+		height:50px;
+		text-decoration:none;
+				
+		
+	}
+	#ID1 li :hover:not(.active){
+		background-color:#8cffff;
+	}
+	
+	
+	#button button {  
+			padding: 10px 20px;margin:0px 0px;  border: none; cursor: pointer; width: 100%; 
+			font: 200 18px Georgia;}
+	#button .gray {
+			background-color: #ababab;
+		}
+	#button .mint-green {
+		background-color:#00cccc;
+	}
+	#Checkboxes {
+		float: left;
+		font: 400 18px Arial;
+	}
+	#searches {
+		width: 100%;
+		font: 400 18px Arial;
+		height:80%;
+	}
+	.searches{z-index:5}
+	select {
+    
+	    font: 400 18px Arial;
+	    border-radius: 0px;
+	    border-width: 1px;
+	    border-style: solid;
+	    border-color: rgb(169, 169, 169);
+	    border-image: initial;
+	}
+
+	#searches #refresh  { background-color: #00cccc; color: green;
+			width: 25px;height: 25px;
+			padding: 5px 0px 5px 0px;
+			background: url(../img/refresh.png);
+			background-size: 115%}
+	input {
+	    
+	    font: 500 18px Arial;
+	    
+	}
+	
+	.town {
+	  position: absolute;
+	  left: -180px;
+	  transition: 0.3s;
+	  padding: 15px;
+	  width: 200px;
+	  text-decoration: none;
+	  font-size: 20px;
+	  color: #000000;
+	  border-radius: 0 10px 10px 0;
+	  padding: 15px 15px 15px 15px;
+	  background-color:#ffff00;
+	  top:70px;
+	  opacity:.3;
+	}
+	.town:hover{
+		left: 0px; opacity:1;background-color:#008000;color: #ffff00;
+	}
+	.town {
+		max-width: 200px;
+	}
+	
+	.brgy {
+	  position: absolute;
+	  left: -180px;
+	  transition: 0.3s;
+	  padding: 15px;
+	  width: 200px;
+	  text-decoration: none;
+	  font-size: 20px;
+	  color: #000000;
+	  border-radius: 0 10px 10px 0;
+	  padding: 15px 15px 15px 15px;
+	  background-color:#ff8000;
+	  top:130px;
+	  opacity:.3;
+	}
+	.brgy:hover{
+		left: 0px; opacity:1;background-color:#008000;color: #ffff00;
+	}
+	.brgy {
+		max-width: 200px;
+	}
+	
+	.crew {
+	  position: absolute;
+	  left: -180px;
+	  transition: 0.3s;
+	  padding: 15px;
+	  width: 200px;
+	  text-decoration: none;
+	  font-size: 20px;
+	  color: #000000;
+	  border-radius: 0 10px 10px 0;
+	  padding: 15px 15px 15px 15px;
+	  background-color:#ff80ff;
+	  top:190px;
+	  opacity:.3;
+	}
+	.crew:hover{
+		left: 0px; opacity:1;background-color:#008000;color: #ffff00;
+	}
+	.crew {
+		max-width: 200px;
+	}
+	
+	.freq {
+	  position: absolute;
+	  left: -180px;
+	  transition: 0.3s;
+	  padding: 15px;
+	  width: 200px;
+	  text-decoration: none;
+	  font-size: 20px;
+	  color:#000000;
+	  border-radius: 0 10px 10px 0;
+	  padding: 15px 15px 15px 15px;
+	  background-color:#ff1e8e;
+	  top:250px;
+	  opacity:.3;
+	  }
+	.freq:hover{
+		left: 0px; opacity:1;background-color:#008000;color: #ffff00;
+	}
+	.freq {
+		max-width: 200px;
+	}
+	
+	.cal {
+	  position: absolute;
+	  left: -180px;
+	  transition: 0.3s;
+	  padding: 15px;
+	  width: 200px;
+	  text-decoration: none;
+	  font-size: 20px;
+	  color:#000000;
+	  border-radius: 0 10px 10px 0;
+	  padding: 15px 15px 15px 15px;
+	  background-color:#6ab5ff;
+	  top:310px;
+	  opacity:.3;
+	  }
+	.cal:hover{
+		left: 0px; opacity:1;background-color:#008000;color: #ffff00;
+	}
+	.cal {
+		max-width: 200px;
+	}
+	
+	

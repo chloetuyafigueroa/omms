@@ -1,0 +1,100 @@
+
+	.draw{
+		z-index:400;
+	}
+	.draw #addpole{
+	  position: fixed;
+	  top: 5px;
+	  left: 5rem;
+	  z-index: 500;
+	}
+	.draw #addbuilding{
+	  position: fixed;
+	  top: 5px;
+	  left: 10rem;
+	  z-index: 500;
+	}
+	.draw #updateGPS{
+	  position: fixed;
+	  top: 5px;
+	  left: 15rem;
+	  z-index: 500;
+	}
+	.draw #phoneGPS{
+	  position: fixed;
+	  top: 5px;
+	  left: 20rem;
+	  z-index: -10;
+	}
+	.draw #updateIconProperty{
+	  position: fixed;
+	  top: 5px;
+	  left: 50rem;
+	  z-index: 500;
+	}
+	.draw #upsertnewGPS{
+	  position: fixed;
+	  top: 5px;
+	  left: 55rem;
+	  z-index: 500;
+	}
+	.draw #test1{
+	  position: absolute;
+	  top: 5px;
+	  left: 25rem;
+	  z-index: 500;
+	}
+
+.location-high {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ff0000;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+ .location-medium {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #00ff00;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}.location-low {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #3498db;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+} 
+.hole {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #ffff00;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.number-label {
+    font-size: 18px;
+    color: #008000;
+    font-weight: bold;
+}
+
+
