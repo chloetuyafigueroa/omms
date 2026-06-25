@@ -100,12 +100,22 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 	    
 	    System.out.println("Date Difference:"+getDateDiff(now,date1,TimeUnit.HOURS));
 	    if(getDateDiff(now,date1,TimeUnit.HOURS)==0) {
-	    	postRun(obj,followed);
+	    	try {
+				postRun(obj,followed);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 	    }
 	    updateObj(obj);
 /**/	insertObj(obj);	
-		upsertJO(obj);
+		try {
+			upsertJO(obj);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
         
@@ -116,7 +126,7 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 		//postRun(new JSONObject(JSONString),"2240707193007");
 		getAllUsers("09778572402250930152808");
 	 }
-	public static void postRun(JSONObject obj,String followed) {
+	public static void postRun(JSONObject obj,String followed) throws Exception {
 		System.out.println("obJ:"+obj);
 		StringBuilder buf = new StringBuilder("omms\\");
 		buf.append(obj.get("unique_id").toString()).append(followed).append("\\");            //followed
@@ -308,7 +318,7 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 			         //System.exit(0);
 			      }
 		}
-	 public static void upsertJO(JSONObject obj) {
+	 public static void upsertJO(JSONObject obj) throws Exception {
 		 String query = 
 				    "INSERT INTO members(unique_id, jo, followed) " +
 				    "SELECT ?, COALESCE(?,TO_CHAR(?::date, 'YYMMDD')  || COALESCE(("+ 
@@ -318,7 +328,8 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 				    " SET jo = EXCLUDED.jo";
 
 		   try {
-			 dbCon=DatabaseConnection.getInstance().getConnection();
+			 DatabaseConnection.getInstance();
+			dbCon=DatabaseConnection.getConnection();
 		       	PreparedStatement pst = dbCon.prepareStatement(query);
 		       	pst.setString(1,obj.getString("unique_id"));
 		       	if (obj.isNull("jo")) {

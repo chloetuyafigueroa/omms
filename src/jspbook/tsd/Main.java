@@ -114,20 +114,25 @@ Connection dbCon;
 	    if (action.equals("login")) {
 	    	 	uid = _req.getParameter("UID");
 	    	    pwd = _req.getParameter("PWD");
-	      if (authenticate(uid, pwd)) {
-	        session.setAttribute("validUser", "y");
-	        session.setAttribute("loginError", "n");
-	        session.setAttribute("uid", uid);
-	
-	      _res.setContentType("text/html;charset=UTF-8");
-	  	  
-	 	  _res.getWriter().write(uid);
-	 	   // System.out.println(uid);
-	        gotoPage("/Nav.html", _req, _res);
-	        }
-	       else {
-	        loginError(_req, _res);
-	      }
+	      try {
+			if (authenticate(uid, pwd)) {
+			    session.setAttribute("validUser", "y");
+			    session.setAttribute("loginError", "n");
+			    session.setAttribute("uid", uid);
+
+			  _res.setContentType("text/html;charset=UTF-8");
+			  
+			  _res.getWriter().write(uid);
+			   // System.out.println(uid);
+			    gotoPage("/Nav.html", _req, _res);
+			    }
+			   else {
+			    loginError(_req, _res);
+			  }
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	    }
 	
 	     else if (action.equals("logout")) {
@@ -166,7 +171,7 @@ Connection dbCon;
     }
 
     /* Check if the user is valid */
-    private boolean authenticate(String _uid, String _pwd) {
+    private boolean authenticate(String _uid, String _pwd) throws Exception {
     	System.out.println("tedgfhf");
 	    
   	    Connection dbCon = null;
@@ -194,7 +199,7 @@ Connection dbCon;
     }
 
     /* Using the CustomerBean, record the data */
-    public boolean recordSurvey(HttpServletRequest _req) {
+    public boolean recordSurvey(HttpServletRequest _req) throws Exception {
 
      //dbCon = DriverManager.getConnection(dbURL);
 	dbCon=DatabaseConnection.getInstance().getConnection();
