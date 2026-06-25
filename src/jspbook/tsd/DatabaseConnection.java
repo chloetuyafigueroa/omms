@@ -34,14 +34,17 @@ public class DatabaseConnection implements ServletContextListener {
     }
 
      public static Connection getConnection() throws Exception {
-        String url = System.getenv("DATABASE_URL");
+       /**/ String url = System.getenv("DATABASE_URL");
 
         if (url == null || url.isEmpty()) {
             throw new RuntimeException("DATABASE_URL is not set");
         }
-
+        /** String url = "jdbc:postgresql://172.17.100.6:5432/joblist";
+        String username = "postgres";
+        String password = "03_0431A";//ileco1_amfm /**/
         Class.forName("org.postgresql.Driver");
         return DriverManager.getConnection(url);
+        //return DriverManager.getConnection(url, username, password);
     }
 
 	@Override
