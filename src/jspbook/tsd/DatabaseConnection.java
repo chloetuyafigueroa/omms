@@ -41,9 +41,10 @@ public class DatabaseConnection implements ServletContextListener {
 
                 // Establish the connection
                 //String url = "jdbc:postgresql://172.17.100.6:5432/joblist";
-                String url = "jdbc:postgresql://db.pfonglwyrcfiigivcpoj.supabase.co:5432/postgres?sslmode=require";
-String username = "postgres";
-                String password = "03_0431Achloe";//ileco1_amfm
+                 String url = "jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require";
+        String username = "postgres.pfonglwyrcfiigivcpoj";
+        String password = System.getenv("03_0431Achloe");
+                //String password = "03_0431Achloe";//ileco1_amfm
                 connection = DriverManager.getConnection(url, username, password);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
