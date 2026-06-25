@@ -33,27 +33,15 @@ public class DatabaseConnection implements ServletContextListener {
         return instance;
     }
 
-    public Connection getConnection() {
-        if (connection == null) {
-            try {
-                // Register the PostgreSQL driver
-                Class.forName("org.postgresql.Driver");
+     public static Connection getConnection() throws Exception {
+        String url = System.getenv("DATABASE_URL");
 
-                // Establish the connection
-                //String url = "jdbc:postgresql://172.17.100.6:5432/joblist";
-                 String url = "jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require";
-        String username = "postgres.pfonglwyrcfiigivcpoj";
-        String password = System.getenv("03_0431Achloe");
-                //String password = "03_0431Achloe";//ileco1_amfm
-                connection = DriverManager.getConnection(url, username, password);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        if (url == null || url.isEmpty()) {
+            throw new RuntimeException("DATABASE_URL is not set");
         }
-        
-        return connection;
+
+        Class.forName("org.postgresql.Driver");
+        return DriverManager.getConnection(url);
     }
 
 	@Override
