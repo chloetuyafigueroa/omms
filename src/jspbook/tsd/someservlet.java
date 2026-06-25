@@ -47,7 +47,7 @@ public class someservlet extends HttpServlet implements ServletContextListener {
 	 */
 	public static ResultSet rs =null;
 	private static final long serialVersionUID = 1L;//jdbc:mysql://blablabla.rds.amazonaws.com/dbname?user=user&password=password
-	public static String dbURL = "jdbc:postgresql://localhost/joblist?user=postgres&password=03_0431A"; //ileco1_amfm
+	public static String dbURL = "jdbc:postgresql://postgres:03_0431Achloe@db.pfonglwyrcfiigivcpoj.supabase.co:5432/postgres/ommscloud"; //ileco1_amfm
 	//public static String dbURL = "jdbc:postgresql://172.17.100.6/joblist?user=postgres&password=03_0431A"; //ileco1_amfm
 	public static String townxx = "Town"; 
 	public static String brgyxx = "Brgy";
