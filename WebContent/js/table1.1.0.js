@@ -217,7 +217,7 @@
 				if($scope.Period=='Yearly'){y2="Month";}
 				console.log(y2 +','+y5);
 				//var sexy21;
-				$http.get('/Joblist/iGIS',{params:{table:'converter.get_table0('+y0+','+y1+','+y4+', "'+dte+'",  "'+$scope.Period+'")',where:'true',limit:500}})
+				$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS',{params:{table:'converter.get_table0('+y0+','+y1+','+y4+', "'+dte+'",  "'+$scope.Period+'")',where:'true',limit:500}})
 				//$http.get('someservlet?x='+y0+'&y='+y1+'&z='+y3+'&z1='+y2+'&z2='+y4+'&z3='+y5)
 						.then(function mySuccs(response){
 						//console.log('table:'+JSON.stringify(response.data));

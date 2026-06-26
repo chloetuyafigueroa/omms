@@ -589,7 +589,7 @@
 							console.log("Town:"+y0);
 							console.log("Brgy:"+y1);
 							console.log("Crew:"+y4);
-							$http.get('/Joblist/iGIS',{params:{table:'converter.get_planner('+y0+','+y1+','+y4+',"'+$scope.startDate+'","'+$scope.endDate+'")',where:'true',limit:1000}})
+							$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS',{params:{table:'converter.get_planner('+y0+','+y1+','+y4+',"'+$scope.startDate+'","'+$scope.endDate+'")',where:'true',limit:1000}})
 							//$http.get('someservlet4?x='+y0+'&y='+y1+'&z='+y3+'&z1='+y2+'&z2='+y4+'&z3='+y5)
 									.then(function mySuccs(response){										
 										var sexy21 = JSON.parse(JSON.stringify(response.data));
@@ -605,7 +605,7 @@
 									
 							)
 							var sample102=[];
-							$http.get('/Joblist/iGIS2',{params:{table:'converter.get_planner_log('+y0+','+y1+','+y4+',"'+$scope.startLog+'","'+$scope.endLog+'")',where:'true',limit:500}})
+							$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS2',{params:{table:'converter.get_planner_log('+y0+','+y1+','+y4+',"'+$scope.startLog+'","'+$scope.endLog+'")',where:'true',limit:500}})
 							//$http.get('someservlet5?x='+y0+'&y='+y1+'&z='+y3+'&z1='+$scope.startLog+'&z2='+y4+'&z3='+$scope.endLog)
 									.then(function mySuccs(responsex){
 										var sexy21 = JSON.parse(JSON.stringify(responsex.data));

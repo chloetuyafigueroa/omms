@@ -517,7 +517,7 @@
 							localStorage.setItem("Towns",JSON.stringify($scope.Towns));
 							localStorage.setItem("Status",JSON.stringify($scope.Status));
 													
-							$http.get('/Joblist/iGIS',{params:{table:'converter.get_map('+y0+','+y1+','+y4+', "'+dte+'",  "'+$scope.Period+'")',where:'true',limit:500}})
+							$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS',{params:{table:'converter.get_map('+y0+','+y1+','+y4+', "'+dte+'",  "'+$scope.Period+'")',where:'true',limit:500}})
 							//$http.get('someservlet2?x='+y0+'&y='+y1+'&z='+y3+'&z1='+y2+'&z2='+y4+'&z3='+y5)
 									.then(function mySuccs(response2){
 									var sexy21 = JSON.parse(JSON.stringify(response2.data));
@@ -634,7 +634,7 @@
 				$scope.crewGPS2=function(){
 					console.log("From crewGPS2","sadkhfjf");
 					//if(y4=='Select Crew'){y4=null}else{y4='"'+y4+'"'}
-					$http.get('/Joblist/iGIS',{params:{table:'converter.get_gps('+y4+',"'+dte+'",'+1000+')',where:'true',limit:5000}}).then(function mySuccs(response){
+					$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS',{params:{table:'converter.get_gps('+y4+',"'+dte+'",'+1000+')',where:'true',limit:5000}}).then(function mySuccs(response){
 						var gisData=JSON.parse(JSON.stringify(response.data))
 						console.log(gisData);
 						for (var j = 0; j< gisData.length; j++) {
@@ -648,7 +648,7 @@
 				$scope.crewGPS=function(){
 					console.log("From crewGPS","sadkhfjf");
 					//if(y4=='Select Crew'){y4=null}else{y4='"'+y4+'"'}
-					$http.get('/Joblist/iGIS',{params:{table:'converter.get_gps('+y4+',"'+dte+'","'+moment($scope.Start).format('HH:mm:ss')+'","'+moment($scope.End).format('HH:mm:ss')+'",'+1000+')',where:'true',limit:5000}}).then(function mySuccs(response){
+					$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS',{params:{table:'converter.get_gps('+y4+',"'+dte+'","'+moment($scope.Start).format('HH:mm:ss')+'","'+moment($scope.End).format('HH:mm:ss')+'",'+1000+')',where:'true',limit:5000}}).then(function mySuccs(response){
 						var gisData=JSON.parse(JSON.stringify(response.data))
 						console.log(gisData);
 						for (var j = 0; j< gisData.length; j++) {
@@ -745,7 +745,7 @@
 				
 				
 				const baseUrl = window.location.origin; // Gets the base URL of your app
-				const socketUrl = `${baseUrl}/Joblist/notifications`;
+				const socketUrl = window.APP_CONFIG.API_BASE_URL +`/Joblist/notifications`;
 				 var ws = new WebSocket(socketUrl);
 					ws.onopen = function() {
 					    console.log('WebSocket connection opened.');
@@ -864,7 +864,7 @@
 				var overlays={};
 				//var overlays={'poles':{},'buildings':{},'prilines':{},'seclines':{},'sdilines':{}, 'guy':{},'transformer':{},'dead_end':{},'jumper':{}};
 				$scope.asPlanAPI=function (created){ 				
-					$http.get('/Joblist/iGIS',{params:{table:'poles',where:'created="'+created+'"',limit:50}}).then(function mySuccs(response){								
+					$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS',{params:{table:'poles',where:'created="'+created+'"',limit:50}}).then(function mySuccs(response){								
 							if (response.data!=''){
 								var asplanWKT=JSON.parse(JSON.stringify(response.data));//'created="'+created+'"'
 								var GeoJSON;					
@@ -890,7 +890,7 @@
 							const table=tables[t];
 							
 							//console.log(overlays[table].data)
-							$http.get('/Joblist/iGIS',{params:{table:table,where:'created="'+created+'"',limit:50}}).then(function mySuccs(response){								
+							$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS',{params:{table:table,where:'created="'+created+'"',limit:50}}).then(function mySuccs(response){								
 								if (response.data!=''){
 									var asplanWKT=JSON.parse(JSON.stringify(response.data));//'created="'+created+'"'
 									console.log(asplanWKT);
@@ -1825,7 +1825,7 @@
 					}
 				//console.log(jo);
 				console.log(overlays);	
-				$http.post('/Joblist/iGIS?table=asplan',jo)
+				$http.post(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS?table=asplan',jo)
 				.then(function mySuccs(response){
 					console.log(response);
 				})
@@ -2609,7 +2609,7 @@
 				
 			}
 			$scope.deletePole=function (){ 
-				$http.post('/Joblist/iGIS?table=deletePole',$scope.poleno)
+				$http.post(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS?table=deletePole',$scope.poleno)
 				.then(function mySuccs(response){
 					console.log(response);
 					removeFeatureById('poles',getPoleID('poles',$scope.poleno))
@@ -2623,7 +2623,7 @@
 			}
 			$scope.deleteLine=function (){ 
 				
-				$http.post('/Joblist/iGIS?table=deleteLine',$scope.poleno)
+				$http.post(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS?table=deleteLine',$scope.poleno)
 				.then(function mySuccs(response){
 					console.log(response);
 					var pID=getID('prilines',l_frompole,l_topole);
@@ -2635,7 +2635,7 @@
 			}
 			$scope.deleteAss=function (id,table){ 
 				console.log("feature:"+id+":"+table);
-				/**/$http.post('/Joblist/iGIS?table=deleteAss',{id:id,table:table})
+				/**/$http.post(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS?table=deleteAss',{id:id,table:table})
 				.then(function mySuccs(response){
 					console.log(getAssID(table,id));
 					removeFeatureById(table,getAssID(table,id))
@@ -2687,7 +2687,7 @@
 					
 					//});
 					const table101 = 'converter.get_linegeometry(ST_GeomFromText("POINT('+center.lng+' '+center.lat+')"), 1000)';
-					$http.get('/Joblist/iGIS',{params:{table:table101,where:'true',limit:2000}}).then(function mySuccs(response){
+					$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS',{params:{table:table101,where:'true',limit:2000}}).then(function mySuccs(response){
 					if (response.data!=''){
 						var asplanWKT=JSON.parse(JSON.stringify(response.data));
 						
@@ -2707,7 +2707,7 @@
 					}
 					});
 					const table102 = 'converter.get_gps(ST_GeomFromText("POINT('+center.lng+' '+center.lat+')"), 1000)';
-					$http.get('/Joblist/iGIS',{params:{table:table102,where:'true',limit:2000}}).then(function mySuccs(response){
+					$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS',{params:{table:table102,where:'true',limit:2000}}).then(function mySuccs(response){
 					if (response.data!=''){
 						var asplanWKT=JSON.parse(JSON.stringify(response.data));
 						
