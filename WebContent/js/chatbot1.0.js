@@ -203,7 +203,7 @@
 				if($scope.Period=='Yearly'){y2="Month";}
 				console.log(y2 +','+y5);
 				//var sexy21;
-				$http.get('/Joblist/Chatbot',{params:{table:'get_chat("'+dte+'",  "'+$scope.Period+'")',where:'true',limit:500}})
+				$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/Chatbot',{params:{table:'get_chat("'+dte+'",  "'+$scope.Period+'")',where:'true',limit:500}})
 				//$http.get('someservlet?x='+y0+'&y='+y1+'&z='+y3+'&z1='+y2+'&z2='+y4+'&z3='+y5)
 						.then(function mySuccs(response){
 						console.log('table:'+JSON.stringify(response.data));
@@ -241,7 +241,7 @@
 		        console.log("Textarea input completed. Triggered after 3 seconds of inactivity.");
 				let updatedRow = $scope.sexy2.find(row => row.r_id === id);
 				  console.log(updatedRow.r_remarks);
-		        $http.post('/Joblist/Chatbot?action=upsert&table=status',{"id":id,"remarks":updatedRow.r_remarks})
+		        $http.post(window.APP_CONFIG.API_BASE_URL +'/Joblist/Chatbot?action=upsert&table=status',{"id":id,"remarks":updatedRow.r_remarks})
 					.then(function mySuccs(response){
 								
 				})
@@ -294,7 +294,7 @@
 				  console.log("row2:"+JSON.stringify(rowarray));
 				if(rowarray.r_selected=='t'){selected=false}
 			  console.log("seen:"+id+","+selected);
-				$http.post('/Joblist/Chatbot?action=upsert&table=status',{"id":id,"selected":selected})
+				$http.post(window.APP_CONFIG.API_BASE_URL +'/Joblist/Chatbot?action=upsert&table=status',{"id":id,"selected":selected})
 							.then(function mySuccs(response){
 								
 							})
@@ -305,7 +305,7 @@
 				$scope.open();
 				$scope.wojo=true;	
 			
-				$http.get('/Joblist/Chatbot',{params:{table:'omms',where:'id='+row.r_id,limit:500}})
+				$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/Chatbot',{params:{table:'omms',where:'id='+row.r_id,limit:500}})
 						.then(function mySuccs(response){
 							console.log("RESPONSE:"+response.data);
 							if(response.data.length>0){
@@ -491,7 +491,7 @@
 			}
 			$scope.postRun=function (){ 
 				$scope.itemChange(0);
-				$http.post('/Joblist/Chatbot?action=upsert&table=omms',{"id":$scope.chatbot.r_id,"oid":$scope.Unique_id})
+				$http.post(window.APP_CONFIG.API_BASE_URL +'/Joblist/Chatbot?action=upsert&table=omms',{"id":$scope.chatbot.r_id,"oid":$scope.Unique_id})
 					.then(function mySuccs(response){
 								
 				})
@@ -511,7 +511,7 @@
 			}
 			$scope.deLete=function (){ 
 				console.log('r_id:'+$scope.chatbot.r_id);
-				/**/ $http.post('/Joblist/Chatbot?action=delete',{"id":$scope.chatbot.r_id})
+				/**/ $http.post(window.APP_CONFIG.API_BASE_URL +'/Joblist/Chatbot?action=delete',{"id":$scope.chatbot.r_id})
 				.then(function mySuccs(response){
 				})
 				$http.post('someservlet7?action=delete',{"unique_id":$scope.Unique_id})
