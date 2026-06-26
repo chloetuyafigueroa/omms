@@ -28,9 +28,15 @@ public class DataSourceConfig implements ServletContextListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        config.setJdbcUrl("jdbc:postgresql://localhost:5432/joblist");
-        config.setUsername("postgres");
-        config.setPassword("03_0431A");
+        String url=System.getenv("DB_URL");
+        String username = System.getenv("DB_USER");
+   	 	String password = System.getenv("DB_PASSWORD");
+        if (url == null || url.isEmpty()) {
+            throw new RuntimeException("DATABASE_URL is not set");
+        }
+        config.setJdbcUrl(url);
+        config.setUsername(username);
+        config.setPassword(password);/**/
         config.setMaximumPoolSize(10); // Set the maximum pool size
         config.setMinimumIdle(2); // Set the minimum idle connections
 
