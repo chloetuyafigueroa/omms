@@ -15,7 +15,7 @@
 				var getDropdownValues = function() {
 					
 					var tDetailsFromLS = localStorage.getItem('dTails');
-					$http.get('/Joblist/iGIS?table=converter.get_towns_version()&where=true&limit=500').success(function(response) {
+					$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS?table=converter.get_towns_version()&where=true&limit=500').success(function(response) {
 						var town_version=response[0].get_towns_version;
 						console.log("Towns version:"+town_version);//
 						var ls_version=0;
@@ -60,7 +60,7 @@
 						//upsert('dTails', plN);
 				    }
 				    else {
-				     	$http.get('/Joblist/iGIS?table=pole_details&where=true&limit=500').success(function(response) {
+				     	$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS?table=pole_details&where=true&limit=500').success(function(response) {
 					console.log(response);
 				         	//$scope.test1 = JSON.parse(JSON.stringify(response));
 							//console.log($scope.test1);
@@ -85,7 +85,7 @@
 						//upsert('dTails', plN);
 				    }
 				    else {
-				     	$http.get('/Joblist/iGIS?table=pole_class&where=true&limit=500').success(function(response) {
+				     	$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS?table=pole_class&where=true&limit=500').success(function(response) {
 					console.log(response);
 				         	//$scope.test1 = JSON.parse(JSON.stringify(response));
 							//console.log($scope.test1);
@@ -112,7 +112,7 @@
 						//upsert('dTails', plN);
 				    }
 				    else {
-				     	$http.get('/Joblist/iGIS?table=conductor&where=true&limit=500').success(function(response) {
+				     	$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS?table=conductor&where=true&limit=500').success(function(response) {
 					console.log(response);
 				         	//$scope.test1 = JSON.parse(JSON.stringify(response));
 							//console.log($scope.test1);
@@ -137,7 +137,7 @@
 						//upsert('dTails', plN);
 				    }
 				    else {
-				     	$http.get('/Joblist/iGIS?table=customer_type&where=true&limit=500').success(function(response) {
+				     	$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS?table=customer_type&where=true&limit=500').success(function(response) {
 					console.log(response);
 				         	//$scope.test1 = JSON.parse(JSON.stringify(response));
 							//console.log($scope.test1);
@@ -162,7 +162,7 @@
 						//upsert('dTails', plN);
 				    }
 				    else {
-				     	$http.get('/Joblist/iGIS?table=meter_type&where=true&limit=500').success(function(response) {
+				     	$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS?table=meter_type&where=true&limit=500').success(function(response) {
 					console.log(response);
 				         	//$scope.test1 = JSON.parse(JSON.stringify(response));
 							//console.log($scope.test1);
