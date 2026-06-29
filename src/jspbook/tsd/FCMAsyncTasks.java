@@ -117,10 +117,9 @@ public class FCMAsyncTasks {
     };
     
     public static void runFCM(String topic,Map<String, String> map) throws IOException, ServletException {
-    	FCMServlet servlet = new FCMServlet();
-        //servlet.initializeFirebase();
-        String absolutePath = "WebContent/google-services.json";
-        servlet.initializeFirebase(absolutePath);
+    	//servlet.initializeFirebase();
+        //String absolutePath = "WebContent/google-services.json";
+        FCMServlet.initializeFirebase();
         
         FCMServlet.sendNotification(topic, map);
     }

@@ -25,6 +25,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import javax.ws.rs.Path;
 
 import org.postgresql.core.Query;
@@ -68,7 +69,17 @@ public class someservlet4 extends HttpServlet implements ServletContextListener 
 	public static Integer pz4=0;
 	
 	public static Integer limit=100;
-	
+	public static DataSource dataSource = DataSourceConfig.getDataSource();
+	public static Connection con=getConnection();
+	public static Connection getConnection() {
+		try {
+			return dataSource.getConnection();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	@Override
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -111,8 +122,8 @@ public class someservlet4 extends HttpServlet implements ServletContextListener 
 	 public List<User3> getAllUsers(String id,String townxx,String brgyxx,String yearxx,String monthxx,String dayxx,String crewxx){ 
 	
 		   List<User3> userList = new ArrayList<>();
-		   Connection dbCon0 = null;
-		   Connection dbCon = null;
+		   //Connection dbCon0 = null;
+		   //Connection dbCon = null;
 	   
 			String cpz1="WHERE";
 			String cpz2="AND";;
@@ -138,10 +149,11 @@ public class someservlet4 extends HttpServlet implements ServletContextListener 
 		       		+ "INNER JOIN converted c on subquery.unique_id=c.unique_id "	+ xz1 + xz2 + xz3 + xz4+ xz6
 		       		+ " ORDER BY c.UNIQUE_ID, c.FOLLOWED::TIMESTAMP WITHOUT TIME ZONE DESC");  
 		    try {
-		       //Class.forName("org.postgresql.Driver");
+		       DatabaseConnection.getInstance();
+			//Class.forName("org.postgresql.Driver");
 		       //dbCon = DriverManager.getConnection(dbURL);
-		       dbCon=DatabaseConnection.getInstance().getConnection();
-		       Statement stmt = dbCon.createStatement();
+		       //dbCon=DatabaseConnection.getConnection();
+		       Statement stmt = con.createStatement();
 		       rs = stmt.executeQuery("SELECT DISTINCT ON (c.UNIQUE_ID) c.unique_id,c.name,c.type,c.status,c.town0,c.brgy0,c.cause,c.followed,c.followed::TIMESTAMP WITHOUT TIME ZONE followed1 FROM (SELECT unique_id,name,type,status,town0,brgy0,cause,followed,ROW_NUMBER() OVER (PARTITION BY unique_id ORDER BY followed) AS row_num FROM converted "+xz5+") subquery "
 		       	+"INNER JOIN converted c on subquery.unique_id=c.unique_id "	+ xz1 + xz2 + xz3 + xz4+ xz6
 				    		+ " ORDER BY c.UNIQUE_ID, c.FOLLOWED::TIMESTAMP WITHOUT TIME ZONE DESC");  

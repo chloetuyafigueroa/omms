@@ -21,6 +21,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import javax.ws.rs.Path;
 import com.google.gson.Gson;
 
@@ -39,6 +40,17 @@ public class someservlet1 extends HttpServlet implements ServletContextListener 
 	public static ResultSet rs =null;
 	private static final long serialVersionUID = 1L;
 	//String dbURL = someservlet.dbURL;
+	public static DataSource dataSource = DataSourceConfig.getDataSource();
+	public static Connection con=getConnection();
+	public static Connection getConnection() {
+		try {
+			return dataSource.getConnection();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	@Override
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -65,13 +77,14 @@ public class someservlet1 extends HttpServlet implements ServletContextListener 
 	public void update(String serial_no,String lat,String lon) {
 		System.out.println(serial_no+","+lat+"/"+lon);
 		
-		 Connection dbCon = null;
+		 //Connection dbCon = null;
 		 String query = "UPDATE TOWNS SET  lat="+lat+", lon="+lon+" WHERE serial_no='"+serial_no+"'";
 		    try {
-		       //Class.forName("org.postgresql.Driver");
+		       //DatabaseConnection.getInstance();
+			//Class.forName("org.postgresql.Driver");
 		       //dbCon = DriverManager.getConnection(dbURL);
-		       dbCon=DatabaseConnection.getInstance().getConnection();
-		       PreparedStatement stmt = dbCon.prepareStatement(query);
+		       //dbCon=DatabaseConnection.getConnection();
+		       PreparedStatement stmt = con.prepareStatement(query);
 		       stmt.executeUpdate(); //DONT FORGET THIS ONE
 		       stmt.close();
 		       //dbCon.close();
@@ -86,12 +99,13 @@ public class someservlet1 extends HttpServlet implements ServletContextListener 
 		  	
 		    List<User2> userList = new ArrayList<>();
 		    //List<> userList = new Gson().fromJSON(jsonPerson, new TypeToken<List<Person>>() {}getType());
-		    Connection dbCon = null;
+		    //Connection dbCon = null;
 		    try {
-		       //Class.forName("org.postgresql.Driver");
+		       //DatabaseConnection.getInstance();
+			//Class.forName("org.postgresql.Driver");
 		       //dbCon = DriverManager.getConnection(dbURL);
-		       dbCon=DatabaseConnection.getInstance().getConnection();
-		       Statement stmt = dbCon.createStatement();
+		       //dbCon=DatabaseConnection.getConnection();
+		       Statement stmt = con.createStatement();
 		       //System.out.println("Opened database successfully");
 		       //ResultSet rs =null;
 		       

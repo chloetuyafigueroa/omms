@@ -27,6 +27,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import javax.ws.rs.Path;
 
 import org.postgresql.core.Query;
@@ -48,10 +49,21 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 	 * 
 	 * 
 	 */
-	public static Connection dbCon = null;
+	//public static Connection dbCon = null;
 	public static ResultSet rs =null;
 	private static final long serialVersionUID = 1L;
 	//public static String dbURL = someservlet.dbURL;
+	public static DataSource dataSource = DataSourceConfig.getDataSource();
+	public static Connection con=getConnection();
+	public static Connection getConnection() {
+		try {
+			return dataSource.getConnection();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 	@Override
 	
@@ -85,12 +97,13 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 		        String query2 = "UPDATE  CONVERTED "+
 		        				"SET FOLLOWED=? "+
 		        				"WHERE UNIQUE_ID=? AND FOLLOWED=?";
-		        Connection dbCon = null;
+		        //Connection dbCon = null;
 				   try {
-				       //Class.forName("org.postgresql.Driver");
+				       DatabaseConnection.getInstance();
+					//Class.forName("org.postgresql.Driver");
 				       //dbCon = DriverManager.getConnection(dbURL);
-				       dbCon=DatabaseConnection.getInstance().getConnection();
-				       Statement stmt = dbCon.createStatement();
+				       //dbCon=DatabaseConnection.getConnection();
+				       Statement stmt = con.createStatement();
 				       ResultSet rx = stmt.executeQuery(query1);
 				       while ( rx.next() ) { 
 				    	  
@@ -107,7 +120,7 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 					    
 					  	    cal.setTime(followed_new);
 					  	
-				    	   PreparedStatement pst = dbCon.prepareStatement(query2);
+				    	   PreparedStatement pst = con.prepareStatement(query2);
 					       pst.setString(1, df.format(cal.getTime()));
 					       pst.setString(2, obj.get("unique_id").getAsString());
 					       //pst.setString(3, obj.get("followed").getAsString());
@@ -147,18 +160,19 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 				                "    WHERE unique_id = ? " +
 				                ") n " +
 				                "WHERE c.ctid = n.ctid;";
-		        Connection dbCon = null;
+		        //Connection dbCon = null;
 				   try {
-				       //Class.forName("org.postgresql.Driver");
+				       //DatabaseConnection.getInstance();
+					//Class.forName("org.postgresql.Driver");
 				       //dbCon = DriverManager.getConnection(dbURL);
-				       dbCon=DatabaseConnection.getInstance().getConnection();
-				       Statement stmt = dbCon.createStatement();
+				       //dbCon=DatabaseConnection.getConnection();
+				       Statement stmt = con.createStatement();
 				       ResultSet rx = stmt.executeQuery(query1);
 				       System.out.println(query1);
 				       while ( rx.next() ) { 
 				    	  
 					  	
-				    	   PreparedStatement pst = dbCon.prepareStatement(query2);
+				    	   PreparedStatement pst =con.prepareStatement(query2);
 					       //pst.setString(3, obj.get("followed").getAsString());
 				    	   //System.out.println("afsgfgg"+rx.getString("followed"));
 					       
@@ -191,13 +205,14 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 			 	//System.out.println(obj.toString());
 			        String query2 = "DELETE FROM  CONVERTED "+
 			        				"WHERE UNIQUE_ID=?";
-			        Connection dbCon = null;
+			        //Connection dbCon = null;
 					   try {
-					       //Class.forName("org.postgresql.Driver");
+					       //DatabaseConnection.getInstance();
+						//Class.forName("org.postgresql.Driver");
 					       //dbCon = DriverManager.getConnection(dbURL);
-					       dbCon=DatabaseConnection.getInstance().getConnection();
-					       Statement stmt = dbCon.createStatement();
-					       PreparedStatement pst = dbCon.prepareStatement(query2);
+					       //dbCon=DatabaseConnection.getConnection();
+					       Statement stmt = con.createStatement();
+					       PreparedStatement pst = con.prepareStatement(query2);
 					 
 					       pst.setString(1, obj.get("unique_id").getAsString());
 					       pst.executeUpdate();

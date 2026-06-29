@@ -28,6 +28,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import javax.ws.rs.Path;
 
 import org.json.JSONObject;
@@ -49,12 +50,24 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 	/**
 	 * 
 	 */
-	public static Connection dbCon = null;
-	public static Connection dbCon1 = null;
+    public static DataSource dataSource = DataSourceConfig.getDataSource();
+	public static Connection con=getConnection();
+	public static Connection con2=getConnection();
+	public static Connection getConnection() {
+		try {
+			return dataSource.getConnection();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	//public static Connection dbCon = null;
+	//public static Connection dbCon1 = null;
 	public static ResultSet rs =null;
 	private static final long serialVersionUID = 1L;
 	//
-	public static String dbURL = someservlet.dbURL;
+	//public static String dbURL = someservlet.dbURL;
 	
 	@Override
 	
@@ -97,9 +110,10 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 /**/		
 	    Date now = new Date(System.currentTimeMillis());
 	    
-	    
+	    updateObj(obj);
+/**/	insertObj(obj);	
 	    System.out.println("Date Difference:"+getDateDiff(now,date1,TimeUnit.HOURS));
-	    if(getDateDiff(now,date1,TimeUnit.HOURS)==0) {
+	    /**/    if(getDateDiff(now,date1,TimeUnit.HOURS)==0) {
 	    	try {
 				postRun(obj,followed);
 			} catch (Exception e) {
@@ -107,9 +121,8 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 				e.printStackTrace();
 			}
 			
-	    }
-	    updateObj(obj);
-/**/	insertObj(obj);	
+	    }/**/
+
 		try {
 			upsertJO(obj);
 		} catch (Exception e) {
@@ -141,7 +154,8 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
         buf.append(obj.get("longitude").toString()).append("\\");
         buf.append("*").append(obj.get("actiontaken").toString());
         
-        dbCon1=DatabaseConnection.getInstance().getConnection();
+        //DatabaseConnection.getInstance();
+		//dbCon1=DatabaseConnection.getConnection();
 	       
           try {
 		       //Class.forName("org.postgresql.Driver");
@@ -153,7 +167,7 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 		            	  System.out.println("from someservlet6 runnable..sending sms command..");
 		            	try {
 		            		
-		            		Statement stmt = dbCon1.createStatement();		    		        
+		            		Statement stmt = con.createStatement();		    		        
 		            		ResultSet rx = stmt.executeQuery( "SELECT  * FROM RECEIVERS WHERE UNIQUE_ID='"+obj.get("unique_id").toString()+"'"); //
 				   		    while ( rx.next() ) {				        	
 								insert(buf.toString(),rx.getString("phone"));	        	  						
@@ -185,9 +199,9 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 		   
 		   try {
 		       Class.forName("org.postgresql.Driver");
-		       dbCon = DriverManager.getConnection(dbURL);
+		       //dbCon = DriverManager.getConnection(dbURL);
 		       //dbCon=DatabaseConnection.getInstance().getConnection();
-		       Statement stmt = dbCon.createStatement();
+		       Statement stmt = con.createStatement();
 		        rs = stmt.executeQuery("SELECT c.*,COALESCE(m.members,'') AS members,COALESCE(m.jo,'') AS jo FROM CONVERTED c LEFT JOIN MEMBERS m ON c.UNIQUE_ID=m.UNIQUE_ID "+
 		        						"WHERE c.unique_id='"+id+"'"+
 		        						"ORDER BY c.UNIQUE_ID, c.FOLLOWED::TIMESTAMP WITHOUT TIME ZONE DESC");
@@ -278,14 +292,16 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 		   
 		 	String query1 = "INSERT INTO SMS2(phone,message) VALUES(?, ?)";
 		
-	        Connection dbCon1 = null;
-	        Connection dbCon2 = null;
+	        //Connection dbCon1 = null;
+	       // Connection dbCon2 = null;
 	          try {
-			       //Class.forName("org.postgresql.Driver");
-			       dbCon1=DatabaseConnection.getInstance().getConnection();
-			       dbCon2=DatabaseConnection.getInstance().getConnection();
-			       Statement stmt1 = dbCon1.createStatement();
-			       PreparedStatement pst1 = dbCon2.prepareStatement(query1);
+			       DatabaseConnection.getInstance();
+				//Class.forName("org.postgresql.Driver");
+			       con=DatabaseConnection.getConnection();
+			       DatabaseConnection.getInstance();
+				con2=DatabaseConnection.getConnection();
+			       Statement stmt1 = con.createStatement();
+			       PreparedStatement pst1 = con2.prepareStatement(query1);
 			    
 			  
 		          ResultSet rx1 = stmt1.executeQuery( "SELECT COUNT(*) FROM SMS2 WHERE MESSAGE='"+Msg.toString()+"'" +" AND PHONE='"+Addrs.toString()+"'"); 
@@ -328,9 +344,9 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 				    " SET jo = EXCLUDED.jo";
 
 		   try {
-			 DatabaseConnection.getInstance();
-			dbCon=DatabaseConnection.getConnection();
-		       	PreparedStatement pst = dbCon.prepareStatement(query);
+			 //DatabaseConnection.getInstance();
+			//dbCon=DatabaseConnection.getConnection();
+		       	PreparedStatement pst = con.prepareStatement(query);
 		       	pst.setString(1,obj.getString("unique_id"));
 		       	if (obj.isNull("jo")) {
 		       	    pst.setNull(2, java.sql.Types.VARCHAR);
@@ -356,14 +372,15 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 		 String query = "INSERT INTO CONVERTED(unique_id, creator, created, follower, followed, name, spinners, town0, brgy0, town, brgy, town2, brgy2, assignedto, status, subs, feeder, section, cause, equip, type, notes, landmark, phone, location, latitude, longitude, actiontaken)" + 
 	        		"	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	        
-	        Connection dbCon = null;
+	        //Connection dbCon = null;
 	     	   try {
 			       //Class.forName("org.postgresql.Driver");
 		 
-			       dbCon=DatabaseConnection.getInstance().getConnection();
-			       Statement stmt = dbCon.createStatement();
+			       //DatabaseConnection.getInstance();
+				//dbCon=DatabaseConnection.getConnection();
+			       Statement stmt = con.createStatement();
 			       
-			       PreparedStatement pst = dbCon.prepareStatement(query);
+			       PreparedStatement pst = con.prepareStatement(query);
 			       	
 			       	pst.setString(1, obj.get("unique_id").getAsString());
 		            pst.setString(2, obj.get("creator").getAsString());
@@ -416,14 +433,15 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 		 String query = "INSERT INTO CONVERTED(unique_id, creator, created, follower, followed, name, spinners, town0, brgy0, town, brgy, town2, brgy2, assignedto, status, subs, feeder, section, cause, equip, type, notes, landmark, phone, location, latitude, longitude, actiontaken)" + 
 	        		"	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	        
-	        Connection dbCon = null;
+	        //Connection dbCon = null;
 	     	   try {
 			       //Class.forName("org.postgresql.Driver");
 		 
-			       dbCon=DatabaseConnection.getInstance().getConnection();
-			       Statement stmt = dbCon.createStatement();
+			       //DatabaseConnection.getInstance();
+				//dbCon=DatabaseConnection.getConnection();
+			       Statement stmt = con.createStatement();
 			       
-			       PreparedStatement pst = dbCon.prepareStatement(query);
+			       PreparedStatement pst = con.prepareStatement(query);
 			       	
 			       	pst.setString(1, obj.get("unique_id").toString());
 		            pst.setString(2, obj.get("creator").toString());
@@ -475,12 +493,13 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 		        String query2 = "UPDATE  CONVERTED "+
 		        				"SET FOLLOWED=? "+
 		        				"WHERE UNIQUE_ID=? AND FOLLOWED>=?";
-		        Connection dbCon = null;
+		        //Connection dbCon = null;
 				   try {
-				       //Class.forName("org.postgresql.Driver");
-				       dbCon=DatabaseConnection.getInstance().getConnection();
-				       Statement stmt = dbCon.createStatement();
-				       PreparedStatement pst = dbCon.prepareStatement(query2);
+				       //DatabaseConnection.getInstance();
+					//Class.forName("org.postgresql.Driver");
+				       //dbCon=DatabaseConnection.getConnection();
+				       Statement stmt = con.createStatement();
+				       PreparedStatement pst = con.prepareStatement(query2);
 				       
 				       Date date = null;
 				       Calendar cal=Calendar.getInstance();
@@ -522,11 +541,12 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 		    
 		    String  description = null;
 		    String converted=null;
-		    Connection dbCon = null;
+		    //Connection dbCon = null;
 			   try {
-			       //Class.forName("org.postgresql.Driver");
-			       dbCon=DatabaseConnection.getInstance().getConnection();
-			       Statement stmt = dbCon.createStatement();
+			       //DatabaseConnection.getInstance();
+				//Class.forName("org.postgresql.Driver");
+			       //dbCon=DatabaseConnection.getConnection();
+			       Statement stmt = con.createStatement();
 			        rs = stmt.executeQuery("SELECT * FROM TOWNS");
 			    
 			       while ( rs.next() ) {
@@ -556,11 +576,12 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 			 
 		    
 		    ArrayList<Object> contacts = new ArrayList<Object>();
-		    Connection dbCon = null;
+		    //Connection dbCon = null;
 			   try {
-			       //Class.forName("org.postgresql.Driver");
-			       dbCon=DatabaseConnection.getInstance().getConnection();
-			       Statement stmt = dbCon.createStatement();
+			       //DatabaseConnection.getInstance();
+				//Class.forName("org.postgresql.Driver");
+			       //dbCon=DatabaseConnection.getConnection();
+			       Statement stmt = con.createStatement();
 			        rs = stmt.executeQuery("SELECT * FROM CONTACTS WHERE CREW='"+crew+"'");
 			    
 			       while ( rs.next() ) {
@@ -587,25 +608,27 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 				 String query1 = "INSERT INTO RECEIVERS(unique_id, crew, phone, time_stamp)" + 
 			        		"	VALUES (?, ?, ?, ?)";
 			
-		        Connection dbCon1 = null;
-		        Connection dbCon2 = null;
+		        //Connection dbCon1 = null;
+		        //Connection dbCon2 = null;
 		        ArrayList<Object> contacts=getContacts(obj.get("assignedto").toString());
 			      
 		          try {
 				       Class.forName("org.postgresql.Driver");
-				       dbCon1=DatabaseConnection.getInstance().getConnection();
+				       DatabaseConnection.getInstance();
+					//dbCon1=DatabaseConnection.getConnection();
 				   
 				/**/  for (int i=0;i< contacts.size();i++){
 					     
 				   		
-						   dbCon2=DatabaseConnection.getInstance().getConnection();
-					       Statement stmt1 = dbCon2.createStatement();
+						   //DatabaseConnection.getInstance();
+						//dbCon2=DatabaseConnection.getConnection();
+					       Statement stmt1 = con2.createStatement();
 					       ResultSet rx1 = stmt1.executeQuery( "SELECT COUNT(*) FROM RECEIVERS WHERE UNIQUE_ID='"+obj.get("unique_id").toString()+"'" +" AND PHONE='"+contacts.get(i).toString()+"'"); 
 					          while ( rx1.next() ) { 
 					        	  int count=rx1.getInt("count");
 					        	  //System.out.println(count);
 						          if (count==0) {
-						        	  	PreparedStatement pst1 = dbCon1.prepareStatement(query1);
+						        	  	PreparedStatement pst1 = con.prepareStatement(query1);
 								        pst1.setString(1, obj.get("unique_id").toString());
 							            pst1.setString(2, obj.get("assignedto").toString());
 							            pst1.setString(3, contacts.get(i).toString());

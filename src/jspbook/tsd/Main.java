@@ -29,12 +29,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+
+
 
 
 
@@ -56,10 +59,22 @@ private static final long serialVersionUID = 1L;
 public static String uid;
 private static String pwd;
 
-Connection dbCon;
+public static DataSource dataSource = DataSourceConfig.getDataSource();
+public static Connection con=getConnection();
+public static Connection con2=getConnection();
+public static Connection getConnection() {
+	try {
+		return dataSource.getConnection();
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return null;
+}
+//Connection dbCon;
   //DataSource ds;
   HttpSession session;
-  String dbURL = someservlet.dbURL;
+  //String dbURL = someservlet.dbURL;
   public static ResultSet rs =null;
 	//private static final long serialVersionUID = 1L;
 	//public static String dbURL = "jdbc:postgresql:joblist?user=postgres&password=03_0431A"; //ileco1_amfm
@@ -174,17 +189,18 @@ Connection dbCon;
     private boolean authenticate(String _uid, String _pwd) throws Exception {
     	System.out.println("tedgfhf");
 	    
-  	    Connection dbCon = null;
-  	    ResultSet rs = null;
+  	    //Connection dbCon = null;
+  	    //ResultSet rs = null;
   	    //Connection c = null;
   	    //String dbURL = "jdbc:postgresql:joblist?user=postgres&password=03_0431A";
   	    try {
-  	       //Class.forName("org.postgresql.Driver");
+  	       //DatabaseConnection.getInstance();
+		//Class.forName("org.postgresql.Driver");
   	       //System.out.println("Opened database successfully");
   	       //dbCon = DriverManager.getConnection(dbURL);
-  	       dbCon=DatabaseConnection.getInstance().getConnection();
+  	       //dbCon=DatabaseConnection.getConnection();
   	  
-  	      Statement s = dbCon.createStatement();
+  	      Statement s = con.createStatement();
   	      rs = s.executeQuery("select * from users where id = '"
   	              + _uid + "' and pwd = '" + _pwd + "'");
   	      return (rs.next());
@@ -201,11 +217,12 @@ Connection dbCon;
     /* Using the CustomerBean, record the data */
     public boolean recordSurvey(HttpServletRequest _req) throws Exception {
 
-     //dbCon = DriverManager.getConnection(dbURL);
-	dbCon=DatabaseConnection.getInstance().getConnection();
+     //DatabaseConnection.getInstance();
+	//dbCon = DriverManager.getConnection(dbURL);
+	con=DatabaseConnection.getConnection();
 	CustomerBean cBean = new CustomerBean();
 	cBean.populateFromParms(_req);
-	return cBean.submit(dbCon);
+	return cBean.submit(con);
       
     }
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -224,10 +241,11 @@ Connection dbCon;
 	  	
 	    List<User4> user_data = new ArrayList<>();
 	    //List<> userList = new Gson().fromJSON(jsonPerson, new TypeToken<List<Person>>() {}getType());
-	    Connection dbCon = null;
+	    //Connection dbCon = null;
 	    try {
-	       dbCon=DatabaseConnection.getInstance().getConnection();
-	       Statement stmt = dbCon.createStatement();
+	       //DatabaseConnection.getInstance();
+		//dbCon=DatabaseConnection.getConnection();
+	       Statement stmt = con.createStatement();
 	       
 	       rs = stmt.executeQuery( "SELECT * FROM USERS WHERE ID='"+uname+"'"); //
 	       while ( rs.next() ) {
@@ -272,13 +290,14 @@ Connection dbCon;
 	    
     	String query1 = "INSERT INTO SMS2(phone,message) VALUES(?, ?)";
 	 
-        Connection dbCon1 = null;
-        Connection dbCon2 = null;
+        //Connection dbCon1 = null;
+        //Connection dbCon2 = null;
           
           try {
-        	   //Class.forName("org.postgresql.Driver"); 
-        	   dbCon1=DatabaseConnection.getInstance().getConnection();
-		       Statement stmt1 = dbCon1.createStatement();
+        	   //DatabaseConnection.getInstance();
+			//Class.forName("org.postgresql.Driver"); 
+        	   //dbCon1=DatabaseConnection.getConnection();
+		       Statement stmt1 = con.createStatement();
 		       
 		     
 		       ResultSet rx1 = stmt1.executeQuery("SELECT DISTINCT ON (UNIQUE_ID) *,followed::TIMESTAMP WITHOUT TIME ZONE followed1 FROM CONVERTED WHERE CAST(followed AS DATE) BETWEEN '"+startNow+"' AND '"+endNow+"' ORDER BY UNIQUE_ID, FOLLOWED DESC"); //
@@ -315,9 +334,10 @@ Connection dbCon;
 				          buf.append(rx1.getString("longitude")).append("\\");
 				          buf.append("*").append(rx1.getString("actiontaken"));
 				          
-				          dbCon2=DatabaseConnection.getInstance().getConnection();	
-				          Statement stmt2 = dbCon2.createStatement();
-				          PreparedStatement pst1 = dbCon2.prepareStatement(query1);
+				          //DatabaseConnection.getInstance();
+						//dbCon2=DatabaseConnection.getConnection();	
+				          Statement stmt2 = con2.createStatement();
+				          PreparedStatement pst1 = con2.prepareStatement(query1);
 				          
 				          Runnable runnable = new Runnable() {
 				         
@@ -372,7 +392,7 @@ Connection dbCon;
     public void terminate_idle() throws JSONException, IllegalAccessException, ClassNotFoundException, SQLException {
     	   Connection con = null;
         	Class.forName("org.postgresql.Driver");
-        	 con = DriverManager.getConnection(dbURL);
+        	 //con = DriverManager.getConnection(dbURL);
         	 //con=DatabaseConnection.getInstance().getConnection();
         	CallableStatement stmt = con.prepareCall("{call _aaaterminate_idle()}");
         	stmt.execute();

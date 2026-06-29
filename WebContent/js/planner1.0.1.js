@@ -193,6 +193,7 @@
 							
 						}
 						$scope.postRun=function (){ 
+							console.log("ABCDER");
 							$scope.itemChange(0);
 							console.log($scope.Phone);
 							$http.post('someservlet6',{"jo":$scope.Jo && $scope.Jo.includes('.') ? null : $scope.Jo,"unique_id":$scope.Unique_id,"creator":$scope.Creator,"created":$scope.Created,

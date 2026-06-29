@@ -185,26 +185,27 @@
 				
                 markers: {}				
             });
-
+			
+			var mapboxToken = window.APP_CONFIG.MAPBOX_ACCESS_TOKEN;
 			angular.extend($scope, {
 				layers: {
 	                baselayers: {
 	                    osm: {
 	                        name: 'StreetMap',
 	                        //url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-	                       	url: 'https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZmlndWVyb2FlYyIsImEiOiJjbDNzMHQ4NTgxbjV3M2JwNzR2ZWgxeG16In0.Xu9JLfq3MZAyCy6M8sHrhQ',
+	                       	url: 'https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token=' + mapboxToken,
 							type: 'xyz',
 							layerParams: {id: 'streets-v11', tileSize: 512, zoomOffset: -1}
 	                      },
 						streets: {
 	                        name: 'Satellite',
-	                        url: 'https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZmlndWVyb2FlYyIsImEiOiJjbDNzMHQ4NTgxbjV3M2JwNzR2ZWgxeG16In0.Xu9JLfq3MZAyCy6M8sHrhQ',
+	                        url: 'https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token=' + mapboxToken,
 							type: 'xyz',
 							layerParams: {id: 'satellite-streets-v11', tileSize: 512, zoomOffset: -1}
 	                        },
 						grayscale: {
 	                        name: 'Grayscale',
-	                        url: 'https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZmlndWVyb2FlYyIsImEiOiJjbDNzMHQ4NTgxbjV3M2JwNzR2ZWgxeG16In0.Xu9JLfq3MZAyCy6M8sHrhQ',
+	                        url: 'https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token=' + mapboxToken,
 							type: 'xyz',
 							layerParams: {id: 'light-v9', tileSize: 512, zoomOffset: -1}
 	                        }       

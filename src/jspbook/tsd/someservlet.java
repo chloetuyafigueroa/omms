@@ -25,6 +25,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import javax.ws.rs.Path;
 
 import org.postgresql.core.Query;
@@ -66,6 +67,18 @@ public class someservlet extends HttpServlet implements ServletContextListener {
 	public static Integer pz2=0;
 	public static Integer pz3=0;
 	public static Integer pz4=0;
+	
+	public static DataSource dataSource = DataSourceConfig.getDataSource();
+	public static Connection con=getConnection();
+	public static Connection getConnection() {
+		try {
+			return dataSource.getConnection();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	@Override
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -214,10 +227,11 @@ public class someservlet extends HttpServlet implements ServletContextListener {
 	       				+ xz1 + xz2 + xz3 + xz4
 			    		+ " ORDER BY UNIQUE_ID, FOLLOWED::TIMESTAMP WITHOUT TIME ZONE DESC limit 10000");
 		    try {
-		      // Class.forName("org.postgresql.Driver");
+		      //DatabaseConnection.getInstance();
+			// Class.forName("org.postgresql.Driver");
 		       //dbCon = DriverManager.getConnection(dbURL);
-		       dbCon=DatabaseConnection.getInstance().getConnection();
-		       Statement stmt = dbCon.createStatement();
+		       //dbCon=DatabaseConnection.getConnection();
+		       Statement stmt = con.createStatement();
 		       //System.out.println("Opened database successfully");
 		       //ResultSet rs =null;
 		       
