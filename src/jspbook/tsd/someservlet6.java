@@ -435,11 +435,11 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 			    "feeder, section, cause, equip, type, notes, landmark, phone, " +
 			    "location, latitude, longitude, actiontaken) " +
 			    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) " +
-			    "ON CONFLICT (unique_id) DO UPDATE SET " +
+			    "ON CONFLICT (unique_id,followed) DO UPDATE SET " +
 			    "creator = EXCLUDED.creator, " +
 			    "created = EXCLUDED.created, " +
 			    "follower = EXCLUDED.follower, " +
-			    "followed = EXCLUDED.followed, " +
+			   // "followed = EXCLUDED.followed, " +
 			    "name = EXCLUDED.name, " +
 			    "spinners = EXCLUDED.spinners, " +
 			    "town0 = EXCLUDED.town0, " +
