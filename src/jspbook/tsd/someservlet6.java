@@ -132,6 +132,7 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 	                }
 
 	                if (date1 != null) {
+	                	System.out.println("running postRun(obj, followed)...123");
 	                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmss");
 	                    String followed = dateFormat.format(date1);
 
