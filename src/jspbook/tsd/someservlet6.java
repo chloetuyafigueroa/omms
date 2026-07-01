@@ -109,7 +109,11 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 	    String followed= dateFormat.format(date1);
 /**/		
 	    Date now = new Date(System.currentTimeMillis());
-/**/    if(getDateDiff(now,date1,TimeUnit.HOURS)==0) {
+	    
+	    updateObj(obj);
+/**/	insertObj(obj);	
+	    System.out.println("Date Difference:"+getDateDiff(now,date1,TimeUnit.HOURS));
+	    /**/    if(getDateDiff(now,date1,TimeUnit.HOURS)==0) {
 	    	try {
 				postRun(obj,followed);
 			} catch (Exception e) {
@@ -118,10 +122,6 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 			}
 			
 	    }/**/
-	    updateObj(obj);
-/**/	insertObj(obj);	
-	    System.out.println("Date Difference:"+getDateDiff(now,date1,TimeUnit.HOURS));
-	    
 
 		try {
 			upsertJO(obj);

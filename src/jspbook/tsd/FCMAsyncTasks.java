@@ -120,7 +120,6 @@ public class FCMAsyncTasks {
     	//servlet.initializeFirebase();
         //String absolutePath = "WebContent/google-services.json";
         FCMServlet.initializeFirebase();
-        
         FCMServlet.sendNotification(topic, map);
     }
     
