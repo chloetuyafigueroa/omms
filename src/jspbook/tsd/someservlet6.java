@@ -85,54 +85,74 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 		    
 	}
 	
-	public void doPost (HttpServletRequest _req, HttpServletResponse _res)
-		    throws ServletException, IOException {
-		//JsonParser parser = new JsonParser();
-		StringBuilder sb = new StringBuilder();
-	    String line;
-	    while ((line = _req.getReader().readLine()) != null) {
-	        sb.append(line);
-	    }
-	    JSONObject obj=new JSONObject(sb.toString());
-		//JSONObject obj = (JsonObject) parser.parse(_req.getReader());
-		
-		upsertReceiver(obj);
-/**/	
-		Date date1 = null;
-	    /**/SimpleDateFormat df = new SimpleDateFormat("MM/dd/yy  hh:mm:ss a");
-	    try {
-	    	date1 = df.parse(obj.get("followed").toString());
-	    } catch (ParseException e) {
-	        e.printStackTrace();
-	    }/**/
-	    SimpleDateFormat dateFormat= new SimpleDateFormat("yyMMddHHmmss");
-	    String followed= dateFormat.format(date1);
-/**/		
-	    Date now = new Date(System.currentTimeMillis());
-	    
-	    //updateObj(obj);
-	    upsertAllObj(obj);
-/**/	//insertObj(obj);	
-	    System.out.println("Date Difference:"+getDateDiff(now,date1,TimeUnit.HOURS));
-	    /**/    if(getDateDiff(now,date1,TimeUnit.HOURS)==0) {
-	    	try {
-				postRun(obj,followed);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-	    }/**/
+	public void doPost(HttpServletRequest _req, HttpServletResponse _res)
+	        throws ServletException, IOException {
 
-		try {
-			upsertJO(obj);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-        
+	    _res.setContentType("application/json");
+	    _res.setCharacterEncoding("UTF-8");
+
+	    try {
+	        StringBuilder sb = new StringBuilder();
+	        String line;
+
+	        while ((line = _req.getReader().readLine()) != null) {
+	            sb.append(line);
+	        }
+
+	        JSONObject obj = new JSONObject(sb.toString());
+
+	        upsertReceiver(obj);
+	        try {
+	            upsertJO(obj);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            // upsertJO failure will NOT affect success response
+	        }
+	        boolean saved = upsertAllObj(obj);
+
+	        if (!saved) {
+	            _res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	            _res.getWriter().write("{\"success\":false,\"message\":\"upsertAllObj failed\"}");
+	            return;
+	        }
+	        _res.setStatus(HttpServletResponse.SC_OK);
+	        _res.getWriter().write("{\"success\":true,\"message\":\"saved successfully\"}");
+	        _res.getWriter().flush();
+	        
+	        new Thread(() -> {
+	            try {
+	                Date date1 = null;
+	                SimpleDateFormat df = new SimpleDateFormat("MM/dd/yy hh:mm:ss a");
+
+	                try {
+	                    date1 = df.parse(obj.get("followed").toString());
+	                } catch (ParseException e) {
+	                    e.printStackTrace();
+	                }
+
+	                if (date1 != null) {
+	                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmss");
+	                    String followed = dateFormat.format(date1);
+
+	                    Date now = new Date(System.currentTimeMillis());
+
+	                    if (getDateDiff(now, date1, TimeUnit.HOURS) == 0) {
+	                        postRun(obj, followed);
+	                    }
+	                }
+
+	                upsertJO(obj);
+
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+	        }).start();
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        _res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	        _res.getWriter().write("{\"success\":false,\"message\":\"server error\"}");
+	    }
 	}
 	public static String JSONString="{\"unique_id\":\"09778572402240707193007\",\"creator\":\"09778572402\",\"created\":\"07/07/24  07:30:07 PM\",\"follower\":\"09778572402\",\"followed\":\"07/07/24  07:30:00 PM\",\"name\":\"sample\",\"spinners\":\"1520230400506007058090100200300400\",\"town0\":\"Leganes\",\"brgy0\":\"Bigke\",\"town\":\"Select Town\",\"brgy\":\"Select Brgy\",\"town2\":\"Select Town\",\"brgy2\":\"Select Brgy\",\"assignedto\":\"Leganes\",\"status\":\"Select Status\",\"subs\":\"Substation\",\"feeder\":\"Feeder\",\"section\":\"Category\",\"equip\":\"Equipment\",\"type\":\"high\",\"cause\":\"Select One\",\"notes\":\"\",\"landmark\":\"\",\"phone\":\"\",\"location\":\"\",\"latitude\":\"10.765937\",\"longitude\":\"122.6005424\",\"actiontaken\":\"\"}\r\n"
 			+ "";
@@ -463,7 +483,7 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 			    "latitude = EXCLUDED.latitude, " +
 			    "longitude = EXCLUDED.longitude, " +
 			    "actiontaken = EXCLUDED.actiontaken";
-	 public static void upsertAllObj(JSONObject obj) {
+	 public static boolean upsertAllObj(JSONObject obj) {
 
 		    System.out.println("from planner4 " + obj.get("notes"));
 
@@ -500,9 +520,11 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 		        pst.setString(28, obj.get("actiontaken").toString());
 
 		        pst.executeUpdate();
+		        return true;
 
 		    } catch (Exception e) {
-		        System.err.println("upsertObj: " + e.getMessage());
+		        System.err.println("upsertAllObj error: " + e.getMessage());
+		        return false;
 		    }
 		}
 	 public static void insertObj(JSONObject obj) {
