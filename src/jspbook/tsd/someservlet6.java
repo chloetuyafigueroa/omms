@@ -497,7 +497,7 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 				   try {
 				       //DatabaseConnection.getInstance();
 					//Class.forName("org.postgresql.Driver");
-				       //dbCon=DatabaseConnection.getConnection();
+				       //dbCon=DatabaseConnection.getConnection();//
 				       Statement stmt = con.createStatement();
 				       PreparedStatement pst = con.prepareStatement(query2);
 				       
