@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import javax.json.Json;
@@ -121,7 +122,7 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 	        
 	        new Thread(() -> {
 	            try {
-	            	
+	            	TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
 	                Date date1 = null;
 	                SimpleDateFormat df = new SimpleDateFormat("MM/dd/yy hh:mm:ss a");
 
