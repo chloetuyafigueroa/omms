@@ -110,8 +110,9 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 /**/		
 	    Date now = new Date(System.currentTimeMillis());
 	    
-	    updateObj(obj);
-/**/	insertObj(obj);	
+	    //updateObj(obj);
+	    upsertAllObj(obj);
+/**/	//insertObj(obj);	
 	    System.out.println("Date Difference:"+getDateDiff(now,date1,TimeUnit.HOURS));
 	    /**/    if(getDateDiff(now,date1,TimeUnit.HOURS)==0) {
 	    	try {
@@ -427,6 +428,83 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 			      }
 	    
 	}
+	 public static String sql =
+			    "INSERT INTO converted (" +
+			    "unique_id, creator, created, follower, followed, name, spinners, " +
+			    "town0, brgy0, town, brgy, town2, brgy2, assignedto, status, subs, " +
+			    "feeder, section, cause, equip, type, notes, landmark, phone, " +
+			    "location, latitude, longitude, actiontaken) " +
+			    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) " +
+			    "ON CONFLICT (unique_id) DO UPDATE SET " +
+			    "creator = EXCLUDED.creator, " +
+			    "created = EXCLUDED.created, " +
+			    "follower = EXCLUDED.follower, " +
+			    "followed = EXCLUDED.followed, " +
+			    "name = EXCLUDED.name, " +
+			    "spinners = EXCLUDED.spinners, " +
+			    "town0 = EXCLUDED.town0, " +
+			    "brgy0 = EXCLUDED.brgy0, " +
+			    "town = EXCLUDED.town, " +
+			    "brgy = EXCLUDED.brgy, " +
+			    "town2 = EXCLUDED.town2, " +
+			    "brgy2 = EXCLUDED.brgy2, " +
+			    "assignedto = EXCLUDED.assignedto, " +
+			    "status = EXCLUDED.status, " +
+			    "subs = EXCLUDED.subs, " +
+			    "feeder = EXCLUDED.feeder, " +
+			    "section = EXCLUDED.section, " +
+			    "cause = EXCLUDED.cause, " +
+			    "equip = EXCLUDED.equip, " +
+			    "type = EXCLUDED.type, " +
+			    "notes = EXCLUDED.notes, " +
+			    "landmark = EXCLUDED.landmark, " +
+			    "phone = EXCLUDED.phone, " +
+			    "location = EXCLUDED.location, " +
+			    "latitude = EXCLUDED.latitude, " +
+			    "longitude = EXCLUDED.longitude, " +
+			    "actiontaken = EXCLUDED.actiontaken";
+	 public static void upsertAllObj(JSONObject obj) {
+
+		    System.out.println("from planner " + obj.get("notes"));
+
+		    try (Connection con = DatabaseConnection.getConnection();
+		         PreparedStatement pst = con.prepareStatement(sql)) {
+
+		        pst.setString(1, obj.get("unique_id").toString());
+		        pst.setString(2, obj.get("creator").toString());
+		        pst.setString(3, obj.get("created").toString());
+		        pst.setString(4, obj.get("follower").toString());
+		        pst.setString(5, obj.get("followed").toString());
+		        pst.setString(6, obj.get("name").toString());
+		        pst.setString(7, obj.get("spinners").toString());
+		        pst.setString(8, obj.get("town0").toString());
+		        pst.setString(9, obj.get("brgy0").toString());
+		        pst.setString(10, obj.get("town").toString());
+		        pst.setString(11, obj.get("brgy").toString());
+		        pst.setString(12, obj.get("town2").toString());
+		        pst.setString(13, obj.get("brgy2").toString());
+		        pst.setString(14, obj.get("assignedto").toString());
+		        pst.setString(15, obj.get("status").toString());
+		        pst.setString(16, obj.get("subs").toString());
+		        pst.setString(17, obj.get("feeder").toString());
+		        pst.setString(18, obj.get("section").toString());
+		        pst.setString(19, obj.get("cause").toString());
+		        pst.setString(20, obj.get("equip").toString());
+		        pst.setString(21, obj.get("type").toString());
+		        pst.setString(22, obj.get("notes").toString());
+		        pst.setString(23, obj.get("landmark").toString());
+		        pst.setString(24, obj.get("phone").toString());
+		        pst.setString(25, obj.get("location").toString());
+		        pst.setString(26, obj.get("latitude").toString());
+		        pst.setString(27, obj.get("longitude").toString());
+		        pst.setString(28, obj.get("actiontaken").toString());
+
+		        pst.executeUpdate();
+
+		    } catch (Exception e) {
+		        System.err.println("upsertObj: " + e.getMessage());
+		    }
+		}
 	 public static void insertObj(JSONObject obj) {
 		 
 		 System.out.println("from planner"+obj.get("notes").toString());
@@ -488,6 +566,43 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 			      }
 	    
 	}
+	 public static void upsertObj(JSONObject obj) {
+
+		    String sql =
+		        "INSERT INTO converted (unique_id, followed) " +
+		        "VALUES (?, ?) " +
+		        "ON CONFLICT (unique_id) DO UPDATE " +
+		        "SET followed = EXCLUDED.followed " +
+		        "WHERE converted.followed >= EXCLUDED.followed";
+
+		    try {
+		        String uniqueId = obj.get("unique_id").toString();
+		        String followed = obj.get("followed").toString();
+
+		        SimpleDateFormat df = new SimpleDateFormat("MM/dd/yy hh:mm:ss a");
+
+		        Date date = df.parse(followed);
+
+		        Calendar cal = Calendar.getInstance();
+		        cal.setTime(date);
+		        cal.add(Calendar.MINUTE, -1);
+
+		        String adjustedFollowed = df.format(cal.getTime());
+
+		        try (Connection con = DatabaseConnection.getConnection();
+		             PreparedStatement pst = con.prepareStatement(sql)) {
+
+		            pst.setString(1, uniqueId);
+		            pst.setString(2, adjustedFollowed);
+
+		            pst.executeUpdate();
+		        }
+
+		    } catch (Exception e) {
+		        System.err.println("upsertObj error: "
+		                + e.getClass().getName() + ": " + e.getMessage());
+		    }
+		}
 	 public static void updateObj(JSONObject obj) {
 		 	
 		        String query2 = "UPDATE  CONVERTED "+
@@ -603,7 +718,43 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 
 			return contacts;
 			}///
-		 public static void upsertReceiver(JSONObject obj) {
+		public static void upsertReceiver(JSONObject obj) {
+
+		    String sql =
+		        "INSERT INTO receivers (unique_id, crew, phone, time_stamp) " +
+		        "VALUES (?, ?, ?, ?) " +
+		        "ON CONFLICT (unique_id, phone) DO NOTHING";
+
+		    try {
+		        ArrayList<Object> contacts = getContacts(obj.get("assignedto").toString());
+
+		        String uniqueId = obj.get("unique_id").toString();
+		        String crew = obj.get("assignedto").toString();
+
+		        SimpleDateFormat df = new SimpleDateFormat("MM/dd/yy hh:mm:ss a");
+		        String timeStamp = df.format(new Date());
+
+		        try (Connection con = DatabaseConnection.getConnection();
+		             PreparedStatement pst = con.prepareStatement(sql)) {
+
+		            for (Object contact : contacts) {
+		                pst.setString(1, uniqueId);
+		                pst.setString(2, crew);
+		                pst.setString(3, contact.toString());
+		                pst.setString(4, timeStamp);
+
+		                pst.addBatch();
+		            }
+
+		            pst.executeBatch();
+		        }
+
+		    } catch (Exception e) {
+		        System.err.println("upsertReceiver error: " 
+		            + e.getClass().getName() + ": " + e.getMessage());
+		    }
+		}
+		 public static void upsertReceiver2(JSONObject obj) {
 			 
 				 String query1 = "INSERT INTO RECEIVERS(unique_id, crew, phone, time_stamp)" + 
 			        		"	VALUES (?, ?, ?, ?)";
