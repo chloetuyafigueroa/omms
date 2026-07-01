@@ -465,7 +465,7 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 			    "actiontaken = EXCLUDED.actiontaken";
 	 public static void upsertAllObj(JSONObject obj) {
 
-		    System.out.println("from planner " + obj.get("notes"));
+		    System.out.println("from planner4 " + obj.get("notes"));
 
 		    try (Connection con = DatabaseConnection.getConnection();
 		         PreparedStatement pst = con.prepareStatement(sql)) {
