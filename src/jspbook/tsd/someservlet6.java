@@ -121,6 +121,7 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 	        
 	        new Thread(() -> {
 	            try {
+	            	System.out.println("running postRun(obj, followed)...");
 	                Date date1 = null;
 	                SimpleDateFormat df = new SimpleDateFormat("MM/dd/yy hh:mm:ss a");
 
@@ -459,7 +460,7 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 			    "creator = EXCLUDED.creator, " +
 			    "created = EXCLUDED.created, " +
 			    "follower = EXCLUDED.follower, " +
-			   // "followed = EXCLUDED.followed, " +
+			    "followed = EXCLUDED.followed, " +
 			    "name = EXCLUDED.name, " +
 			    "spinners = EXCLUDED.spinners, " +
 			    "town0 = EXCLUDED.town0, " +
