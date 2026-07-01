@@ -121,7 +121,7 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 	        
 	        new Thread(() -> {
 	            try {
-	            	System.out.println("running postRun(obj, followed)...");
+	            	
 	                Date date1 = null;
 	                SimpleDateFormat df = new SimpleDateFormat("MM/dd/yy hh:mm:ss a");
 
@@ -138,6 +138,7 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 	                    Date now = new Date(System.currentTimeMillis());
 
 	                    if (getDateDiff(now, date1, TimeUnit.HOURS) == 0) {
+	                    	System.out.println("running postRun(obj, followed)...");
 	                        postRun(obj, followed);
 	                    }
 	                }
