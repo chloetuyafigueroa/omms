@@ -137,7 +137,7 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 	                    String followed = dateFormat.format(date1);
 
 	                    Date now = new Date(System.currentTimeMillis());
-
+	                    System.out.println(now +":"+followed);
 	                    if (getDateDiff(now, date1, TimeUnit.HOURS) == 0) {
 	                    	System.out.println("running postRun(obj, followed)...");
 	                        postRun(obj, followed);
