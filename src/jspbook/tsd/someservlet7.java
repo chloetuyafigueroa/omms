@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
@@ -55,6 +57,7 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 	//public static String dbURL = someservlet.dbURL;
 	public static DataSource dataSource = DataSourceConfig.getDataSource();
 	public static Connection con=getConnection();
+	public static Connection con2=getConnection();
 	public static Connection getConnection() {
 		try {
 			return dataSource.getConnection();
@@ -89,7 +92,89 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 		 }
         
 	}
-		 public static void update(JsonObject obj) {
+	public static void update(JsonObject obj) {
+
+	    String uniqueId = obj.get("unique_id").getAsString();
+	    String followedValue = obj.get("followed").getAsString();
+
+	    String selectSql =
+	        "SELECT ctid, followed::timestamp without time zone AS followed_old " +
+	        "FROM converted " +
+	        "WHERE unique_id = ? " +
+	        "ORDER BY COALESCE(" +
+	        "    updated_at, " +
+	        "    followed::timestamp without time zone" +
+	        ") DESC NULLS LAST " +
+	        "LIMIT 1";
+
+	    String updateSql =
+	        "UPDATE converted " +
+	        "SET followed = ?, updated_at = ? " +
+	        "WHERE ctid = ?::tid";
+
+	    try (
+	        PreparedStatement selectPst =
+	            con.prepareStatement(selectSql)
+	    ) {
+	        selectPst.setString(1, uniqueId);
+
+	        try (ResultSet rx = selectPst.executeQuery()) {
+
+	            if (!rx.next()) {
+	                System.out.println(
+	                    "No record found for unique_id: " + uniqueId
+	                );
+	                return;
+	            }
+
+	            String ctid = rx.getString("ctid");
+	            Timestamp followedOld =
+	                rx.getTimestamp("followed_old");
+
+	            Timestamp updatedAt =
+	                new Timestamp(System.currentTimeMillis());
+
+	            try (
+	                PreparedStatement updatePst =
+	                    con.prepareStatement(updateSql)
+	            ) {
+	                updatePst.setString(1, followedValue);
+	                updatePst.setTimestamp(2, updatedAt);
+	                updatePst.setString(3, ctid);
+
+	                System.out.println(
+	                    "followedValue: " + followedValue
+	                );
+	                System.out.println(
+	                    "updatedAt: " + updatedAt
+	                );
+	                System.out.println(
+	                    "uniqueId: " + uniqueId
+	                );
+	                System.out.println(
+	                    "followedOld: " + followedOld
+	                );
+	                System.out.println(
+	                    "ctid: " + ctid
+	                );
+
+	                int rowsUpdated =
+	                    updatePst.executeUpdate();
+
+	                System.out.println(
+	                    "Rows updated: " + rowsUpdated
+	                );
+	            }
+	        }
+
+	    } catch (SQLException e) {
+	        System.err.println(
+	            "Failed to update unique_id: " + uniqueId
+	        );
+	        e.printStackTrace();
+	    }
+	}
+		 public static void update3(JsonObject obj) {
 			 System.out.println(obj.toString());
 		        String query1 = "SELECT DISTINCT ON (UNIQUE_ID)*,followed::TIMESTAMP WITHOUT TIME ZONE followed1 FROM CONVERTED "+
 		        				"WHERE UNIQUE_ID='"+obj.get("unique_id").getAsString()+"'"+
@@ -97,12 +182,8 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 		        String query2 = "UPDATE  CONVERTED "+
 		        				"SET FOLLOWED=? "+
 		        				"WHERE UNIQUE_ID=? AND FOLLOWED=?";
-		        //Connection dbCon = null;
-				   try {
-				       DatabaseConnection.getInstance();
-					//Class.forName("org.postgresql.Driver");
-				       //dbCon = DriverManager.getConnection(dbURL);
-				       //dbCon=DatabaseConnection.getConnection();
+		        	try {
+				       
 				       Statement stmt = con.createStatement();
 				       ResultSet rx = stmt.executeQuery(query1);
 				       while ( rx.next() ) { 
@@ -113,7 +194,6 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 					  	    SimpleDateFormat df = new SimpleDateFormat("MM/dd/yy  hh:mm:ss a");
 					  	    try {
 					  	    	followed_new = df.parse(obj.get("followed").getAsString());
-					  	    	//followed_old =  df.parse(rx.getString("followed"));
 					  	    } catch (ParseException e) {
 					  	        e.printStackTrace();
 					  	    }
@@ -123,8 +203,6 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 				    	   PreparedStatement pst = con.prepareStatement(query2);
 					       pst.setString(1, df.format(cal.getTime()));
 					       pst.setString(2, obj.get("unique_id").getAsString());
-					       //pst.setString(3, obj.get("followed").getAsString());
-					       
 					       pst.setString(3, rx.getString("followed"));
 					       pst.executeUpdate();
 					       
