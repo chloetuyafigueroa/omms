@@ -80,8 +80,9 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 		String action = _req.getParameter("action");
 		JsonParser parser = new JsonParser();
 		JsonObject obj = (JsonObject) parser.parse(_req.getReader());
-		update(obj);
+		
 		if (action.equals("update")) {
+			 update(obj);
 			_res.setContentType("text/html;charset=UTF-8");
 			_res.getWriter().write(obj.toString());
 		
@@ -174,6 +175,7 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 	        e.printStackTrace();
 	    }
 	}
+	
 		 public static void update3(JsonObject obj) {
 			 System.out.println(obj.toString());
 		        String query1 = "SELECT DISTINCT ON (UNIQUE_ID)*,followed::TIMESTAMP WITHOUT TIME ZONE followed1 FROM CONVERTED "+
