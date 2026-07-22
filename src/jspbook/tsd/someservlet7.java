@@ -134,6 +134,7 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 
 	            Timestamp updatedAt =
 	                new Timestamp(System.currentTimeMillis());
+	            
 
 	            try (
 	                PreparedStatement updatePst =
@@ -145,6 +146,88 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 
 	                System.out.println(
 	                    "followedValue: " + followedValue
+	                );
+	                System.out.println(
+	                    "updatedAt: " + updatedAt
+	                );
+	                System.out.println(
+	                    "uniqueId: " + uniqueId
+	                );
+	                System.out.println(
+	                    "followedOld: " + followedOld
+	                );
+	                System.out.println(
+	                    "ctid: " + ctid
+	                );
+
+	                int rowsUpdated =
+	                    updatePst.executeUpdate();
+
+	                System.out.println(
+	                    "Rows updated: " + rowsUpdated
+	                );
+	            }
+	        }
+
+	    } catch (SQLException e) {
+	        System.err.println(
+	            "Failed to update unique_id: " + uniqueId
+	        );
+	        e.printStackTrace();
+	    }
+	}
+	public static void update2(JsonObject obj) {
+
+	    String uniqueId = obj.get("unique_id").getAsString();
+	    
+	    String selectSql =
+	        "SELECT ctid, followed::timestamp without time zone AS followed_old " +
+	        "FROM converted " +
+	        "WHERE unique_id = ? " +
+	        "ORDER BY COALESCE(" +
+	        "    updated_at, " +
+	        "    followed::timestamp without time zone" +
+	        ") DESC NULLS LAST " +
+	        "LIMIT 1";
+
+	    String updateSql =
+	        "UPDATE converted " +
+	        "SET followed = ?, updated_at = ? " +
+	        "WHERE ctid = ?::tid";
+
+	    try (
+	        PreparedStatement selectPst =
+	            con.prepareStatement(selectSql)
+	    ) {
+	        selectPst.setString(1, uniqueId);
+
+	        try (ResultSet rx = selectPst.executeQuery()) {
+
+	            if (!rx.next()) {
+	                System.out.println(
+	                    "No record found for unique_id: " + uniqueId
+	                );
+	                return;
+	            }
+
+	            String ctid = rx.getString("ctid");
+	            Timestamp followedOld =
+	                rx.getTimestamp("followed_old");
+
+	            Timestamp updatedAt =
+	                new Timestamp(System.currentTimeMillis());
+	            
+
+	            try (
+	                PreparedStatement updatePst =
+	                    con.prepareStatement(updateSql)
+	            ) {
+	                updatePst.setString(1, "01/01/20 06:00:00 AM");
+	                updatePst.setTimestamp(2, updatedAt);
+	                updatePst.setString(3, ctid);
+
+	                System.out.println(
+	                    "followedValue: " + "01/01/20 06:00:00 AM"
 	                );
 	                System.out.println(
 	                    "updatedAt: " + updatedAt
@@ -226,7 +309,7 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 				      }
 		    
 		}
-		 public static void update2(JsonObject obj) {
+		 public static void update4(JsonObject obj) {
 			 System.out.println("delete!"+obj);
 		        String query1 = "SELECT UNIQUE_ID FROM CONVERTED "+
 		        				"WHERE UNIQUE_ID='"+obj.get("unique_id").getAsString()+"'";
