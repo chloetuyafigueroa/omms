@@ -176,7 +176,7 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 	        e.printStackTrace();
 	    }
 	}
-	public static void update2(JsonObject obj) {
+	public static void update4(JsonObject obj) {
 
 	    String uniqueId = obj.get("unique_id").getAsString();
 	    
@@ -309,13 +309,14 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 				      }
 		    
 		}
-		 public static void update4(JsonObject obj) {
+		 public static void update2(JsonObject obj) {
 			 System.out.println("delete!"+obj);
 		        String query1 = "SELECT UNIQUE_ID FROM CONVERTED "+
 		        				"WHERE UNIQUE_ID='"+obj.get("unique_id").getAsString()+"'";
 		        String query2 = "UPDATE converted c " +
 				                "SET followed = TO_CHAR('2020-01-01 06:00:00'::timestamp + (n.rn-1) * interval '1 second','MM/DD/YY HH12:MI:SS AM'), " +
 				                "    status   = ?, " +
+				                "    updated_at   = ?, " +
 				                "    spinners = ? " +
 				                "FROM ( " +
 				                "    SELECT ctid, ROW_NUMBER() OVER (PARTITION BY unique_id ORDER BY followed) AS rn " +
@@ -323,34 +324,26 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 				                "    WHERE unique_id = ? " +
 				                ") n " +
 				                "WHERE c.ctid = n.ctid;";
-		        //Connection dbCon = null;
-				   try {
-				       //DatabaseConnection.getInstance();
-					//Class.forName("org.postgresql.Driver");
-				       //dbCon = DriverManager.getConnection(dbURL);
-				       //dbCon=DatabaseConnection.getConnection();
+		        try {
 				       Statement stmt = con.createStatement();
 				       ResultSet rx = stmt.executeQuery(query1);
 				       System.out.println(query1);
+				       Timestamp updatedAt =
+				                new Timestamp(System.currentTimeMillis());
 				       while ( rx.next() ) { 
 				    	  
 					  	
 				    	   PreparedStatement pst =con.prepareStatement(query2);
-					       //pst.setString(3, obj.get("followed").getAsString());
-				    	   //System.out.println("afsgfgg"+rx.getString("followed"));
-					       
 					       pst.setString(1, "Cancelled");
-					       pst.setString(2, obj.get("spinners").getAsString());
-					       pst.setString(3, obj.get("unique_id").getAsString());
+					       pst.setTimestamp(2, updatedAt);
+					       pst.setString(3, obj.get("spinners").getAsString());
+					       pst.setString(4, obj.get("unique_id").getAsString());
 					       System.out.println(query2);
 					       pst.executeUpdate();
 					       
 /**/						
 				       }
-				       
-			           
-				        
-			       rs.close();
+				  rs.close();
 			       stmt.close();
 			      
 			 
