@@ -1,0 +1,41 @@
+steps:
+
+# Build WAR using Ant
+- name: eclipse-temurin:17-jdk
+  entrypoint: bash
+  args:
+    - -c
+    - |
+      apt-get update
+      apt-get install -y ant
+      ant clean war
+
+# Build Docker image
+- name: gcr.io/cloud-builders/docker
+  args:
+    - build
+    - -t
+    - asia-southeast1-docker.pkg.dev/$PROJECT_ID/omms-repo/omms:$SHORT_SHA
+    - .
+
+# Push Docker image
+- name: gcr.io/cloud-builders/docker
+  args:
+    - push
+    - asia-southeast1-docker.pkg.dev/$PROJECT_ID/omms-repo/omms:$SHORT_SHA
+
+# Deploy to Cloud Run
+- name: gcr.io/google.com/cloudsdktool/cloud-sdk
+  entrypoint: gcloud
+  args:
+    - run
+    - deploy
+    - omms
+    - --image=asia-southeast1-docker.pkg.dev/$PROJECT_ID/omms-repo/omms:$SHORT_SHA
+    - --region=asia-southeast1
+    - --platform=managed
+    - --allow-unauthenticated
+    - --port=8080
+
+images:
+- asia-southeast1-docker.pkg.dev/$PROJECT_ID/omms-repo/omms:$SHORT_SHA
