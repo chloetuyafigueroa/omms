@@ -321,7 +321,7 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 				                "FROM ( " +
 				                "    SELECT ctid, ROW_NUMBER() OVER (PARTITION BY unique_id ORDER BY followed) AS rn " +
 				                "    FROM converted " +
-				                "    WHERE unique_id = ? " +
+				                "    WHERE unique_id = ? AND followed = ? " +
 				                ") n " +
 				                "WHERE c.ctid = n.ctid;";
 		        try {
@@ -338,6 +338,7 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 					       pst.setTimestamp(2, updatedAt);
 					       pst.setString(3, obj.get("spinners").getAsString());
 					       pst.setString(4, obj.get("unique_id").getAsString());
+					       pst.setString(5, obj.get("followed").getAsString());
 					       System.out.println(query2);
 					       pst.executeUpdate();
 					       
