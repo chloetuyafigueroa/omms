@@ -89,7 +89,7 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 		}
 		else if (action.equals("delete")) {
 			 //delete(obj);
-			 update2(obj);
+			 update4(obj);
 		 }
         
 	}
@@ -179,9 +179,10 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 	public static void update4(JsonObject obj) {
 
 	    String uniqueId = obj.get("unique_id").getAsString();
-	    
+
 	    String selectSql =
-	        "SELECT ctid, followed::timestamp without time zone AS followed_old " +
+	        "SELECT ctid, " +
+	        "       followed::timestamp without time zone AS followed_old " +
 	        "FROM converted " +
 	        "WHERE unique_id = ? " +
 	        "ORDER BY COALESCE(" +
@@ -191,13 +192,28 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 	        "LIMIT 1";
 
 	    String updateSql =
-	        "UPDATE converted " +
-	        "SET followed = ?, updated_at = ? " +
-	        "WHERE ctid = ?::tid";
+	        "UPDATE converted AS c " +
+	        "SET followed = TO_CHAR(" +
+	        "        TIMESTAMP '2020-01-01 06:00:00' " +
+	        "        + (n.rn - 1) * INTERVAL '1 second', " +
+	        "        'MM/DD/YY HH12:MI:SS AM'" +
+	        "    ), " +
+	        "    updated_at = ? " +
+	        "FROM ( " +
+	        "    SELECT " +
+	        "        ctid, " +
+	        "        ROW_NUMBER() OVER ( " +
+	        "            PARTITION BY unique_id " +
+	        "            ORDER BY followed::timestamp without time zone, ctid" +
+	        "        ) AS rn " +
+	        "    FROM converted " +
+	        "    WHERE unique_id = ? " +
+	        ") AS n " +
+	        "WHERE c.ctid = n.ctid " +
+	        "  AND c.ctid = ?::tid";
 
 	    try (
-	        PreparedStatement selectPst =
-	            con.prepareStatement(selectSql)
+	        PreparedStatement selectPst = con.prepareStatement(selectSql)
 	    ) {
 	        selectPst.setString(1, uniqueId);
 
@@ -211,43 +227,25 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 	            }
 
 	            String ctid = rx.getString("ctid");
-	            Timestamp followedOld =
-	                rx.getTimestamp("followed_old");
-
+	            Timestamp followedOld = rx.getTimestamp("followed_old");
 	            Timestamp updatedAt =
 	                new Timestamp(System.currentTimeMillis());
-	            
 
 	            try (
 	                PreparedStatement updatePst =
 	                    con.prepareStatement(updateSql)
 	            ) {
-	                updatePst.setString(1, "01/01/20 06:00:00 AM");
-	                updatePst.setTimestamp(2, updatedAt);
+	                updatePst.setTimestamp(1, updatedAt);
+	                updatePst.setString(2, uniqueId);
 	                updatePst.setString(3, ctid);
 
-	                System.out.println(
-	                    "followedValue: " + "01/01/20 06:00:00 AM"
-	                );
-	                System.out.println(
-	                    "updatedAt: " + updatedAt
-	                );
-	                System.out.println(
-	                    "uniqueId: " + uniqueId
-	                );
-	                System.out.println(
-	                    "followedOld: " + followedOld
-	                );
-	                System.out.println(
-	                    "ctid: " + ctid
-	                );
+	                int rowsUpdated = updatePst.executeUpdate();
 
-	                int rowsUpdated =
-	                    updatePst.executeUpdate();
-
-	                System.out.println(
-	                    "Rows updated: " + rowsUpdated
-	                );
+	                System.out.println("updatedAt: " + updatedAt);
+	                System.out.println("uniqueId: " + uniqueId);
+	                System.out.println("followedOld: " + followedOld);
+	                System.out.println("ctid: " + ctid);
+	                System.out.println("Rows updated: " + rowsUpdated);
 	            }
 	        }
 
@@ -321,7 +319,7 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 				                "FROM ( " +
 				                "    SELECT ctid, ROW_NUMBER() OVER (PARTITION BY unique_id ORDER BY followed) AS rn " +
 				                "    FROM converted " +
-				                "    WHERE unique_id = ? AND followed = ? " +
+				                "    WHERE unique_id = ? " +
 				                ") n " +
 				                "WHERE c.ctid = n.ctid;";
 		        try {
@@ -338,7 +336,6 @@ public class someservlet7 extends HttpServlet implements ServletContextListener 
 					       pst.setTimestamp(2, updatedAt);
 					       pst.setString(3, obj.get("spinners").getAsString());
 					       pst.setString(4, obj.get("unique_id").getAsString());
-					       pst.setString(5, obj.get("followed").getAsString());
 					       System.out.println(query2);
 					       pst.executeUpdate();
 					       
