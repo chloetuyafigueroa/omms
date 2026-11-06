@@ -442,7 +442,9 @@
 					$scope.Cause= $scope.test1[8];
 					
 					var f=8 //plus item no.
-					//console.log($scope.sexy2[i]);
+					console.log(i);
+					console.log(jo);
+					console.log($scope.sexy2);
 					var newTown=$filter('filter')($scope.test1,function(x){return x.category == 'town'&& x.serial_no ==parseFloat($scope.sexy2[i].spinners.substr(0,2)).toString()})
 					var newBrgys=$filter('filter')($scope.test1,function(x){return x.category == 'barangay'&& x.serial_no ==parseFloat($scope.sexy2[i].spinners.substr(0,5)).toString()})
 					var Towns1=$filter('filter')($scope.test1,function(x){return x.category == 'town'&& x.serial_no ==parseFloat($scope.sexy2[i].spinners.substr(5,2)-20).toString()})
@@ -594,14 +596,14 @@
 							//$http.get('someservlet4?x='+y0+'&y='+y1+'&z='+y3+'&z1='+y2+'&z2='+y4+'&z3='+y5)
 									.then(function mySuccs(response){										
 										var sexy21 = JSON.parse(JSON.stringify(response.data));
-										console.log("planner:"+JSON.stringify(response.data));
+										
 										//sexy21=$filter('filter')(sexy21,function(x){return moment(x.followed, "MM/DD/YY hh:mm A").week() == $scope.Week_s})
 										$scope.sexy2=sexy21;
 										$scope.sexy2.forEach(function(s){
 											console.log("s.followed:"+s.followed);
 											console.log("column:"+moment(s.followed, "MM/DD/YY  hh:mm:ss A").day()+1);
 											sample101.push({sizeX: 1, sizeY: 1, row: 0, col: moment(s.followed, "MM/DD/YY hh:mm:ss A").day()+1,
-												unique_id: s.unique_id, name: s.name, status: s.status, brgy: s.brgy0, town: s.town0, jo: s.jo,
+												unique_id: "0"+String(s.unique_id).slice(-22), name: s.name, status: s.status, brgy: s.brgy0, town: s.town0, jo: s.jo,
 												cause: s.cause, type: s.type, time: moment(s.followed, "MM/DD/YY hh:mm:ss A").format("hh:mm:ss A")});
 										})
 									}
@@ -619,12 +621,13 @@
 																					
 										sample102=sample101;
 										$scope.sexy2.forEach(function(s){
-											sample102.push({sizeX: 1, sizeY: 1, row: 0, col: 0, unique_id: s.unique_id, name: s.name, status: s.status, 
+											sample102.push({sizeX: 1, sizeY: 1, row: 0, col: 0, unique_id: "0"+String(s.unique_id).slice(-22), name: s.name, status: s.status, 
 												brgy: s.brgy0, town: s.town0, cause: s.cause, type: s.type, jo: s.jo,
 												time: moment(s.followed, "MM/DD/YY hh:mm:ss A").format("hh:mm:ss A")});
 										})
 										$scope.standardItems =sample102;
 										 //$scope.resultxx="$scope.standardItems";
+									console.log("planner:"+JSON.stringify(sample102));
 									}
 									
 							)

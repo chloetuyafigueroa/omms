@@ -50,167 +50,122 @@
 	input {    
 	    font: 500 18px Arial;	    
 	}
-	.searches{z-index:5}
-	.status {
-	  position: absolute;
-	  left: -180px;
-	  transition: 0.3s;
-	  padding: 15px;
-	  width: 200px;
-	  text-decoration: none;
-	  font-size: 20px;
-	  color: #000000;
-	  border-radius: 0 10px 10px 0;
-	  padding: 15px 15px 15px 15px;
-	  background-color:#80ff00;
-	  top:10px;
-	  opacity:.3;
-	}
-	.status:hover{
-		left: 0px;
-		opacity:1;
-		background-color:#008000;
-		color: #ffff00;
-	}
-	.status {
-		max-width: 200px;
-	}
-		
-		
-	.town {
-	  position: absolute;
-	  left: -180px;
-	  transition: 0.3s;
-	  padding: 15px;
-	  width: 200px;
-	  text-decoration: none;
-	  font-size: 20px;
-	  color: #000000;
-	  border-radius: 0 10px 10px 0;
-	  padding: 15px 15px 15px 15px;
-	  background-color:#ffff00;
-	  top:70px;
-	  opacity:.3;
-	}
-	.town:hover{
-		left: 0px; opacity:1;background-color:#008000;color: #ffff00;
-	}
-	.town {
-		max-width: 200px;
-	}
-	
-	.brgy {
-	  position: absolute;
-	  left: -180px;
-	  transition: 0.3s;
-	  padding: 15px;
-	  width: 200px;
-	  text-decoration: none;
-	  font-size: 20px;
-	  color: #000000;
-	  border-radius: 0 10px 10px 0;
-	  padding: 15px 15px 15px 15px;
-	  background-color:#ff8000;
-	  top:130px;
-	  opacity:.3;
-	}
-	.brgy:hover{
-		left: 0px; opacity:1;background-color:#008000;color: #ffff00;
-	}
-	.brgy {
-		max-width: 200px;
-	}
-	
-	.crew {
-	  position: absolute;
-	  left: -180px;
-	  transition: 0.3s;
-	  padding: 15px;
-	  width: 200px;
-	  text-decoration: none;
-	  font-size: 20px;
-	  color: #000000;
-	  border-radius: 0 10px 10px 0;
-	  padding: 15px 15px 15px 15px;
-	  background-color:#ff80ff;
-	  top:190px;
-	  opacity:.3;
-	}
-	.crew:hover{
-		left: 0px; opacity:1;background-color:#008000;color: #ffff00;
-	}
-	.crew {
-		max-width: 200px;
-	}
-	
-	.freq {
-	  position: absolute;
-	  left: -180px;
-	  transition: 0.3s;
-	  padding: 15px;
-	  width: 200px;
-	  text-decoration: none;
-	  font-size: 20px;
-	  color:#000000;
-	  border-radius: 0 10px 10px 0;
-	  padding: 15px 15px 15px 15px;
-	  background-color:#ff1e8e;
-	  top:250px;
-	  opacity:.3;
-	  }
-	.freq:hover{
-		left: 0px; opacity:1;background-color:#008000;color: #ffff00;
-	}
-	.freq {
-		max-width: 200px;
-	}
-	
-	.cal {
-	  position: absolute;
-	  left: -180px;
-	  transition: 0.3s;
-	  padding: 15px;
-	  width: 200px;
-	  text-decoration: none;
-	  font-size: 20px;
-	  color:#000000;
-	  border-radius: 0 10px 10px 0;
-	  padding: 15px 15px 15px 15px;
-	  background-color:#6ab5ff;
-	  top:310px;
-	  opacity:.3;
-	  }
-	.cal:hover{
-		left: 0px; opacity:1;background-color:#008000;color: #ffff00;
-	}
-	.cal {
-		max-width: 200px;
-	}
-	
-	.duration {
-	  position: absolute;
-	  left: -260px;
-	  transition: 0.3s;
-	  padding: 15px;
-	  width: 250px;
-	  text-decoration: none;
-	  font-size: 20px;
-	  color:#000000;
-	  border-radius: 0 10px 10px 0;
-	  padding: 15px 15px 15px 15px;
-	  background-color:#6ab5ff;
-	  top:375px;
-	  opacity:.3;
-	  }
-	.duration:hover{
-		left: 0px; opacity:1;background-color:#008000;color: #ffff00;
-	}
-	.duration {
-		max-width: 250px;
-	}
 	
 	
+/* Common styles */
+.status, .town, .brgy, .crew,
+.freq, .cal, .duration {
+    position: absolute;
+    left: -210px;
+    top: 0;
+    width: 200px;
+    padding: 15px;
+
+    font-size: 20px;
+    color: #000;
+    text-decoration: none;
+
+    border-radius: 0 10px 10px 0;
+    opacity: 0.3;
+    transition: 0.3s;
+    box-sizing: content-box;
+}
+
+/* Individual positions and colors */
+.status {
+    top: 10px;
+    background: #80ff00;
+}
+
+.town {
+    top: 70px;
+    background: #ffff00;
+}
+
+.brgy {
+    top: 130px;
+    background: #ff8000;
+}
+
+.crew {
+    top: 190px;
+    background: #ff80ff;
+}
+
+.freq {
+    top: 250px;
+    background: #ff1e8e;
+}
+
+.cal {
+    top: 310px;
+    background: #6ab5ff;
+}
+
+.duration {
+    top: 375px;
+    background: #6ab5ff;
+}
+
+/* Common hover effect */
+.status:hover, .town:hover, .brgy:hover,
+.crew:hover, .freq:hover, .cal:hover,
+.duration:hover {
+    left: 0;
+    opacity: 1;
+    background: #008000;
+    color: #ffff00;
+}
+
+/* Start and end controls */
+.start, .end {
+    position: static;
+    width: auto;
+    padding: 8px;
+    font-size: 25px;
+}
+
+     
 	
+	
+	/* MOBILE VIEW */
+@media screen and (max-width: 768px) {
+
+    .info-container {
+        position:fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 1500;
+        pointer-events: none;
+    }
+	.info-container.filter-hidden {
+	    opacity: 0;
+    	visibility: hidden;
+    	pointer-events: none;
+	}
+    .status, .town, .brgy, .crew,
+    .freq, .cal ,.duration{
+        position: static;
+        width: 75%;
+        padding: 8px;
+        font-size: 25px;
+        opacity: 1;
+        box-sizing: border-box;
+        pointer-events: auto;
+    }
+    .start, .end {
+        position: static;
+        width: 100%;
+        padding: 8px;
+        font-size: 25px;
+        pointer-events: auto;
+    }
+     
+
+}
 	select {
     
 	    font: 400 18px Arial;

@@ -219,7 +219,7 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 			}
 	}
 	 public static List<User> getAllUsers(String id){ 
-		 
+		 System.out.println(id);
 		   List<User> userList = new ArrayList<>();
 		   
 		   try {
@@ -227,8 +227,8 @@ public class someservlet6 extends HttpServlet implements ServletContextListener 
 		       //dbCon = DriverManager.getConnection(dbURL);
 		       //dbCon=DatabaseConnection.getInstance().getConnection();
 		       Statement stmt = con.createStatement();
-		        rs = stmt.executeQuery("SELECT c.*,COALESCE(m.members,'') AS members,COALESCE(m.jo,'') AS jo FROM CONVERTED c LEFT JOIN MEMBERS m ON c.UNIQUE_ID=m.UNIQUE_ID "+
-		        						"WHERE c.unique_id='"+id+"'"+
+		        rs = stmt.executeQuery("SELECT c.*,COALESCE(m.members,'') AS members,COALESCE(m.jo,'') AS jo FROM CONVERTED c LEFT JOIN MEMBERS m ON RIGHT(c.UNIQUE_ID,21) LIKE RIGHT(m.UNIQUE_ID,21) "+
+		        						"WHERE RIGHT(c.unique_id,21)=RIGHT('"+id+"',21)"+
 		        						"ORDER BY c.UNIQUE_ID, c.FOLLOWED::TIMESTAMP WITHOUT TIME ZONE DESC");
 	       	 
 		       while ( rs.next() ) {

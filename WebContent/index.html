@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html ng-app="firstAPP">
+<head>
+    <title>SharedService Test</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+
+    <script>
+        // Create AngularJS module
+        var app = angular.module("firstAPP", []);
+
+        // Create controller
+        app.controller("myCtrl1", function($scope, SharedService) {
+
+            $scope.message = "success!"
+            	SharedService. selectAPI();
+
+        });
+    </script>
+
+    <script src="../Omms/js/sharedService.js"></script>
+</head>
+
+<body ng-controller="myCtrl1">
+
+    <h2>{{message}}</h2>
+
+</body>
+</html>

@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="firstAPP">
 <head>
 <meta charset="ISO-8859-1">
 <title>OMMS|ILECO-1</title>
 <script src="config.js"></script>
- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
- <script type="text/javascript"  src="../Omms/js/login1.0.js"></script>
+ <script type="text/javascript"  src="../Omms/js/angular.min.js"></script>
+
+ <script type="text/javascript"  src="../Omms/js/login1.1.js"></script>
+ <script type="text/javascript"  src="../Omms/js/sharedService.js"></script>
+ 
+  
  <link href="../Omms/css/login1.0.0.css"  rel="stylesheet" type="text/css">
  <link rel="shortcut icon" href="../Omms/img/logo.png"/>
 </head>
@@ -18,8 +22,8 @@
     .style.display='block'" style="width:auto;">Login 
     </button>
     
-   <div id ="ID1" ng-app="firstAPP" ng-controller="myCtrl1">
-   
+   <div id ="ID1"  ng-controller="myCtrl1">
+    
      <div id="id02" class="modals"> 
         <form  method="post" class="modal-content animate" action="Main?action=login"> 
             <div class="imgcontainer"> 

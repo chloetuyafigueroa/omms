@@ -196,7 +196,15 @@
         </url-pattern>
     </servlet-mapping>
    
-   
+   <servlet>
+    	<servlet-name>MobileView</servlet-name>
+    	<jsp-file>/mobile.jsp</jsp-file>
+	</servlet>
+	
+	<servlet-mapping>
+	    <servlet-name>MobileView</servlet-name>
+	    <url-pattern>/iGIS</url-pattern>
+	</servlet-mapping>
     
     <filter>
 	    <filter-name>InvalidRequestFilter</filter-name>

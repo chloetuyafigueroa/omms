@@ -1,3 +1,34 @@
+.map-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.map-menu-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+
+    width: 36px;
+    height: 36px;
+
+    background: white;
+    border: 2px solid rgba(0,0,0,0.2);
+    border-radius: 4px;
+
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.map-menu-btn:hover {
+    background: #f4f4f4;
+}
 
 	.draw{
 		z-index:400;
@@ -96,5 +127,36 @@
     color: #008000;
     font-weight: bold;
 }
+.gray-icon {
+    filter: grayscale(100%);
+}
 
+/* MOBILE VIEW */
+@media screen and (max-width: 768px) {
+	
+
+    .draw {
+        background: #2e2e2e;
+        color:#2e2e2e;
+        z-index: 400;
+    }
+
+	    .draw #addpole,
+	    .draw #addbuilding,
+	    .draw #updateGPS {
+	
+	        position: fixed;
+	        top:auto;
+        	bottom: 10px;
+        
+	        width: 50px;
+	        height: 50px;
+	
+	        flex: 0 0 50px;
+	        z-index: auto;
+	    }
+	  
+    
+
+}
 

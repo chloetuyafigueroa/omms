@@ -20,9 +20,10 @@ public class ConfigServlet extends HttpServlet {
 
         String apiBaseUrl = System.getenv("API_BASE_URL");
         String mapboxToken = System.getenv("MAPBOX_ACCESS_TOKEN");
+       
 
         if (apiBaseUrl == null || apiBaseUrl.trim().isEmpty()) {
-            apiBaseUrl = "http://localhost:8080/Joblist";
+            apiBaseUrl = "http://localhost:8080";
         }
 
         if (mapboxToken == null) {
@@ -33,6 +34,7 @@ public class ConfigServlet extends HttpServlet {
         response.getWriter().println("  API_BASE_URL: \"" + escape(apiBaseUrl) + "\",");
         response.getWriter().println("  MAPBOX_ACCESS_TOKEN: \"" + escape(mapboxToken) + "\"");
         response.getWriter().println("};");
+        System.out.println("API_BASE_URL:"+apiBaseUrl);
     }
 
     private String escape(String value) {

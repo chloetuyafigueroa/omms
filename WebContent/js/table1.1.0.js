@@ -251,7 +251,97 @@
 				)
 				
 			}	
+			$scope.exportCSV = function () {
+
+			    var table = document.getElementById("table1");
 			
+			    if (!table) {
+			        alert("Table not found.");
+			        return;
+			    }
+			
+			    var csvRows = [];
+			    var rows = table.querySelectorAll("tr");
+			
+			    angular.forEach(rows, function (row) {
+			
+			        var csvColumns = [];
+			        var columns = row.querySelectorAll("th, td");
+			
+			        angular.forEach(columns, function (column) {
+			
+			            // Export only columns currently visible
+			            if (column.offsetParent !== null) {
+			
+			                var value = column.innerText || column.textContent || "";
+			
+			                // Remove unnecessary spaces and line breaks
+			                value = value
+			                    .replace(/\r?\n|\r/g, " ")
+			                    .replace(/\s+/g, " ")
+			                    .trim();
+			
+			                // Escape quotation marks for CSV
+			                value = value.replace(/"/g, '""');
+			
+			                csvColumns.push('"' + value + '"');
+			            }
+			        });
+			
+			        // Do not add completely empty rows
+			        if (csvColumns.length > 0) {
+			            csvRows.push(csvColumns.join(","));
+			        }
+			    });
+			
+			    if (csvRows.length <= 1) {
+			        alert("There is no table data to export.");
+			        return;
+			    }
+			
+			    // Add UTF-8 BOM so Excel displays special characters correctly
+			    var csv = "\uFEFF" + csvRows.join("\r\n");
+			
+			    var blob = new Blob([csv], {
+			        type: "text/csv;charset=utf-8;"
+			    });
+			
+			    // Filename format: joborder yymmddHHmmss.csv
+			    var now = new Date();
+			
+			    function pad(number) {
+			        return number < 10 ? "0" + number : number.toString();
+			    }
+			
+			    var fileName =
+			        "joborder " +
+			        now.getFullYear().toString().slice(-2) +
+			        pad(now.getMonth() + 1) +
+			        pad(now.getDate()) +
+			        pad(now.getHours()) +
+			        pad(now.getMinutes()) +
+			        pad(now.getSeconds()) +
+			        ".csv";
+			
+			    if (window.navigator.msSaveBlob) {
+			        window.navigator.msSaveBlob(blob, fileName);
+			    } else {
+			        var link = document.createElement("a");
+			        var url = URL.createObjectURL(blob);
+			
+			        link.href = url;
+			        link.download = fileName;
+			        link.style.display = "none";
+			
+			        document.body.appendChild(link);
+			        link.click();
+			
+			        setTimeout(function () {
+			            document.body.removeChild(link);
+			            URL.revokeObjectURL(url);
+			        }, 100);
+			    }
+			};
 			const customOrder = ["jo","unique_id","creator","created","follower","followed","name","town0","brgy0","landmark","town","brgy","town2","brgy2","assignedto","status","subs","feeder","section","equip","type","cause","notes","phone","location","latitude","longitude","members","actiontaken"];
 			function transformJson(json) {
 			  return json.map(item => {

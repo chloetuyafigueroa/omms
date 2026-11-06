@@ -3,16 +3,23 @@
   <head>
     <title>OMMS|Map</title>
    
-<script src="config.js"></script>
+	<script src="config.js"></script>
+	
 	<script type="text/javascript"  src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
 	<script type="text/javascript"  src="../Omms/js/angular.min.js"></script>
+	 
 	<!--script src="https://cdnjs.cloudflare.com/ajax/libs/angular-leaflet-directive/0.10.0/angular-leaflet-directive.min.js"></script>-->
 	<script src="https://momentjs.com/downloads/moment.js"></script>
 	<script type="text/javascript"  src="../Omms/js/angular-leaflet-directive.min.js"></script>
 	<script type="text/javascript"  src="../Omms/js/wkt.js"></script>
 	<script type="text/javascript"  src="../Omms/js/proj4.js"></script>
 	<script type="text/javascript"  src="../Omms/js/leaflet.rotatedMarker.js"></script>
+	<script type="text/javascript"  src="../Omms/js/app-config.js"></script>
 	<script type="text/javascript"  src="../Omms/js/map1.0.1.js"></script>
+	<script type="text/javascript"  src="../Omms/js/menu.js"></script>
+	<script type="text/javascript"  src="../Omms/js/profile.js"></script>
+	<script type="text/javascript"  src="../Omms/js/joblist.js"></script>
+	<script type="text/javascript"  src="../Omms/js/sharedService.js"></script>
 	<script type="text/javascript"  src="../Omms/js/jquery-2.1.4.min.js"></script>
     
     <link rel="shortcut icon" href="../Omms/img/logo.png"/>
@@ -23,12 +30,26 @@
     <link href="../Omms/css/pdetails.css" rel="stylesheet" type="text/css">
     <link href="../Omms/css/cdetails.css" rel="stylesheet" type="text/css">
     <link href="../Omms/css/map1.0.css" rel="stylesheet" type="text/css">
+    <link href="../Omms/css/menu.css" rel="stylesheet" type="text/css">
+    <link href="../Omms/css/profile.css" rel="stylesheet" type="text/css">
+    <link href="../Omms/css/joblist.css" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
   	<style>
         /* Set the size of the map */
         #map {
-            height: 400px;
+            height: 99%;
+            width: 99%;
+            position:fixed;left: 20px;top:5px;
+        }
+        @media screen and (max-width: 768px) {
+        #map {
+            left: 0px;
+            height: 100%;
             width: 100%;
+        }
+        
         }
 
         /* Define custom marker */
@@ -44,8 +65,406 @@
   </head>
   <body >
   <div id ="ID1" ng-app="firstAPP" ng-controller="GISController">
-  <leaflet id="map" style="position:fixed;left: 20px;top:5px;" lf-center="headquarter"  layers="layers"  markers="markers" defaults="defaults" height="99%" width="98%"></leaflet>
   
+  
+  <div class="map-wrapper">
+	  <leaflet id="map" lf-center="headquarter"  layers="layers"  markers="markers" defaults="defaults"></leaflet>
+	   <div class="map-buttons">
+	   		<button class="map-menu-btn"
+		            ng-click="toggleMenu()">
+		       <i class="fa fa-list"></i>
+		    </button>
+		     <!-- Filter -->
+		    <button class="map-filter-btn"
+		            ng-click="toggleFilter()">
+		        <i class="fa fa-filter"></i>
+		    </button>
+		    <button class="map-joblist-btn"
+		            ng-click="toggleJoblist2()">
+		        <i class="fa-regular fa-clipboard"></i>
+		    </button>
+		</div>
+  </div>
+  <div class="mobile-container" ng-class="{'menu-hidden': !menuVisible}" >
+
+    <!-- HEADER -->
+    <header class="header">
+       <button class="notification"
+                aria-label="Notifications"
+                onclick="openNotifications()">
+            <i class="fa-regular fa-bell"></i>
+        </button>
+    </header>
+
+    <!-- WELCOME -->
+    <section class="welcome">
+        <div class="subtitle">
+            Operations Dashboard
+        </div>
+
+        <h1>Welcome to OMMS</h1>
+
+        <p>Mobile Job Order Management</p>
+    </section>
+
+    <!-- STATISTICS -->
+    <section class="stats-grid">
+
+        <div class="stat-card">
+            <i class="fa-regular fa-clipboard"></i>
+            <div>
+                <div class="stat-number" id="pendingJobs">
+                    24
+                </div>
+                <div class="stat-label">Pending Jobs</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <i class="fa-regular fa-circle-check"></i>
+            <div>
+                <div class="stat-number" id="completedJobs">
+                    18
+                </div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <i class="fa-solid fa-users"></i>
+            <div>
+                <div class="stat-number" id="fieldCrews">
+                    8
+                </div>
+                <div class="stat-label">Field Crews</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <i class="fa-solid fa-location-dot"></i>
+            <div>
+                <div class="stat-number" id="mapAssets">
+                    1,245
+                </div>
+                <div class="stat-label">Map Assets</div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- QUICK ACTIONS -->
+    <h2 class="section-title">Quick Actions</h2>
+
+    <section class="actions-grid">
+
+        <button class="action-button"
+                ng-click="toggleMenu()">
+            <i class="fa-regular fa-map"></i>
+            <span>GIS Map</span>
+        </button>
+
+        <button class="action-button"
+                ng-click="open()">
+            <i class="fa-regular fa-clipboard"></i>
+            <span>New Job Order</span>
+        </button>
+
+    </section>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="bottom-nav">
+        <div class="nav-items">
+
+            <button class="nav-item active"
+                    onclick="navigate('home', this)">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </button>
+
+            <button class="nav-item"
+                    ng-click="toggleJoblist()">
+                <i class="fa-regular fa-clipboard"></i>
+                <span>Jobs</span>
+            </button>
+
+            <button class="nav-item"
+                    ng-click="toggleMenu()">
+                <i class="fa-regular fa-map"></i>
+                <span>Map</span>
+            </button>
+
+            <button class="nav-item"
+                    ng-click="profileVisible = !profileVisible">
+                <i class="fa-regular fa-user"></i>
+                <span>Profile</span>
+            </button>
+
+        </div>
+    </nav>
+
+</div>
+
+
+
+<!-- Profile container -->
+<div class="profile-container"
+     ng-show="profileVisible">
+
+    <div class="profile-header">
+        <div class="profile-avatar">
+            <i class="fa fa-user"></i>
+        </div>
+
+        <div class="profile-heading">
+            <strong>User Profile</strong>
+            <small>{{profile.loggedIn ? 'Logged In' : 'Logged Out'}}</small>
+        </div>
+
+        <button type="button"
+                class="profile-close"
+                ng-click="profileVisible = false">
+            &times;
+        </button>
+    </div>
+
+    <div class="profile-body">
+
+        <label>Name</label>
+        <input type="text"
+               ng-model="profile.name"
+               placeholder="Enter full name">
+
+        <label>Contact Number</label>
+        <input type="tel"
+               ng-model="profile.phone"
+               placeholder="09XXXXXXXXX">
+
+        <label>Crew</label>
+        <select ng-model="profile.crew"
+                ng-options="c for c in crewOptions">
+            <option value="">Select Crew</option>
+        </select>
+
+        <label>Assigned Towns</label>
+
+        <div class="profile-town-actions">
+            <span>{{selectedTownCount()}} selected</span>
+            <button type="button" ng-click="selectAllTowns()">All</button>
+            <button type="button" ng-click="clearTowns()">Clear</button>
+        </div>
+
+        <div class="profile-town-list">
+            <label ng-repeat="town in townOptions track by town"
+                   class="profile-town-item">
+                <input type="checkbox"
+                       ng-model="profile.towns[town]">
+                <span>{{town}}</span>
+            </label>
+        </div>
+
+        <button type="button"
+                class="profile-save"
+                ng-click="saveProfile()">
+            SAVE PROFILE
+        </button>
+
+        <div class="profile-auth-buttons" ng-if="!profile.loggedIn">
+
+		    <button type="button"
+		            class="profile-auth"
+		            ng-click="profileLogin()">
+		        <i class="fa fa-sign-in"></i> LOGIN
+		    </button>
+		
+		    <button type="button"
+		            class="profile-auth signup"
+		            ng-click="showSignup = true">
+		        <i class="fa fa-user-plus"></i> SIGN UP
+		    </button>
+		
+		</div>
+
+        <button type="button"
+                class="profile-auth logout"
+                ng-if="profile.loggedIn"
+                ng-click="profileLogout()">
+            <i class="fa fa-sign-out"></i> LOGOUT
+        </button>
+    </div>
+    
+    <div class="profile-signup" ng-show="showSignup">
+
+	    <div class="signup-header">
+	        <strong>CREATE ACCOUNT</strong>
+	        <button type="button" ng-click="showSignup = false">
+	            &times;
+	        </button>
+	    </div>
+	
+	    <form name="signupForm"
+	          ng-submit="registerUser()"
+	          novalidate>
+	
+	        <label>Full Name</label>
+	        <input type="text"
+	               ng-model="signup.name"
+	               required
+	               placeholder="Enter full name">
+	
+	        <label>Contact Number</label>
+	        <input type="tel"
+	               ng-model="signup.phone"
+	               ng-pattern="/^09[0-9]{9}$/"
+	               required
+	               placeholder="09XXXXXXXXX">
+	
+	        <label>Crew</label>
+	        <select ng-model="signup.crew"
+	                ng-options="c for c in crewOptions"
+	                required>
+	            <option value="">Select Crew</option>
+	        </select>
+	
+	        <label>Assigned Towns</label>
+	        <div class="profile-town-list">
+	            <label class="profile-town-item"
+	                   ng-repeat="town in townOptions track by town">
+	                <input type="checkbox"
+	                       ng-model="signup.towns[town]">
+	                {{town}}
+	            </label>
+	        </div>
+	
+	        <label>Password</label>
+	        <input type="password"
+	               ng-model="signup.password"
+	               required
+	               minlength="8"
+	               autocomplete="new-password"
+	               placeholder="Create password">
+	
+	        <label>Confirm Password</label>
+	        <input type="password"
+	               ng-model="signup.confirmPassword"
+	               required
+	               autocomplete="new-password"
+	               placeholder="Confirm password">
+	
+	        <div class="signup-error" ng-if="signupError">
+	            {{signupError}}
+	        </div>
+	
+	        <button type="submit"
+	                class="signup-submit"
+	                ng-disabled="signupForm.$invalid || signupLoading">
+	            {{signupLoading ? 'REGISTERING...' : 'CREATE ACCOUNT'}}
+	        </button>
+	
+	        <button type="button"
+	                class="signup-cancel"
+	                ng-click="showSignup = false">
+	            CANCEL
+	        </button>
+	
+	    </form>
+	</div>
+</div>
+
+<div class="joblist-container" ng-class="{'job-hidden': !jobVisible}">
+
+    <div class="job-row"
+         ng-repeat="job in jobs track by $index"
+         ng-click="selectItem(job.unique_id,job.jo)">
+
+        <!-- STATUS ICON -->
+        <div class="job-icon"
+             ng-class="{
+               'type-high': job.type === 'high',
+               'type-medium': job.type === 'medium',
+               'type-low': job.type === 'low',
+             }">
+
+            <img ng-if="job.type === 'high'"
+		     src="img/interruption.png"
+		     class="job-type-icon"
+		     alt="High">
+		
+		<img ng-if="job.type === 'medium'"
+		     src="img/om.png"
+		     class="job-type-icon"
+		     alt="Medium">
+		
+		<img ng-if="job.type === 'low'"
+		     src="img/verification.png"
+		     class="job-type-icon"
+		     alt="Low">
+
+        </div>
+
+       <!-- VERTICAL NUMBER -->
+		<div class="job-number"
+		     ng-class="{
+		         'number-completed': job.status === 'completed',
+		         'number-cancelled': job.status === 'cancelled',
+		         'number-pending': job.status === 'pending'
+		     }">
+		
+		    <div ng-repeat="digit in job.jo.split('') track by $index">
+		        {{digit}}
+		    </div>
+		
+		</div>
+
+        <!-- NAME AND LOCATION -->
+        <div class="job-info">
+
+            <div class="job-name">
+                {{job.name}}
+            </div>
+
+            <div class="job-location">
+                 {{job.brgy0}}, {{job.town0}}
+            </div>
+
+        </div>
+
+        <!-- DATE AND TIME -->
+        <div class="job-datetime">
+
+            <div class="job-date">
+                {{job.date}}
+            </div>
+
+            <div class="job-time">
+                {{job.time}}
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  <div class="info-container"  ng-class="{'filter-hidden': !filterVisible}" id=searches>
+		<select class="status" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Status" ng-change="testRun(-1,0)" ng-options="x.value for x in test1| filter: {category:'status'}" >
+		</select>
+		
+		<select class="town"  onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Towns" ng-change="testRun(0,0)" ng-options="x.value for x in test1| filter: {category:'town'}" >
+		</select>
+		
+		<select class="brgy" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Brgys" ng-change="testRun(1,0)" ng-options="x.value for x in test1| filter: myBrgy">
+		</select>
+		
+		<select class="crew" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Crews" ng-change="testRun(2,3)" ng-options="x.value for x in test1| filter: myCrew">
+		</select>
+		
+		 <select class="freq" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Period"  ng-change="testRun(5,0)" ng-options="y for 	y in Period1">
+		</select>
+		<input class="cal" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Date" ng-change= "testRun(2,2)" type="date">
+		<div class="duration" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)">
+		<input class="start" ng-model="Start" ng-change= "getTime()" type="time">
+		<input class="end" ng-model="End" ng-change= "getTime()" type="time">
+		</div>
+</div>
   		<div class="draw" >
 			<button id="addpole" ng-click="addPole()"><img src="../Omms/img/new_pole.png" style="width:20px;transform: scale(1.5);"></button>
 			<button id="addbuilding" ng-click="addBuilding()"><img src="../Omms/img/new_building.png" style="width:20px"></button>
@@ -54,6 +473,7 @@
 			<!--button id="updateIconProperty" ng-click="updateIconProperty()"><img src="../Omms/img/new_pole.png" style="width:20px;transform: scale(1.5);"></button>
         	<button id="upsertnewGPS" ng-click="upsertnewGPS()"><img src="../Omms/img/new_pole.png" style="width:20px;transform: scale(1.5);"></button>-->
         </div>
+        
         <div id="polemodals"  ng-show="showPoleDetails"> 
         <div style="font-weight: bold" >POLE DETAILS:</div>
        	<div class=prow>
@@ -93,45 +513,45 @@
 		<div class=prow>
          	<button class="w25 button"  id="save" type="button" ng-click="savePole()" class="btn btn-primary">SAVE</button>
 			<button class="w25 button" id="delete" type="button" ng-click="deletePole()" class="btn btn-primary">DELETE</button>
-			<button class="w25 button" id="clear" type="button" ng-click="clearDtails()" class="btn btn-primary">CLEAR</button>
+			<button class="w25 button" id="clear" type="button" ng-click="clearDtails('pole')" class="btn btn-primary">CLEAR</button>
 			<button class="w25 button" id="exit" type="button" ng-click="openDtails('pole')" class="btn btn-primary">EXIT</button>
 			</div>
 		</div>
-		<div id="custmodals"  ng-show="showCustDetails"> 
+		<div id="custmodals"  ng-show="showCustDetails" > 
         	<div style="font-weight: bold" >CUSTOMER DETAILS:</div>
         	<div class=prow>
         	 	<div class="w30 checkbox-left">
-        			<input  type="checkbox" ng-model="existBldg">Existing
+        			<input  type="checkbox" ng-model="existBldg" ng-change= "custChange()">Existing
         		</div>
-        		<input class="w70 field" id=account_no placeholder= "Account No." type="text" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict> <br>
+        		<input class="w70 field" id=account_no placeholder= "Account No." ng-model="acctNo" ng-change= "custChange()" type="text" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict> <br>
 	        </div>
-	        <input class="w100 field" id=account_name placeholder= "Account Name" ng-model="Name" type="text" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict> <br>
+	        <input class="w100 field" id=account_name placeholder= "Account Name" ng-model="acctName"  ng-change= "custChange()" type="text" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict> <br>
         	<div class=prow>
-        		<input class="w70 field" id=meter_no  placeholder= "Meter No." type="text" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict> <br>
-            	<input class="w30 field" id=multiplier placeholder= "Multiplier" type="number"> <br>
+        		<input class="w70 field" id=meter_no  placeholder= "Meter No." ng-model="meterNo" ng-change= "custChange()"  type="text" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict> <br>
+            	<input class="w30 field" id=multiplier placeholder= "Multiplier" ng-model="meterMult" ng-change= "custChange()"  type="number"> <br>
             </div>
             <div class=prow>
-        		<select  class="w50 field" id=cust_class ng-model="CustClass" ng-options="y for y in cCategory"></select>
-		    	<select  class="w50 field" id=cust_type ng-model="CustType"  ng-options="y for y in cType"></select>
+        		<select  class="w50 field" id=cust_class ng-model="CustClass" ng-change= "custChange()"  ng-options="y for y in cCategory"></select>
+		    	<select  class="w50 field" id=cust_type ng-model="CustType" ng-change= "custChange()"   ng-options="y for y in cType"></select>
 			</div>
 			<div class=prow>
-        		<select  class="w50 field" id=phase ng-model="meterPhase"  ng-options="y for y in pPhases"></select>
-		    	<select  class="w50 field" id=brand ng-model="meterBrand" ng-options="y for y in mBrand" ></select>
+        		<select  class="w50 field" id=phase ng-model="meterPhase" ng-change= "custChange()"   ng-options="y for y in pPhases"></select>
+		    	<select  class="w50 field" id=brand ng-model="meterBrand" ng-change= "custChange()"  ng-options="y for y in mBrand" ></select>
 			</div>
 			<div class=prow>
-        		<select  class="w50 field" id=model ng-model="meterModel"  ng-options="y for y in mModel"></select>
-		    	<select  class="w50 field" id=rating ng-model="meterRating" ng-options="y for y in mRating" ></select>
+        		<select  class="w50 field" id=model ng-model="meterModel" ng-change= "custChange()"   ng-options="y for y in mModel"></select>
+		    	<select  class="w50 field" id=rating ng-model="meterRating" ng-change= "custChange()"  ng-options="y for y in mRating" ></select>
 			</div>
 			<div class=prow>
 				<label class="w30 nc" >WIRE SIZE:</label>
-				<select  class="w70 field" id=wire ng-model="cWire" ng-options="y.wire_size for y in wDetails" ></select>
+				<select  class="w70 field" id=wire ng-model="cWire" ng-change= "custChange()"  ng-options="y.wire_size for y in wDetails" ></select>
 			</div>
-			<textarea class=cremarks id=cremarks ng-model="cRemarks" ng-change= "cremChange()" placeholder= "Remarks" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict wrap="soft"></textarea><br>
+			<textarea class=cremarks id=cremarks ng-model="cRemarks" ng-change= "custChange()"  ng-change= "cremChange()" placeholder= "Remarks" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict wrap="soft"></textarea><br>
 			<button class="w100 button" id="addsdiline" type="button" ng-click="AddLine('sdilines')" class="btn btn-primary">ADD SDI</button>
         	<div class=prow>
 	         	<button class="w25 button" id="save" type="button" ng-click="savePole()" class="btn btn-primary">SAVE</button>
-				<button class="w25 button"  id="bksp" type="button" ng-click="backSpace()" class="btn btn-primary">BKSP</button>
-				<button class="w25 button"  id="clear" type="button" ng-click="clearDtails()" class="btn btn-primary">CLEAR</button>
+				<button class="w25 button"  id="delete" type="button" ng-click="deleteBldg()" class="btn btn-primary">DELETE</button>
+				<button class="w25 button"  id="clear" type="button" ng-click="clearDtails('cust')" class="btn btn-primary">CLEAR</button>
 				<button class="w25 button"  id="exit" type="button" ng-click="openDtails('cust')" class="btn btn-primary">EXIT</button>
 			</div>
 		</div>
@@ -196,7 +616,7 @@
         <div id="sdimodals"  ng-show="showSdiDetails"> 
         	<div style="font-weight: bold" >LINE DETAILS:</div>
         	<div  style="padding: 5px 10px 5px 5px;" id=sectionid ng-model="Name">SECTION ID: {{currentSectionid}}</div>
-        	<input type="checkbox" ng-model="existSDI" ng-change= "sdiexistChange()"> Existing
+        	<input type="checkbox" ng-model="existSDI" ng-change= "lineexistChange()"> Existing
 		  	
 			<div class=prow><span class="w50 nc">phase:</span><span class="w50 nc">sdi line:</span></div>
        		
@@ -211,16 +631,35 @@
 			</div>
        		<div class=prow style="padding: 5px 10px 5px 5px">
 				<span class="w50 nc" id="len">LENGTH (mtrs):</span>
-				<input  id=sdilength ng-model="sdiLength" placeholder= "Length in meters" type=number> 
+				<input  id=sdilength ng-model="conLength" placeholder= "Length in meters" type=number> 
+			</div>
+			<div  id=wirelen>Angle of Inclination: </div>
+       		<div class="angle-container">
+			  <div  class="slider-box">
+			    <input ng-model="anglechange" ng-change= "angleChange()"
+			      type="range" 
+			      id="angleSlider" 
+			      min=0 
+			      max=90 
+			      value=0
+			    >
+			    <span id="angleValue">{{anglechange}}</span>
+			    <span id="angleSym">&#176</span>
+			  </div>
+			
 			</div>
 			<div class=prow>
 	         	<button class="w25 button" id="save" type="button" ng-click="savePole()" class="btn btn-primary">SAVE</button>
-				<button class="w25 button" id="bksp" type="button" ng-click="deleteLine()" class="btn btn-primary">DELETE</button>
+				<button class="w25 button" id="delete" type="button" ng-click="deleteLine()" class="btn btn-primary">DELETE</button>
 				<button class="w25 button" id="clear" type="button" ng-click="clearDtails()" class="btn btn-primary">CLEAR</button>
 				<button class="w25 button" id="exit" type="button" ng-click="openDtails('sdi')" class="btn btn-primary">EXIT</button>
 			</div>
 		</div>
-	   	<div id="modals" ng-show="showModal"> 				   
+	   	<div id="modals" ng-show="showModal"> 	
+	   	
+	   	<div class="modal-pages" id="modalPages">
+	   	<!-- PAGE 1: JOB ORDER DETAILS -->
+        <div class="modal-page">			   
 	   		J.O.#:{{Jo}}<br>
        	    <input id=creator ng-model="Name" ng-change= "itemChange(0)" placeholder= "Created/Reported by" type="text" required pattern="^[A-Za-z0-9- !-):;?@*^+./]*$" ng-pattern-restrict> <br>
             <select id=town ng-model="newTown" ng-change= "itemChange(1)" ng-options="y.value for y in test1| filter: {category:'town'}" ></select>
@@ -255,6 +694,10 @@
 			<button  class="right" type="button" ng-click="Hist(1)"></button>
 			</div>
 		</div>
+	 </div>
+
+      <!-- PAGE 2: LINE COVERAGE -->
+       <div class="modal-page">
          LINE COVERAGE:
          <div class=row>
             <select class=col id=town1 ng-model="Towns1" ng-change= "itemChange(4)" ng-options="y.value for y in test1| filter: {category:'town'}" ></select>
@@ -273,7 +716,7 @@
 			<div class=col1>To-Brgy</div>
 		  </div> 
             <input id=section ng-model="Location" placeholder= "Please specify line section if any" type="text" pattern="^[A-Za-z0-9- !-):?@*^+./]*$" ng-pattern-restrict > <br>
-         <div id=gps ><input name="gps" value={{Gps}}></div> 
+         <div class=row id=gps ><input name="gps" value={{Gps}}></div> 
     		       
          <div class=row>
           <div>ACTION TAKEN:</div> 
@@ -295,32 +738,28 @@
 		</div>
 	
 		
-            <div class=label1>Creator:{{Creator}}  {{Created}}</div>
-			<div class=label1>Follower:{{Follower}}  {{Followed}}</div>
-	 		<div class=label1>Team/Members:{{Members}}</div>
+            <div class="job-labels">
+			    <div class="label1">Creator: {{Creator}} {{Created}}</div>
+			    <div class="label1">Follower: {{Follower}} {{Followed}}</div>
+			    <div class="label1">Team/Members: {{Members}}</div>
+			</div>
 		</div> 
+		</div>	
 		
-	   	
-		<div id=searches>
-		<select class="status" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Status" ng-change="testRun(-1,0)" ng-options="x.value for x in test1| filter: {category:'status'}" >
-		</select>
-		
-		<select class="town"  onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Towns" ng-change="testRun(0,0)" ng-options="x.value for x in test1| filter: {category:'town'}" >
-		</select>
-		
-		<select class="brgy" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Brgys" ng-change="testRun(1,0)" ng-options="x.value for x in test1| filter: myBrgy">
-		</select>
-		
-		<select class="crew" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Crews" ng-change="testRun(2,3)" ng-options="x.value for x in test1| filter: myCrew">
-		</select>
-		
-		 <select class="freq" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Period"  ng-change="testRun(5,0)" ng-options="y for 	y in Period1">
-		</select>
-		<input class="cal" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)" ng-model="Date" ng-change= "testRun(2,2)" type="date">
-		<div class="duration" onmouseover= "zIndex(-1)" onmouseout= "zIndex(0)">
-		<input ng-model="Start" ng-change= "getTime()" type="time">
-		<input ng-model="End" ng-change= "getTime()" type="time">
-		</div>
+		<!-- PAGE NAVIGATION -->
+	    <div class="modal-navigation">
+	        <button type="button" onclick="changeModalPage(-1)">
+	            &#10094;
+	        </button>
+	
+	        <span id="modalPageIndicator">1 / 2</span>
+	
+	        <button type="button" onclick="changeModalPage(1)">
+	            &#10095;
+	        </button>
+	    </div>
+	    </div>
+			
 		
 			<div ng-if="showSearch">
 			<button type="button" ng-click="addr_search3()">Search</button>
@@ -352,7 +791,7 @@
 				<button type="button" ng-click="addr_search()">Search</button>
 			</div>
    		
-   </div>
+  
    
   </body>
 </html>

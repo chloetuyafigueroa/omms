@@ -11,7 +11,9 @@
 			});
 			
 		});
+	var result110;
 	var result111;
+	var result112;
 	var map;
 	var center;
 	var sdipole=null;
@@ -70,20 +72,150 @@
 				        }
 				    };
 				}]);
-				       
-			 app.controller('GISController',function($scope,$http,$q,$rootScope,$filter,$interval,leafletMarkerEvents, leafletMapEvents, leafletData){
-          
-			leafletData.getMap('map').then(function(map){		
-				map=map;
-				center = map.getCenter();
-				console.log('center27:'+center);		
-				map.createPane('prilines').style.zIndex = 650;
-				map.createPane('seclines').style.zIndex = 550;
-				map.createPane('sdilines').style.zIndex = 500;
-				map.createPane('poles').style.zIndex = 680;	
-				map.createPane('crew').style.zIndex = 700;				
-				
-			});
+		
+			       
+	app.controller('GISController',function($scope,$http,$q,$filter,$interval, leafletData,SharedService){
+			
+	GISJobList($scope);
+    GISMenu($scope);
+ 	GISProfile($scope);
+			
+					
+          SharedService.selectAPI().then(function() {
+				$scope.testRun(0,0);
+				    })
+					.catch(function(error) {
+					
+					    console.error("No Joblist server available.");
+					
+					});
+					
+					function onLoginReady() {
+					
+					    $scope.$evalAsync(function() {
+					
+					        console.log("Login ready.");
+							$scope.test1    = getLocalData("dTails");
+						    $scope.pDetails = getLocalData("pDtails");
+						    $scope.wDetails = getLocalData("wDtails");
+						    $scope.mDetails = getLocalData("mDtails");
+						    $scope.pClass   = getLocalData("pClass");
+							$scope.cClass   = getLocalData("cClass");	
+							$scope.mBrand = [...new Set($scope.mDetails.map(item => item.brand))];
+							$scope.mModel = [...new Set($scope.mDetails.map(item => item.model))];
+							$scope.mRating = [...new Set($scope.mDetails.map(item => item.rating))];
+							//$scope.cClass = JSON.parse(localStorage.getItem("cClass"));
+							$scope.cCategory = [...new Set($scope.cClass.map(item => item.category))];
+							$scope.cType = [...new Set($scope.cClass.map(item => item.type))];
+							$scope.pQty=[1,2,3,4,5,6,7,8,9,10];
+							$scope.pPhases = ['1P','2P','3P'];
+							$scope.pType = ['Concrete','Steel','Wood'];
+							$scope.pHeight = ['25ft','30ft','35ft','40ft','45ft','50ft','55ft','60ft','65ft','75ft','80ft','90ft'];
+							$scope.pCategory = [...new Set($scope.pDetails.map(item => item.category))];
+							
+							if ($scope.pType && $scope.pType.length > 0) {
+							  $scope.ptype = $scope.pType[1];
+							}
+							if ($scope.pHeight && $scope.pHeight.length > 0) {
+							  $scope.pheight = $scope.pHeight[2];
+							}
+							var filteredList = $filter('filter')($scope.pClass, { type: $scope.ptype });
+							if (filteredList.length >= 2) {
+							  $scope.pclass = filteredList[2]; // second item (index 1)
+							}
+							
+							if ($scope.pPhases && $scope.pPhases.length > 0) {
+							  $scope.Phases = $scope.pPhases[0];
+							}
+							if ($scope.pQty && $scope.pQty.length > 0) {
+							  $scope.Qty = $scope.pQty[0];
+							}
+							if ($scope.pCategory && $scope.pCategory.length > 0) {
+							  $scope.Category = $scope.pCategory[0];
+							}
+							if ($scope.pDetails && $scope.pDetails.length > 0) {
+							  $scope.pDtails = $scope.pDetails[0];
+							}
+							//if ($scope.cDetails && $scope.cDetails.length > 0) {
+							  //$scope.cDtails = $scope.cDetails[0];
+							//}
+							if ($scope.mDetails && $scope.mDetails.length > 0) {
+							  $scope.mDtails = $scope.mDetails[0];
+							}
+							if ($scope.wDetails && $scope.wDetails.length > 0) {
+							  $scope.priSize = $scope.wDetails[13];
+							  $scope.secSize = $scope.wDetails[13];
+							  $scope.neuSize = $scope.wDetails[13];
+							}	
+									
+					      	$scope.Towns= $scope.test1[0];
+							$scope.Brgys= $scope.test1[1];
+							$scope.Crews= $scope.test1[2];
+							$scope.Status= $scope.test1[3];
+							
+							$scope.phoneGPS='omms';
+							var f=8 //plus item no.
+							if(localStorage.hasOwnProperty('Towns')){
+								var Towns=$filter('filter')($scope.test1,function(x){return x.category == 'town'&& x.value==JSON.parse(localStorage.getItem("Towns")).value})
+								if(Towns[0].serial_no!="00"){$scope.Towns= $scope.test1[parseFloat(Towns[0].unique_id)+f]};
+							}
+							if(localStorage.hasOwnProperty('Status')){
+								var Status=$filter('filter')($scope.test1,function(x){return x.category == 'status'&& x.value==JSON.parse(localStorage.getItem("Status")).value})
+								if(Status[0].serial_no!="00"){$scope.Status= $scope.test1[parseFloat(Status[0].unique_id)+f]};
+							}	
+							
+							updateTime(); // Set initial value
+	            			$interval(updateTime, 60000*15); // Update every second
+							
+							result111=$filter('filter')($scope.test1,{category:"town"});
+							result110=$filter('filter')($scope.test1,{category:"barangay"});
+						
+					    });
+					
+					}
+					
+					window.addEventListener("loginReady", onLoginReady);
+					
+					if (window.loginReady === true) {
+					    onLoginReady();
+					}
+					
+					$scope.$on("$destroy", function() {
+					    window.removeEventListener("loginReady", onLoginReady);
+					});
+			
+					 leafletData.getMap('map').then(function(map){		
+						map=map;
+						center = map.getCenter();
+						console.log('center27:'+center);		
+						map.createPane('prilines').style.zIndex = 650;
+						map.createPane('seclines').style.zIndex = 550;
+						map.createPane('sdilines').style.zIndex = 500;
+						map.createPane('poles').style.zIndex = 680;	
+						map.createPane('crew').style.zIndex = 700;				
+						map.zoomControl.setPosition('bottomright');
+						});	
+						
+						// Safely retrieve localStorage data
+					    function getLocalData(key) {
+					        try {
+					            var data = JSON.parse(localStorage.getItem(key));
+					            return Array.isArray(data) ? data : [];
+					        } catch (error) {
+					            console.warn("Error reading localStorage:", key, error);
+					            return [];
+					        }
+					    }
+					
+					    
+
+  
+						
+						
+						
+					
+			
+			
 		 	
 			$scope.$on('leafletDirectiveMap.map.zoomend', function(event, args){
 		        var map1 = args.leafletEvent.target;
@@ -190,7 +322,31 @@
 			angular.extend($scope, {
 				layers: {
 	                baselayers: {
-	                    osm: {
+						googleHybrid: {
+						    name: 'Google Hybrid',
+						    url: 'https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+						    type: 'xyz',
+						    layerParams: {
+						        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+						    }
+						},
+						googleSatellite: {
+						    name: 'Google Satellite',
+						    url: 'https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+						    type: 'xyz',
+						    layerParams: {
+						        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+						    }
+						},
+						google: {
+					        name: 'Google Maps',
+					        url: 'https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+					        type: 'xyz',
+					        layerParams: {
+					            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+					        	}
+					    	},						 
+						osm: {
 	                        name: 'StreetMap',
 	                        //url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 	                       	url: 'https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token=' + mapboxToken,
@@ -208,14 +364,15 @@
 	                        url: 'https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token=' + mapboxToken,
 							type: 'xyz',
 							layerParams: {id: 'light-v9', tileSize: 512, zoomOffset: -1}
-	                        }       
+	                        } 
+						   
 					},
 					overlays:{}
 	                    
 	             }
 			});
 				$scope.defaults={
-					    maxZoom: 18,
+					    maxZoom: 20,
 					    minZoom: 1,
 					    doubleClickZoom: true,
 					    scrollWheelZoom: true,
@@ -311,9 +468,9 @@
 			function updateTime() {
                 $scope.Start=moment(new Date()).add(-3,'hours').second(0).milliseconds(0).toDate();
 				$scope.End=moment(new Date()).second(0).milliseconds(0).toDate();
+				console.log("im here!")
             }	
-			updateTime(); // Set initial value
-            $interval(updateTime, 60000*15); // Update every second
+			
 			
 			$scope.getTime=function(){
 				console.log('Start:'+$scope.Start);
@@ -328,60 +485,7 @@
 				 }
 				//$q.all([ $http.get('someservlet2?x=Town&y=Brgy&z2=Crew&z3=Day'),$http.get('someservlet1')])
 		        
-					//.then(function mySuccs(response){
-						$scope.test1 = JSON.parse(localStorage.getItem("dTails"));
-						$scope.pDetails = JSON.parse(localStorage.getItem("pDtails"));
-						$scope.wDetails = JSON.parse(localStorage.getItem("wDtails"));
-						$scope.mDetails = JSON.parse(localStorage.getItem("mDtails"));
-						$scope.mBrand = [...new Set($scope.mDetails.map(item => item.brand))];
-						$scope.mModel = [...new Set($scope.mDetails.map(item => item.model))];
-						$scope.mRating = [...new Set($scope.mDetails.map(item => item.rating))];
-						$scope.cClass = JSON.parse(localStorage.getItem("cClass"));
-						$scope.cCategory = [...new Set($scope.cClass.map(item => item.category))];
-						$scope.cType = [...new Set($scope.cClass.map(item => item.type))];
-						$scope.pQty=[1,2,3,4,5,6,7,8,9,10];
-						$scope.pPhases = ['1P','2P','3P'];
-						$scope.pType = ['Concrete','Steel','Wood'];
-						$scope.pHeight = ['25ft','30ft','35ft','40ft','45ft','50ft','55ft','60ft','65ft','75ft','80ft','90ft'];
-						$scope.pClass = JSON.parse(localStorage.getItem("pClass"));
-						$scope.pCategory = [...new Set($scope.pDetails.map(item => item.category))];
-						
-						if ($scope.pType && $scope.pType.length > 0) {
-						  $scope.ptype = $scope.pType[1];
-						}
-						if ($scope.pHeight && $scope.pHeight.length > 0) {
-						  $scope.pheight = $scope.pHeight[2];
-						}
-						var filteredList = $filter('filter')($scope.pClass, { type: $scope.ptype });
-						if (filteredList.length >= 2) {
-						  $scope.pclass = filteredList[2]; // second item (index 1)
-						}
-						
-						if ($scope.pPhases && $scope.pPhases.length > 0) {
-						  $scope.Phases = $scope.pPhases[0];
-						}
-						if ($scope.pQty && $scope.pQty.length > 0) {
-						  $scope.Qty = $scope.pQty[0];
-						}
-						if ($scope.pCategory && $scope.pCategory.length > 0) {
-						  $scope.Category = $scope.pCategory[0];
-						}
-						if ($scope.pDetails && $scope.pDetails.length > 0) {
-						  $scope.pDtails = $scope.pDetails[0];
-						}
-						if ($scope.cDetails && $scope.cDetails.length > 0) {
-						  $scope.cDtails = $scope.cDetails[0];
-						}
-						if ($scope.mDetails && $scope.mDetails.length > 0) {
-						  $scope.mDtails = $scope.mDetails[0];
-						}
-						if ($scope.wDetails && $scope.wDetails.length > 0) {
-						  $scope.priSize = $scope.wDetails[13];
-						  $scope.secSize = $scope.wDetails[13];
-						  $scope.neuSize = $scope.wDetails[13];
-						}
-						
-
+					
 						//$scope.filteredPhases = angular.copy($scope.pPhases); 
 						//$scope.phaseSelected = function() {
 						  // When a valid phase is selected, remove "Select Phase"
@@ -402,8 +506,7 @@
 							return true;
 						};
 						
-						result111=$filter('filter')($scope.test1,{category:"town"});
-						var result110=$filter('filter')($scope.test1,{category:"barangay"});
+						
 																	
 						/**var sexy21 = JSON.parse(JSON.stringify(response[0].data));
 						
@@ -424,21 +527,7 @@
 						
 						$scope.sexy2 = results102;**/
 	
-						$scope.Towns= $scope.test1[0];
-						$scope.Brgys= $scope.test1[1];
-						$scope.Crews= $scope.test1[2];
-						$scope.Status= $scope.test1[3];
-						
-						$scope.phoneGPS='omms';
-						var f=8 //plus item no.
-						if(localStorage.hasOwnProperty('Towns')){
-							var Towns=$filter('filter')($scope.test1,function(x){return x.category == 'town'&& x.value==JSON.parse(localStorage.getItem("Towns")).value})
-							if(Towns[0].serial_no!="00"){$scope.Towns= $scope.test1[parseFloat(Towns[0].unique_id)+f]};
-						}
-						if(localStorage.hasOwnProperty('Status')){
-							var Status=$filter('filter')($scope.test1,function(x){return x.category == 'status'&& x.value==JSON.parse(localStorage.getItem("Status")).value})
-							if(Status[0].serial_no!="00"){$scope.Status= $scope.test1[parseFloat(Status[0].unique_id)+f]};
-						}			 
+								 
 			        	/**$scope.data1=$filter('filter')($scope.sexy2,{type:'low'}).length;
 						$scope.data2=$filter('filter')($scope.sexy2,{type:'medium'}).length;
 						$scope.data3=$filter('filter')($scope.sexy2,{type:'high'}).length;
@@ -497,9 +586,9 @@
 					    $scope.series_bar = ["Inspection/Verification", "O & M", "Power Interruption"];
 					    $scope.data_bar = [yr,ys,yt];
 						**/
-					    var y0=null;var y1=null;var y2=null;var y3=null;var y4=$scope.Crews.value;var y5=$scope.Days;var dte=null;											
+					    var y0=null;var y1=null;var y2=null;var y3=null;var y4 = $scope.Crews ? $scope.Crews.value : null;var y5=$scope.Days;var dte=null;											
 						
-						$scope.testRun=function (xd,idx){ 							
+						$scope.testRun=function (xd,idx){ 	
 							var nNow=mNow-$scope.Months+2;if(nNow<=0){nNow=12+nNow};//alert(nNow);
 							if($scope.Months=="0"){nNow="null"};
 							if(xd==0){y0=$scope.Towns.value;y1=null;y2=nNow;y3=$scope.Years;$scope.Brgys= $scope.test1[1];}
@@ -573,9 +662,10 @@
 								    });
 								    
 									
-								     var result112=$filter('filter')(result110,$scope.myBrgy);
+								     
 									 console.log(idx);
 								
+									result112=$filter('filter')(result110,$scope.myBrgy);
 									 								 							
 				                     if(idx==0){
 										 if ($scope.Towns.value!="Select Town"){
@@ -623,7 +713,7 @@
 						             }
 									 $scope.markers = {};
 						             $scope.addMarkers(zb, marketx,result111,result110);
-									 
+									 $scope.joblist(zb);
 						   				
 								}
 							  )
@@ -744,9 +834,11 @@
 					
 				}						
 				
-				
 				const baseUrl = window.location.origin; // Gets the base URL of your app
+				//const socketUrl = `${baseUrl}/Joblist/notifications`;
+
 				const socketUrl = window.APP_CONFIG.API_BASE_URL +`/Joblist/notifications`;
+				console.log(socketUrl);
 				 var ws = new WebSocket(socketUrl);
 					ws.onopen = function() {
 					    console.log('WebSocket connection opened.');
@@ -864,220 +956,285 @@
 				//layers={overlays:{}};
 				var overlays={};
 				//var overlays={'poles':{},'buildings':{},'prilines':{},'seclines':{},'sdilines':{}, 'guy':{},'transformer':{},'dead_end':{},'jumper':{}};
-				$scope.asPlanAPI=function (created){ 				
-					$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS',{params:{table:'poles',where:'created="'+created+'"',limit:50}}).then(function mySuccs(response){								
-							if (response.data!=''){
-								var asplanWKT=JSON.parse(JSON.stringify(response.data));//'created="'+created+'"'
-								var GeoJSON;					
+				$scope.asPlanAPI = function(created) {
+
+				    var API = window.APP_CONFIG.API_BASE_URL + '/Joblist/iGIS';
+				
+				    function loadTable(table) {
+				
+				        return $http.get(API, {
+				            params: {
+				                table: table,
+				                where: 'created="' + created + '"',
+				                limit: 50
+				            }
+				        }).then(function(response) {
+				
+				            if (!Array.isArray(response.data) ||
+				                response.data.length === 0) {
+				                return;
+				            }
+				
+				            var asplanWKT = response.data;
+				            var GeoJSON;
+				
+				            var data = {
+				                type: "FeatureCollection",
+				                features: []
+				            };
+				
+				            for (var i = 0; i < asplanWKT.length; i++) {
+				
+		                if (table === 'poles') {
+								if (response.data!=''){
+									var asplanWKT=JSON.parse(JSON.stringify(response.data));//'created="'+created+'"'
+									var GeoJSON;					
 									var data ={"type":"FeatureCollection","features":[]}
-								for (var i = 0; i < asplanWKT.length; i++) {
+									for (var i = 0; i < asplanWKT.length; i++) {
 									GeoJSON=convertCRS(Terraformer.wktToGeoJSON(asplanWKT[i].geom));
-									var features={"type":"Feature","id": asplanWKT[i]._id,"properties":{"name":'poles',"poleno":asplanWKT[i].poleno,"oldpoleno":asplanWKT[i].oldpoleno,"priassembly":asplanWKT[i].priassembly,"secassembly":asplanWKT[i].secassembly,"miscellaneous":asplanWKT[i].miscellaneous,"ptype":asplanWKT[i].ptype,"pheight":asplanWKT[i].pheight,"pclass":asplanWKT[i].pclass,"remarks":asplanWKT[i].remarks,"existing":asplanWKT[i].existing},"geometry":GeoJSON}
+									var features={"type":"Feature","id": asplanWKT[i]._id,"properties":{"name":'poles',"poleno":asplanWKT[i].poleno,"oldpoleno":asplanWKT			[i].oldpoleno,"priassembly":asplanWKT[i].priassembly,"secassembly":asplanWKT[i].secassembly,"miscellaneous":asplanWKT[i].miscellaneous,"ptype":asplanWKT[i].ptype,"pheight":asplanWKT[i].pheight,"pclass":asplanWKT[i].pclass,"remarks":asplanWKT[i].remarks,"existing":asplanWKT[i].existing},"geometry":GeoJSON}
 									data.features.push(features);
-									localStorage.setItem(asplanWKT[i].poleno,JSON.stringify(asplanWKT[i].geom));										
-									upsertItem(nodes, {'nodeid':asplanWKT[i].poleno,'geom':asplanWKT[i].geom}, 'nodeid');											
+									localStorage.setItem(asplanWKT[i].poleno,JSON.stringify(asplanWKT[i].geom));		
+									upsertItem(nodes, {'nodeid':asplanWKT[i].poleno,'geom':asplanWKT[i].geom}, 'nodeid');			
 									//console.log(asplanWKT[i].existing);
 								}
-									
+						
 								if(data.features.length>0){
 									 overlays['poles'] = createOverlays(data);
 									localStorage.setItem('overlays',JSON.stringify(overlays));	
 								}
-											
+							
 							}
-					}).finally(function () {
-						var tables=['buildings','prilines','seclines','sdilines', 'guy','transformer','dead_end','jumper'];
-						for(var t=0;t<tables.length;t++){
-							const table=tables[t];
-							
-							//console.log(overlays[table].data)
-							$http.get(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS',{params:{table:table,where:'created="'+created+'"',limit:50}}).then(function mySuccs(response){								
-								if (response.data!=''){
-									var asplanWKT=JSON.parse(JSON.stringify(response.data));//'created="'+created+'"'
-									console.log(asplanWKT);
-									var GeoJSON;					
-										var data ={"type":"FeatureCollection","features":[]}
-									for (var i = 0; i < asplanWKT.length; i++) {
-										switch(table){
-											case 'guy':
-												const id=asplanWKT[i]._id;
-												const plN=asplanWKT[i].poleno;
-												const tYpe=asplanWKT[i].type;
-												const bearing1=asplanWKT[i].bearing1;
-												const bearing2=asplanWKT[i].bearing2;
-												const geom1=asplanWKT[i].geom1;
-												const geom2=asplanWKT[i].geom2;
-												const code=asplanWKT[i].code;
-														const points=[];
-														//var PolesArray=JSON.parse(localStorage.getItem(plN));	
-														var PolesArray=nodes.filter(obj => obj.nodeid === plN)[0];
-														console.log(PolesArray);
-													//if(PolesArray){
-														points.push(getLatlng(convertCRS(Terraformer.wktToGeoJSON(PolesArray.geom))));	
-													//}
-													if(tYpe==1){
-														GeoJSON=convertCRS(Terraformer.wktToGeoJSON(geom1));
-														var features1={"type":"Feature","id": id,"properties":{"name":table,"bearing":bearing1,"type":1,"poleno":plN},"geometry":GeoJSON}
-														points.push(getLatlng(GeoJSON));
-													}if(tYpe==2){
-														GeoJSON=convertCRS(Terraformer.wktToGeoJSON(geom1));
-														var features2={"type":"Feature","id": id,"properties":{"name":table,"bearing":bearing1,"type":2,"poleno":plN},"geometry":GeoJSON}
-														points.push(getLatlng(GeoJSON));
-											
-														GeoJSON=convertCRS(Terraformer.wktToGeoJSON(geom2));
-														var features3={"type":"Feature","id": id,"properties":{"name":table,"bearing":bearing2,"type":1,"poleno":plN},"geometry":GeoJSON}
-														points.push(getLatlng(GeoJSON));
-													}	
-												var features4={"type":"Feature","id": id,"properties":{"name":table,"poleno":plN,"code":code,"gtype":tYpe},"geometry":multiline(points)}
-												data.features.push(features4);	
-												if(tYpe==1){
-														data.features.push(features1);
-												}if(tYpe==2){
-														data.features.push(features2);
-														data.features.push(features3);
-												}	
-												
-												break;
-											case 'transformer':	
-												var PolesArray=nodes.filter(obj => obj.nodeid === asplanWKT[i].poleno)[0];	
-												var geom=convertCRS(Terraformer.wktToGeoJSON(PolesArray.geom));
-												console.log(geom);
-												var features={"type":"Feature","id": asplanWKT[i]._id,"properties":{"name":table,"poleno":asplanWKT[i].poleno,"bearing":asplanWKT[i].bearing,"qty":1,"rating":asplanWKT[i].size},"geometry":geom}
-												data.features.push(features);	
-														
-											break;
-											case 'dead_end':	
-												const polenos=[asplanWKT[i].poleno,asplanWKT[i].prevpole];
-												var pArray={};												
-												var bearingI=0;	
-												//const typeI=(parseInt(asplanWKT[i].type)+1).toString();	
-												const typeI=asplanWKT[i].type;	
-													
-												for (var j = 0; j < polenos.length; j++) {
-													const jD=j;	
-														//var PolesArray=JSON.parse(localStorage.getItem(polenos[jD]));
-														var PolesArray=nodes.filter(obj => obj.nodeid === polenos[jD])[0];	
-														var geom=getLatlng(convertCRS(Terraformer.wktToGeoJSON(PolesArray.geom)));
-														pArray[polenos[jD]]=geom;
-														if(typeof pArray[polenos[0]] !== 'undefined' && typeof pArray[polenos[1]] !== 'undefined'){
-															if(jD+1==polenos.length){
-																bearingI= bearing(pArray[polenos[0]], pArray[polenos[1]]);
-																GeoJSON=getPointGeoJSON(getPoint(15, bearingI, getPointGeoJSON(pArray[polenos[0]])));
-																var features={"type":"Feature","id": asplanWKT[i]._id,"properties":{"name":table,"poleno":asplanWKT[i].poleno,"prevpole":asplanWKT[i].prevpole,"bearing":bearingI,"type":typeI,"code":asplanWKT[i].code},"geometry":GeoJSON}
-																data.features.push(features);
-																
-															} 
-														}
-													
-												}
-												break;
-											
-											case 'jumper':												
-												const polenosJ=[asplanWKT[i].poleno,asplanWKT[i].prevpole,asplanWKT[i].b4prevpole];
-												var pArray={};												
-												var bearingJ1=0;
-												var bearingJ2=0;	
-												//const typeJ=(parseInt(asplanWKT[i].type)+1).toString();	
-												const typeJ=asplanWKT[i].type;	
-												//const code=asplanWKT[i].code;
-												for (var j = 0; j < polenosJ.length; j++) {
-													const jD=j;	
-													//var PolesArray=JSON.parse(localStorage.getItem(polenosJ[jD]));
-													var PolesArray=nodes.filter(obj => obj.nodeid === polenosJ[jD])[0];															
-													var geom=getLatlng(convertCRS(Terraformer.wktToGeoJSON(PolesArray.geom)));
-														pArray[polenosJ[jD]]=geom;
-														if(typeof pArray[polenosJ[0]] !== 'undefined' && typeof pArray[polenosJ[1]] !== 'undefined' && typeof pArray[polenosJ[2]] !== 'undefined'){
-															if(jD+1==polenosJ.length){
-																bearingJ1= bearing(pArray[polenosJ[0]], pArray[polenosJ[1]]);
-																bearingJ2= bearing(pArray[polenosJ[0]], pArray[polenosJ[2]]);
-																
-																var delta;var echo;
-															if (bearingJ1-bearingJ2>0){
-													            delta=bearingJ2;
-													            echo=bearingJ1;
-													        }else{
-													            delta=bearingJ1;
-													            echo=bearingJ2;
-													        }
-															var foxtrot=echo-delta;
-															if(foxtrot>180) {				
-																foxtrot=360-echo+delta;
-															} 
-															const div=3;
-											        		//const dist=10+10*asplanWKT[i]._id;
-															const dist=10+10*getRank(asplanWKT,asplanWKT[i]._id);
-													
-																GeoJSON=arc(getPointGeoJSON(pArray[polenosJ[0]]),bearingJ1,bearingJ2,dist);
-																var features={"type":"Feature","id": asplanWKT[i]._id,"properties":{"name":table,"poleno":asplanWKT[i].poleno,"prevpole":asplanWKT[i].prevpole,"b4prevpole":asplanWKT[i].b4prevpole,"type":typeJ,"dist":dist,"code":asplanWKT[i].code},"geometry":GeoJSON}
-																data.features.push(features);
-																
-																GeoJSON=getPointGeoJSON(getPoint(dist, bearingJ1, getPointGeoJSON(pArray[polenosJ[0]])));
-																var features={"type":"Feature","id": asplanWKT[i]._id,"properties":{"name":table,"poleno":asplanWKT[i].poleno,"prevpole":asplanWKT[i].prevpole,"b4prevpole":asplanWKT[i].b4prevpole,"type":typeJ,"dist":dist},"geometry":GeoJSON}
-																data.features.push(features);
-																
-																GeoJSON=getPointGeoJSON(getPoint(dist, bearingJ2, getPointGeoJSON(pArray[polenosJ[0]])));
-																var features={"type":"Feature","id": asplanWKT[i]._id,"properties":{"name":table,"poleno":asplanWKT[i].poleno,"prevpole":asplanWKT[i].prevpole,"b4prevpole":asplanWKT[i].b4prevpole,"type":typeJ,"dist":dist},"geometry":GeoJSON}
-																data.features.push(features);
-																
-															} 
-														}
-												}
-																									
-											break;
-											case 'prilines':
-											case 'seclines':
-											case 'sdilines':
-												//GeoJSON=convertCRS(Terraformer.wktToGeoJSON(asplanWKT[i].geom));
-												//console.log(nodes);
-												var p1=convertCRS(Terraformer.wktToGeoJSON(nodes.filter(obj => obj.nodeid === asplanWKT[i].frompole)[0].geom));
-												var p2=convertCRS(Terraformer.wktToGeoJSON(nodes.filter(obj => obj.nodeid === asplanWKT[i].topole)[0].geom));
-												GeoJSON=geoJsonMLineString([[[p1.coordinates[0],p1.coordinates[1]],[p2.coordinates[0],p2.coordinates[1]]]]);						
+					
+				        } else {
+				
+				        switch (table) {
+
+                        case 'buildings':
+							GeoJSON=convertCRS(Terraformer.wktToGeoJSON(asplanWKT[i].geom));
+							var features={"type":"Feature","id": asplanWKT[i]._id,"properties":{"name":table,"poleno":asplanWKT[i].poleno,"bearing":asplanWKT[i].bearing, 				"cust_class":asplanWKT[i].cust_class,"cust_type":asplanWKT[i].cust_type,"remarks":asplanWKT[i].remarks,"account_no":asplanWKT[i].account_no,"account_name":asplanWKT[i].account_name,"meter_no":asplanWKT[i].meter_no,"multiplier":Number(asplanWKT[i].multiplier),"meter_phase":asplanWKT[i].meter_phase,"meter_brand":asplanWKT[i].meter_brand,"meter_model":asplanWKT[i].meter_model,"meter_rating":asplanWKT[i].meter_rating,"existing":asplanWKT[i].existing},"geometry":GeoJSON}
+							data.features.push(features);
+							//console.log(asplanWKT[i]);	
+							localStorage.setItem(asplanWKT[i].bldgno,JSON.stringify(asplanWKT[i].geom));
+							upsertItem(nodes, {'nodeid':asplanWKT[i].poleno,'geom':asplanWKT[i].geom}, 'nodeid');											
+							break;
+
+                        case 'prilines':
+                        case 'seclines':
+                            console.log(asplanWKT[i].topole);
+							console.log(nodes);
+							var p1=convertCRS(Terraformer.wktToGeoJSON(nodes.filter(obj => obj.nodeid === asplanWKT[i].frompole)[0].geom));
+							var p2=convertCRS(Terraformer.wktToGeoJSON(nodes.filter(obj => obj.nodeid === asplanWKT[i].topole)[0].geom));
+							GeoJSON=geoJsonMLineString([[[p1.coordinates[0],p1.coordinates[1]],[p2.coordinates[0],p2.coordinates[1]]]]);						
+	
+							//if(cvjson==1){console.log('sacsacs');GeoJSON={type: 'MultiLineString', coordinates: [[[122.47264083595012, 10.72072409851215],[0,0]]]};}
 						
-												//if(cvjson==1){console.log('sacsacs');GeoJSON={type: 'MultiLineString', coordinates: [[[122.47264083595012, 10.72072409851215],[0,0]]]};}
-											
-												var features={"type":"Feature","id": asplanWKT[i]._id,"properties":{"name":table,"created":asplanWKT[i].created,"length":asplanWKT[i].length,"bearing":180, "topole":asplanWKT[i].topole,"frompole":asplanWKT[i].frompole, "topole":asplanWKT[i].topole,"phase":asplanWKT[i].phase, "topole":asplanWKT[i].topole,"size":asplanWKT[i].size, "neutral":asplanWKT[i].neutral,"inclination":asplanWKT[i].inclination,"existing":asplanWKT[i].existing},"geometry":GeoJSON}
-												data.features.push(features);
-												break;
-											
-											case 'buildings':
-												GeoJSON=convertCRS(Terraformer.wktToGeoJSON(asplanWKT[i].geom));
-												var features={"type":"Feature","id": asplanWKT[i]._id,"properties":{"name":table,"bearing":asplanWKT[i].bearing, "poleno":asplanWKT[i].bldgno},"geometry":GeoJSON}
-												data.features.push(features);
-												//console.log(asplanWKT[i]);	
-												localStorage.setItem(asplanWKT[i].bldgno,JSON.stringify(asplanWKT[i].geom));
-												upsertItem(nodes, {'nodeid':asplanWKT[i].bldgno,'geom':asplanWKT[i].geom}, 'nodeid');											
-												break;								
-											default:					
-											
-											break;							
-										}
-										
-									}	
-									if(data.features.length>0){
-										 overlays[table] = createOverlays(data);
-									
-										localStorage.setItem('overlays',JSON.stringify(overlays));	
-									}
-									 
-								
-								}
-							})									
+							var features={"type":"Feature","id": asplanWKT[i]._id,"properties":{"name":table,"created":asplanWKT[i].created,"length":asplanWKT[i].length, "topole":asplanWKT[i].topole,"frompole":asplanWKT[i].frompole, "topole":asplanWKT[i].topole,"phase":asplanWKT[i].phase, "topole":asplanWKT[i].topole,"size":asplanWKT[i].size, "neutral":asplanWKT[i].neutral,"inclination":asplanWKT[i].inclination,"existing":asplanWKT[i].existing},"geometry":GeoJSON}
+							data.features.push(features);
+							break;
+
+                        case 'sdilines':
+                            //GeoJSON=convertCRS(Terraformer.wktToGeoJSON(asplanWKT[i].geom));
+							console.log(asplanWKT[i].topole);
+							console.log(nodes);
+							var p1=convertCRS(Terraformer.wktToGeoJSON(nodes.filter(obj => obj.nodeid === asplanWKT[i].frompole)[0].geom));
+							var p2=convertCRS(Terraformer.wktToGeoJSON(nodes.filter(obj => obj.nodeid === asplanWKT[i].topole)[0].geom));
+							GeoJSON=geoJsonMLineString([[[p1.coordinates[0],p1.coordinates[1]],[p2.coordinates[0],p2.coordinates[1]]]]);						
+		
+							//if(cvjson==1){console.log('sacsacs');GeoJSON={type: 'MultiLineString', coordinates: [[[122.47264083595012, 10.72072409851215],[0,0]]]};}
+						
+							var features={"type":"Feature","id": asplanWKT[i]._id,"properties":{"name":table,"created":asplanWKT[i].created,"length":asplanWKT[i].length, "topole":asplanWKT[i].topole,"frompole":asplanWKT[i].frompole, "topole":asplanWKT[i].topole,"phase":asplanWKT[i].phase, "topole":asplanWKT[i].topole,"size":asplanWKT[i].size,"inclination":asplanWKT[i].inclination,"existing":asplanWKT[i].existing},"geometry":GeoJSON}
+							data.features.push(features);
+							break;
+
+                        case 'guy':
+                            const id=asplanWKT[i]._id;
+							const plN=asplanWKT[i].poleno;
+							const tYpe=asplanWKT[i].type;
+							const bearing1=asplanWKT[i].bearing1;
+							const bearing2=asplanWKT[i].bearing2;
+							const geom1=asplanWKT[i].geom1;
+							const geom2=asplanWKT[i].geom2;
+							const code=asplanWKT[i].code;
+									const points=[];
+									//var PolesArray=JSON.parse(localStorage.getItem(plN));	
+									var PolesArray=nodes.filter(obj => obj.nodeid === plN)[0];
+									console.log(PolesArray);
+								//if(PolesArray){
+									points.push(getLatlng(convertCRS(Terraformer.wktToGeoJSON(PolesArray.geom))));	
+								//}
+								if(tYpe==1){
+									GeoJSON=convertCRS(Terraformer.wktToGeoJSON(geom1));
+									var features1={"type":"Feature","id": id,"properties":{"name":table,"bearing":bearing1,"type":1,"poleno":plN},"geometry":GeoJSON}
+									points.push(getLatlng(GeoJSON));
+								}if(tYpe==2){
+									GeoJSON=convertCRS(Terraformer.wktToGeoJSON(geom1));
+									var features2={"type":"Feature","id": id,"properties":{"name":table,"bearing":bearing1,"type":2,"poleno":plN},"geometry":GeoJSON}
+									points.push(getLatlng(GeoJSON));
+						
+									GeoJSON=convertCRS(Terraformer.wktToGeoJSON(geom2));
+									var features3={"type":"Feature","id": id,"properties":{"name":table,"bearing":bearing2,"type":1,"poleno":plN},"geometry":GeoJSON}
+									points.push(getLatlng(GeoJSON));
+								}	
+							var features4={"type":"Feature","id": id,"properties":{"name":table,"poleno":plN,"code":code,"gtype":tYpe},"geometry":multiline(points)}
+							data.features.push(features4);	
+							if(tYpe==1){
+									data.features.push(features1);
+							}if(tYpe==2){
+									data.features.push(features2);
+									data.features.push(features3);
+							}	
 							
-						}
-						console.log(overlays);	
-					});				 
-									
-					
-					Overlays();	
-					
+							break;
+
+                        case 'transformer':
+                            var PolesArray=nodes.filter(obj => obj.nodeid === asplanWKT[i].poleno)[0];	
+							var geom=convertCRS(Terraformer.wktToGeoJSON(PolesArray.geom));
+							console.log(geom);
+							var features={"type":"Feature","id": asplanWKT[i]._id,"properties":{"name":table,"poleno":asplanWKT[i].poleno,"bearing":asplanWKT[i].bearing,"qty":1,"rating":asplanWKT[i].size,"existing":asplanWKT[i].existing},"geometry":geom}
+							data.features.push(features);	break;
+
+                        case 'dead_end':
+                            const polenos=[asplanWKT[i].poleno,asplanWKT[i].prevpole];
+							var pArray={};												
+							var bearingI=0;	
+							//const typeI=(parseInt(asplanWKT[i].type)+1).toString();	
+							const typeI=asplanWKT[i].type;	
 								
-				}
+							for (var j = 0; j < polenos.length; j++) {
+								const jD=j;	
+									//var PolesArray=JSON.parse(localStorage.getItem(polenos[jD]));
+									var PolesArray=nodes.filter(obj => obj.nodeid === polenos[jD])[0];	
+									var geom=getLatlng(convertCRS(Terraformer.wktToGeoJSON(PolesArray.geom)));
+									pArray[polenos[jD]]=geom;
+									if(typeof pArray[polenos[0]] !== 'undefined' && typeof pArray[polenos[1]] !== 'undefined'){
+										if(jD+1==polenos.length){
+											bearingI= bearing(pArray[polenos[0]], pArray[polenos[1]]);
+											GeoJSON=getPointGeoJSON(getPoint(15, bearingI, getPointGeoJSON(pArray[polenos[0]])));
+											var features={"type":"Feature","id": asplanWKT[i]._id,"properties":{"name":table,"poleno":asplanWKT[i].poleno,"prevpole":asplanWKT[i].prevpole,"bearing":bearingI,"type":typeI,"code":asplanWKT[i].code},"geometry":GeoJSON}
+											data.features.push(features);
+											
+										} 
+									}
+								
+							}
+							break;
+
+                        case 'jumper':
+                            const polenosJ=[asplanWKT[i].poleno,asplanWKT[i].prevpole,asplanWKT[i].b4prevpole];
+							var pArray={};												
+							var bearingJ1=0;
+							var bearingJ2=0;	
+							//const typeJ=(parseInt(asplanWKT[i].type)+1).toString();	
+							const typeJ=asplanWKT[i].type;	
+							//const code=asplanWKT[i].code;
+							for (var j = 0; j < polenosJ.length; j++) {
+								const jD=j;	
+								//var PolesArray=JSON.parse(localStorage.getItem(polenosJ[jD]));
+								var PolesArray=nodes.filter(obj => obj.nodeid === polenosJ[jD])[0];															
+								var geom=getLatlng(convertCRS(Terraformer.wktToGeoJSON(PolesArray.geom)));
+									pArray[polenosJ[jD]]=geom;
+									if(typeof pArray[polenosJ[0]] !== 'undefined' && typeof pArray[polenosJ[1]] !== 'undefined' && typeof pArray[polenosJ[2]] !== 'undefined'){
+										if(jD+1==polenosJ.length){
+											bearingJ1= bearing(pArray[polenosJ[0]], pArray[polenosJ[1]]);
+											bearingJ2= bearing(pArray[polenosJ[0]], pArray[polenosJ[2]]);
+											
+											var delta;var echo;
+										if (bearingJ1-bearingJ2>0){
+								            delta=bearingJ2;
+								            echo=bearingJ1;
+								        }else{
+								            delta=bearingJ1;
+								            echo=bearingJ2;
+								        }
+										var foxtrot=echo-delta;
+										if(foxtrot>180) {				
+											foxtrot=360-echo+delta;
+										} 
+										const div=3;
+						        		//const dist=10+10*asplanWKT[i]._id;
+										const dist=10+10*getRank(asplanWKT,asplanWKT[i]._id);
+								
+											GeoJSON=arc(getPointGeoJSON(pArray[polenosJ[0]]),bearingJ1,bearingJ2,dist);
+											var features={"type":"Feature","id": asplanWKT[i]._id,"properties":{"name":table,"poleno":asplanWKT[i].poleno,"prevpole":asplanWKT[i].prevpole,"b4prevpole":asplanWKT[i].b4prevpole,"type":typeJ,"dist":dist,"code":asplanWKT[i].code},"geometry":GeoJSON}
+											data.features.push(features);
+											
+											GeoJSON=getPointGeoJSON(getPoint(dist, bearingJ1, getPointGeoJSON(pArray[polenosJ[0]])));
+											var features={"type":"Feature","id": asplanWKT[i]._id,"properties":{"name":table,"poleno":asplanWKT[i].poleno,"prevpole":asplanWKT[i].prevpole,"b4prevpole":asplanWKT[i].b4prevpole,"type":typeJ,"dist":dist},"geometry":GeoJSON}
+											data.features.push(features);
+											
+											GeoJSON=getPointGeoJSON(getPoint(dist, bearingJ2, getPointGeoJSON(pArray[polenosJ[0]])));
+											var features={"type":"Feature","id": asplanWKT[i]._id,"properties":{"name":table,"poleno":asplanWKT[i].poleno,"prevpole":asplanWKT[i].prevpole,"b4prevpole":asplanWKT[i].b4prevpole,"type":typeJ,"dist":dist},"geometry":GeoJSON}
+											data.features.push(features);
+															
+														} 
+													}
+											}
+								break;
+				                    }
+				                }
+				            }
+				
+				            if (data.features.length > 0) {
+				                overlays[table] = createOverlays(data);
+				                localStorage.setItem(
+				                    'overlays',
+				                    JSON.stringify(overlays)
+				                );
+				            }
+				
+				            console.log(table + ' loaded');
+				
+				        });
+				    }
+				
+				    // STEP 1: Load poles first
+				    return loadTable('poles')
+				
+				    // STEP 2: Load buildings after poles
+				    .then(function() {
+				        return loadTable('buildings');
+				    })
+				
+				    // STEP 3: Load all remaining layers
+				    .then(function() {
+				
+				        var tables = [
+				            'prilines',
+				            'seclines',
+				            'sdilines',
+				            'guy',
+				            'transformer',
+				            'dead_end',
+				            'jumper'
+				        ];
+				
+				        return $q.all(
+				            tables.map(function(table) {
+				                return loadTable(table);
+				            })
+				        );
+				    })
+				
+				    // STEP 4: Refresh overlays after completion
+				    .then(function() {
+				        console.log('All layers loaded');
+				        Overlays();
+				    })
+				
+				    .catch(function(error) {
+				        console.error('Layer loading failed:', error);
+				    });
+				};
+				
+				
 				function dragg(feature) {
 					//console.log(feature.properties.name)
 	               	var drag;
 					switch(feature.properties.name){
 						case 'dead_end':
 						case 'jumper':
+						case 'transformer':
 						drag=false;
 						break;
 						default:
@@ -1087,42 +1244,68 @@
 					return drag;
 				}
 				function style(feature) {
-					//console.log(feature.properties.name)
-	               	var color;
-					var weight=10;
-					switch(feature.properties.name){
-						case 'prilines':
-						case 'guy':
-						color='black';
-						weight=4;
-						break;
-						case 'seclines':
-						weight=10;
-						color='magenta';
-						break;
-						case 'sdilines':
-						weight=4;
-						color='yellow';
-						break;
-						case 'jumper':	
-						case 'dead_end':					
-						if(feature.properties.type==0)
-							{weight=10;color='magenta';}
-						else{weight=4;color='black';}
-						break;
-						default:					
-						color='black';
-						weight=5;
-						break;							
-					}
-					//console.log('color:'+color)
-                    return {fillColor: color,
-		                    weight: weight,
-		                    opacity: 1,
-		                    color: color,
-		                    dashArray: '3',
-						    fillOpacity: 0.7}
-	            }
+				    var color;
+				    var weight = 10;
+				
+				    switch(feature.properties.name) {
+				        case 'prilines':
+				        case 'guy':
+				            color = 'darkred';
+				            weight = 4;
+				            break;
+				
+				        case 'seclines':
+				            weight = 10;
+				            color = 'magenta';
+				            break;
+				
+				        case 'sdilines':
+				            weight = 4;
+				            color = 'yellow';
+				            break;
+				
+				        case 'jumper':
+				        case 'dead_end':
+				            if(feature.properties.type == 0) {
+				                weight = 10;
+				                color = 'magenta';
+				            } else {
+				                weight = 4;
+				                color = 'darkred';
+				            }
+				            break;
+				
+				        default:
+				            color = 'darkred';
+				            weight = 5;
+				            break;
+				    }
+				
+				    // Override color if existing = true
+				    if (feature.properties.existing === true) {
+						 switch(color){
+							case 'darkred':
+								color = 'black';
+								break;
+							case 'magenta':
+								color = 'gray';
+								break;
+							default:
+					            color = '#C0C0C0';
+					            break;
+						}
+				        
+				    }
+				
+				    return {
+				        fillColor: color,
+				        weight: weight,
+				        opacity: 1,
+				        color: color,
+				        dashArray: '3',
+				        fillOpacity: 0.7
+				    };
+				}
 				
 				var getIcon=function(feature){
 					var Url;
@@ -1156,7 +1339,15 @@
 						Url= '../Omms/img/leaf-green.png'
 						break;							
 					}
-					return Url;
+					return L.icon({
+					        iconUrl: Url,
+					        iconSize: getIconSize(feature),
+					        iconAnchor: getIconAnchor(feature),
+							popupAnchor:  [1, -24],
+					        className: feature.properties.existing === true
+					            ? 'gray-icon'
+					            : ''
+					    });
 				}	
 				var getPane=function(prop){
 					var Pane;
@@ -1240,15 +1431,32 @@
 				        iconSize: getIconSize(feature),
 				        iconAnchor: getIconAnchor(feature),
 				        popupAnchor: [1, -24],
-				        iconUrl: '../Omms/img/new_pole.png'
+				        iconUrl: '../Omms/img/new_pole.png',
+						className: feature.properties.existing === true
+					            ? 'gray-icon'
+					            : ''
 				    });
 				};
-				var enlargedIcon = function(x) {
+				var custIcon = function(feature) {
+				    return L.icon({
+				        iconSize: getIconSize(feature),
+				        iconAnchor: getIconAnchor(feature),
+				        popupAnchor: [1, -24],
+				        iconUrl: '../Omms/img/new_building.png',
+						className: feature.properties.existing === true
+					            ? 'gray-icon'
+					            : ''
+				    });
+				};
+				var enlargedIcon = function(feature) {
 				    return L.icon({
 				        iconSize: [40, 40],
 				        iconAnchor: [20, 20],
 				        popupAnchor: [1, -24],
-				        iconUrl: '../Omms/img/new_pole.png'
+				        iconUrl: '../Omms/img/new_pole.png',
+						className: feature.properties.existing === true
+					            ? 'gray-icon'
+					            : ''
 				    });
 				};
 				
@@ -1257,7 +1465,10 @@
 				        iconSize: getIconSize(feature),
 				        iconAnchor: getIconAnchor(feature),
 				        popupAnchor: [1, -24],
-				        iconUrl: '../Omms/img/last_pole.png'
+				        iconUrl: '../Omms/img/last_pole.png',
+						className: feature.properties.existing === true
+					            ? 'gray-icon'
+					            : ''
 				    });
 				};
 				
@@ -1273,12 +1484,7 @@
 									//pane: getPane(data.features[0].properties),
 									//zIndex : getZIndex(data.features[0].properties.name),
 	                                pointToLayer: function (feature, latlng) {
-	                                    var smallIcon = L.icon({
-							                      iconSize: getIconSize(feature),
-							                      iconAnchor: getIconAnchor(feature),
-							                      popupAnchor:  [1, -24],
-												  iconUrl: getIcon(feature)
-									   });
+	                                    var smallIcon = getIcon(feature);
 																			
 									   return L.marker(latlng, {icon: smallIcon, rotationAngle:getRotationAngle(feature),draggable: dragg(feature),pane: getPane(feature.properties)});
 			                       },
@@ -1294,8 +1500,26 @@
 									switch(feature.properties.name){
 										case 'prilines':
 										case 'seclines':
+										layer.bindPopup("Section ID:"+feature.properties.topole);
+										layer.on('popupopen', function(e) {
+    										var popupElement = e.popup.getElement().querySelector('.leaflet-popup-content');
+											L.DomEvent.on(popupElement, 'click', function() {
+										        $scope.$applyAsync(function() {
+										            $scope.openDtails('line');
+										        });
+										    });
+										});
+										break;
 										case 'sdilines':
-											layer.bindPopup("Section ID:"+feature.properties.topole);
+										layer.bindPopup("Section ID:"+feature.properties.topole);
+										layer.on('popupopen', function(e) {
+    										var popupElement = e.popup.getElement().querySelector('.leaflet-popup-content');
+											L.DomEvent.on(popupElement, 'click', function() {
+										        $scope.$applyAsync(function() {
+										            $scope.openDtails('sdi');
+										        });
+										    });
+										});
 										break;
 										case 'guy':
 										case 'jumper':
@@ -1313,10 +1537,19 @@
 										break;
 										default:
 											layer.bindPopup("Pole ID:"+feature.properties.poleno);
+											layer.on('popupopen', function(e) {
+    										var popupElement = e.popup.getElement().querySelector('.leaflet-popup-content');
+												L.DomEvent.on(popupElement, 'click', function() {
+											        $scope.$applyAsync(function() {
+											            if(feature.properties.name==='poles'){$scope.openDtails('pole');}
+														if(feature.properties.name==='buildings'){$scope.openDtails('cust');}
+											        });
+											    });
+											});
 										break;
 										}
 										 //myFeaturesMap[feature.properties.objectID] = layer;
-									if (feature.geometry.type === "Point" && feature.properties.name==='poles') {
+									if (feature.geometry.type === "Point" && (feature.properties.name==='poles'||feature.properties.name==='buildings')) {
 										polenoLayerMap[feature.properties.poleno] = layer;
 										polenoFeatureMap[feature.properties.poleno] = feature;
 										}
@@ -1378,167 +1611,8 @@
 												console.log(latt+":"+lngg);
 											}
 									    var id = localStorage.getItem("unique_id");
-										switch (feature.properties.name) {
-											case  'prilines':
-											case  'seclines':
-												$scope.poleno=feature.properties.topole;
-												console.log($scope.poleno);
-												if (feature.geometry.type === "MultiLineString") {
-												var newCurrentPole = feature.properties.topole;
-												var newLastPole = feature.properties.frompole;
-												
-													// Reset previous layers:
-											    if (currentpoleLayer instanceof L.Marker && currentpole) {
-											        var currentFeature = polenoFeatureMap[currentpole];
-											        if (currentFeature) {
-											            currentpoleLayer.setIcon(defaultIcon(currentFeature));
-											        }
-											    }
-												    
-												}
-											    // Stop previous blinkers:
-											    if (prevBlinkInterval) {
-											        clearInterval(prevBlinkInterval);
-											        prevBlinkInterval = null;
-											    }
-											    if (blinkInterval) {
-											        clearInterval(blinkInterval);
-											        blinkInterval = null;
-											    }
-											
-											    
-							
-												
-											    // Set new layers:
-											    lastpoleLayer = polenoLayerMap[newLastPole];
-												currentpoleLayer = polenoLayerMap[newCurrentPole];
-											
-											    
-											
-											    // Start blinking lastpoleLayer:
-											    if (lastpoleLayer instanceof L.Marker && lastpole) {
-											        var lastFeature = polenoFeatureMap[lastpole];
-											        if (lastFeature) {
-											            var visibleLast = true;
-											            blinkInterval = setInterval(function() {
-											                if (visibleLast) {
-											                    lastpoleLayer.setIcon(blinkingIcon(lastFeature));
-											                } else {
-											                    lastpoleLayer.setIcon(defaultIcon(lastFeature));
-											                }
-											                visibleLast = !visibleLast;
-											            }, 500);
-											        }
-											    }
-												if (currentpoleLayer instanceof L.Marker && newCurrentPole) {
-											        var currentFeature = polenoFeatureMap[newCurrentPole];
-											        if (currentFeature) {
-											            currentpoleLayer.setIcon(enlargedIcon(currentFeature));
-											        }
-											    }	
-												
-											break;
-											case  'buildings':
-												console.log(feature.properties);
-												sdipole=feature.properties.poleno;
-											break;
-											case  'poles':
-												$scope.poleno=feature.properties.poleno;
-												if (feature.geometry.type === "Point") {
-												var newCurrentPole = feature.properties.poleno;
-													
-												    // If already hovering on this pole → do nothing
-												    if (currentpole === newCurrentPole) {
-														currentpole = newCurrentPole;
-												    	e_currentpole = e;
-												        console.log("Hovering again on same pole, skipping update.");
-												        return;
-												    }
-													
-												    // Shift poles:
-												    prevpole = lastpole;
-												    e_prevpole = e_lastpole;
-												
-												    lastpole = currentpole;
-												    e_lastpole = e_currentpole;
-												
-												    currentpole = newCurrentPole;
-												    e_currentpole = e;
-												
-												    console.log(prevpole + ":" + lastpole + ":" + currentpole);
-												}
-											    // Stop previous blinkers:
-											    if (prevBlinkInterval) {
-											        clearInterval(prevBlinkInterval);
-											        prevBlinkInterval = null;
-											    }
-											    if (blinkInterval) {
-											        clearInterval(blinkInterval);
-											        blinkInterval = null;
-											    }
-											
-											    // Reset previous layers:
-											    if (prevpoleLayer instanceof L.Marker && prevpole) {
-											        var prevFeature = polenoFeatureMap[prevpole];
-											        if (prevFeature) {
-											            prevpoleLayer.setIcon(defaultIcon(prevFeature));
-											        }
-											    }
-											
-											    if (lastpoleLayer instanceof L.Marker && lastpole) {
-											        var lastFeature = polenoFeatureMap[lastpole];
-											        if (lastFeature) {
-											            lastpoleLayer.setIcon(defaultIcon(lastFeature));
-											        }
-											    }
-							
-												
-											    // Set new layers:
-											    prevpoleLayer = polenoLayerMap[prevpole];
-											    lastpoleLayer = polenoLayerMap[lastpole];
-												currentpoleLayer = polenoLayerMap[newCurrentPole];
-											
-											    // Start blinking prevpoleLayer:
-											    if (prevpoleLayer instanceof L.Marker && prevpole) {
-											        var prevFeature = polenoFeatureMap[prevpole];
-											        if (prevFeature) {
-											            var visiblePrev = true;
-											            prevBlinkInterval = setInterval(function() {
-											                if (visiblePrev) {
-											                    prevpoleLayer.setIcon(blinkingIcon(prevFeature));
-											                } else {
-											                    prevpoleLayer.setIcon(defaultIcon(prevFeature));
-											                }
-											                visiblePrev = !visiblePrev;
-											            }, 3000);
-											        }
-											    }
-											
-											    // Start blinking lastpoleLayer:
-											    if (lastpoleLayer instanceof L.Marker && lastpole) {
-											        var lastFeature = polenoFeatureMap[lastpole];
-											        if (lastFeature) {
-											            var visibleLast = true;
-											            blinkInterval = setInterval(function() {
-											                if (visibleLast) {
-											                    lastpoleLayer.setIcon(blinkingIcon(lastFeature));
-											                } else {
-											                    lastpoleLayer.setIcon(defaultIcon(lastFeature));
-											                }
-											                visibleLast = !visibleLast;
-											            }, 500);
-											        }
-											    }
-												if (currentpoleLayer instanceof L.Marker && newCurrentPole) {
-											        var currentFeature = polenoFeatureMap[newCurrentPole];
-											        if (currentFeature) {
-											            currentpoleLayer.setIcon(enlargedIcon(currentFeature));
-											        }
-											    }	
-												
-												break;
-										}
 										
+										poleSelect(feature,e);
 									
 									});
 										var startLatLng;
@@ -1547,12 +1621,8 @@
 										});
 										layer.on('dragend', function(e) {
 										  var poleno=e.target.feature.properties.poleno;
-										  //var pdtls=JSON.parse(localStorage.getItem(poleno));
-											//console.log(nodes);
-										  //var pdtls=nodes.filter(obj => obj.nodeid === poleno)[0];	
-											//console.log("test:"+pdtls.geom);		
-										 // var orgPoint=convertCRS(Terraformer.wktToGeoJSON(pdtls.geom));
-						              	   /**/
+										 
+												
 											console.log(overlays);
 									 //UpdatePoleCoord(e,'prilines',orgPoint);
 										  UpdatePoleCoord(e,'transformer',startLatLng);
@@ -1565,7 +1635,8 @@
 										  UpdatePoleCoord(e,'dead_end',startLatLng);
 										  UpdatePoleCoord(e,'jumper',startLatLng);	
 											/**/
-											//console.log(JSON.stringify(overlays));	
+											//console.log(JSON.stringify(overlays));
+											
 																			  
 										});
 										
@@ -1574,6 +1645,188 @@
 						}
     				 
 		     };	
+			function poleSelect(feature,e){	
+				switch (feature.properties.name) {
+						case  'sdilines':
+						$scope.poleno=feature.properties.topole;
+						break;
+						case  'prilines':
+						case  'seclines':
+							$scope.poleno=feature.properties.topole;
+							console.log(lastpole+':'+currentpole);
+							// Reset previous layers:
+						    if (currentpoleLayer instanceof L.Marker && currentpole) {
+						        var currentFeature = polenoFeatureMap[currentpole];
+						        if (currentFeature) {
+						            currentpoleLayer.setIcon(defaultIcon(currentFeature));
+						        }
+						    }
+							if (lastpoleLayer instanceof L.Marker && lastpole) {
+						        var lastFeature = polenoFeatureMap[lastpole];
+						        if (lastFeature) {
+						            lastpoleLayer.setIcon(defaultIcon(lastFeature));
+						        }
+						    }
+							
+		
+							
+						    // Stop previous blinkers:
+						    if (prevBlinkInterval) {
+						        clearInterval(prevBlinkInterval);
+						        prevBlinkInterval = null;
+						    }
+						    if (blinkInterval) {
+						        clearInterval(blinkInterval);
+						        blinkInterval = null;
+						    }
+						
+						    if (feature.geometry.type === "MultiLineString") {
+								var newCurrentPole = feature.properties.topole;
+								var newLastPole = feature.properties.frompole;
+							   
+							}
+		
+							 // Shift poles:
+							    lastpole = newLastPole;	
+								currentpole = newCurrentPole;
+							   
+						    // Set new layers:
+						    lastpoleLayer = polenoLayerMap[newLastPole];
+							currentpoleLayer = polenoLayerMap[newCurrentPole];
+						
+						    
+						
+						    // Start blinking lastpoleLayer:
+						    if (lastpoleLayer instanceof L.Marker && newLastPole) {
+						        var lastFeature = polenoFeatureMap[newLastPole];
+						        if (lastFeature) {
+						            var visibleLast = true;
+						            blinkInterval = setInterval(function() {
+						                if (visibleLast) {
+						                    lastpoleLayer.setIcon(blinkingIcon(lastFeature));
+						                } else {
+						                    lastpoleLayer.setIcon(defaultIcon(lastFeature));
+						                }
+						                visibleLast = !visibleLast;
+						            }, 500);
+						        }
+						    }
+							if (currentpoleLayer instanceof L.Marker && newCurrentPole) {
+						        var currentFeature = polenoFeatureMap[newCurrentPole];
+						        if (currentFeature) {
+						            currentpoleLayer.setIcon(enlargedIcon(currentFeature));
+						        }
+						    }	
+							
+						break;
+						case  'buildings':
+							console.log(feature.properties);
+							sdipole=feature.properties.poleno;
+							$scope.poleno=feature.properties.poleno;
+							if (feature.geometry.type === "Point") {
+								var newCurrentPole = feature.properties.poleno;
+								currentpoleLayer = polenoLayerMap[newCurrentPole];
+							}
+						break;
+						case  'poles':
+							$scope.poleno=feature.properties.poleno;
+							if (feature.geometry.type === "Point") {
+							var newCurrentPole = feature.properties.poleno;
+								
+							    // If already hovering on this pole → do nothing
+							    if (currentpole === newCurrentPole) {
+									currentpole = newCurrentPole;
+							    	e_currentpole = e;
+							        console.log("Hovering again on same pole, skipping update.");
+							        return;
+							    }
+								// Reset previous layers:
+								    if (prevpoleLayer instanceof L.Marker && prevpole) {
+								        var prevFeature = polenoFeatureMap[prevpole];
+								        if (prevFeature) {
+								            prevpoleLayer.setIcon(defaultIcon(prevFeature));
+								        }
+								    }
+								
+								    if (lastpoleLayer instanceof L.Marker && lastpole) {
+								        var lastFeature = polenoFeatureMap[lastpole];
+								        if (lastFeature) {
+								            lastpoleLayer.setIcon(defaultIcon(lastFeature));
+								        }
+								    }
+								
+							    // Shift poles:
+							    prevpole = lastpole;
+							    e_prevpole = e_lastpole;
+							
+							    lastpole = currentpole;
+							    e_lastpole = e_currentpole;
+							
+							    currentpole = newCurrentPole;
+							    e_currentpole = e;
+							
+							    console.log(prevpole + ":" + lastpole + ":" + currentpole);
+							}
+						    // Stop previous blinkers:
+						    if (prevBlinkInterval) {
+						        clearInterval(prevBlinkInterval);
+						        prevBlinkInterval = null;
+						    }
+						    if (blinkInterval) {
+						        clearInterval(blinkInterval);
+						        blinkInterval = null;
+						    }
+						
+						    
+		
+							
+						    // Set new layers:
+						    prevpoleLayer = polenoLayerMap[prevpole];
+						    lastpoleLayer = polenoLayerMap[lastpole];
+							currentpoleLayer = polenoLayerMap[newCurrentPole];
+						
+						    // Start blinking prevpoleLayer:
+						    if (prevpoleLayer instanceof L.Marker && prevpole) {
+						        var prevFeature = polenoFeatureMap[prevpole];
+						        if (prevFeature) {
+						            var visiblePrev = true;
+						            prevBlinkInterval = setInterval(function() {
+						                if (visiblePrev) {
+						                    prevpoleLayer.setIcon(blinkingIcon(prevFeature));
+						                } else {
+						                    prevpoleLayer.setIcon(defaultIcon(prevFeature));
+						                }
+						                visiblePrev = !visiblePrev;
+						            }, 3000);
+						        }
+						    }
+						
+						    // Start blinking lastpoleLayer:
+						    if (lastpoleLayer instanceof L.Marker && lastpole) {
+						        var lastFeature = polenoFeatureMap[lastpole];
+						        if (lastFeature) {
+						            var visibleLast = true;
+						            blinkInterval = setInterval(function() {
+						                if (visibleLast) {
+						                    lastpoleLayer.setIcon(blinkingIcon(lastFeature));
+						                } else {
+						                    lastpoleLayer.setIcon(defaultIcon(lastFeature));
+						                }
+						                visibleLast = !visibleLast;
+						            }, 500);
+						        }
+						    }
+							if (currentpoleLayer instanceof L.Marker && newCurrentPole) {
+						        var currentFeature = polenoFeatureMap[newCurrentPole];
+						        if (currentFeature) {
+						            currentpoleLayer.setIcon(enlargedIcon(currentFeature));
+						        }
+						    }	
+							
+							break;
+					}				
+				
+			}
 			function Overlays(){	
 				$scope.layers.overlays=overlays;				
 				
@@ -1688,9 +1941,10 @@
 			}
 			$scope.existPole=false;
 			$scope.savePole = function(){
+				console.log(overlays);
 				overlays['poles'].data.features[findIndexByPoleno(overlays['poles'],currentpole)].properties.existing=$scope.existPole;
 				var created=localStorage.getItem("unique_id");
-				var jo = {}; jo[created] = [{ 'poles': [],'prilines':[],'seclines':[],'guy':[],'jumper':[],'dead_end':[],'transformer':[]  }];
+				var jo = {}; jo[created] = [{ 'poles': [],'buildings': [],'prilines':[],'seclines':[],'sdilines':[],'guy':[],'jumper':[],'dead_end':[],'transformer':[]  }];
 				var tables=['poles','buildings','prilines','seclines','sdilines','guy','transformer','dead_end','jumper','transformer'];
 					for(var t=0;t<tables.length;t++){
 						const table=tables[t];
@@ -1723,14 +1977,18 @@
 									case 'buildings':
 										var poleObj={//'_id':overlays['poles'].data.features[i].id
 										'poleno':overlays[table].data.features[i].properties.poleno
-										,'oldpoleno':overlays[table].data.features[i].properties.oldpoleno
 										,'geom':geoJSONToWKT(overlays[table].data.features[i].geometry)
-										,'priassembly':overlays[table].data.features[i].properties.priassembly
-										,'secassembly':overlays[table].data.features[i].properties.secassembly
-										,'miscellaneous':overlays[table].data.features[i].properties.miscellaneous
-										,'ptype':overlays[table].data.features[i].properties.ptype
-										,'pheight':overlays[table].data.features[i].properties.pheight
-										,'pclass':overlays[table].data.features[i].properties.pclass
+										,'bearing':overlays[table].data.features[i].properties.bearing
+										,'cust_class':overlays[table].data.features[i].properties.cust_class
+										,'cust_type':overlays[table].data.features[i].properties.cust_type
+										,'account_no':overlays[table].data.features[i].properties.account_no
+										,'account_name':overlays[table].data.features[i].properties.account_name
+										,'meter_no':overlays[table].data.features[i].properties.meter_no
+										,'multiplier':overlays[table].data.features[i].properties.multiplier
+										,'meter_phase':overlays[table].data.features[i].properties.meter_phase
+										,'meter_brand':overlays[table].data.features[i].properties.meter_brand
+										,'meter_model':overlays[table].data.features[i].properties.meter_model
+										,'meter_rating':overlays[table].data.features[i].properties.meter_rating
 										,'remarks':overlays[table].data.features[i].properties.remarks
 										,'existing':overlays[table].data.features[i].properties.existing
 										}
@@ -1756,13 +2014,13 @@
 										'frompole':overlays[table].data.features[i].properties.frompole
 										,'topole':overlays[table].data.features[i].properties.topole
 										,'size':overlays[table].data.features[i].properties.size
-										,'neutral':overlays[table].data.features[i].properties.neutral
 										,'phase':overlays[table].data.features[i].properties.phase
 										,'length':overlays[table].data.features[i].properties.length
 										,'inclination':overlays[table].data.features[i].properties.inclination
 										,'geom':geoJSONToWKT(overlays[table].data.features[i].geometry)
 										,'existing':overlays[table].data.features[i].properties.existing
 										}
+										console.log(lineObj);
 										jo[created][0][table].push(lineObj)
 									break;
 									case 'guy':
@@ -1813,6 +2071,7 @@
 										,'bearing':overlays[table].data.features[i].properties.bearing
 										,'phase':overlays[table].data.features[i].properties.qty+'P'
 										,'size':overlays[table].data.features[i].properties.rating
+										,'existing':overlays[table].data.features[i].properties.existing
 										,'code':'('+overlays[table].data.features[i].properties.qty+')'+overlays[table].data.features[i].properties.rating
 										}
 										console.log(xfoObj);
@@ -1841,16 +2100,71 @@
 			$scope.existPri=false;
 			$scope.existSec=false;
 			$scope.lineexistChange = function() {
-			  
-			  var pID=getID('prilines',l_frompole,l_topole);
-			  var sID=getID('seclines',l_frompole,l_topole);
-			  if(pID!=null){
-				overlays['prilines'].data.features[pID].properties.existing=$scope.existPri;
-			  }
-			  if(sID!=null){
-			  	overlays['seclines'].data.features[sID].properties.existing=$scope.existSec;
-			  }
+
+			    var pID = getID('prilines', l_frompole, l_topole);
+			    var sID = getID('seclines', l_frompole, l_topole);
+				var cID = getID('sdilines', l_frompole, l_topole);
+				
+				
+			    // Primary line
+			    if (pID != null) {
+			
+			        var pFeature = overlays['prilines'].data.features[pID];
+			
+			        pFeature.properties.existing = $scope.existPri;
+			
+			        // Update displayed Leaflet layer
+			        updateLineStyle('prilines', pFeature);
+			    }
+			
+			    // Secondary line
+			    if (sID != null) {
+			
+			        var sFeature = overlays['seclines'].data.features[sID];
+			
+			        sFeature.properties.existing = $scope.existSec;
+			
+			        // Update displayed Leaflet layer
+			        updateLineStyle('seclines', sFeature);
+			    }
+				// SDI line
+			    if (cID != null) {
+			
+			        var cFeature = overlays['sdilines'].data.features[cID];
+			
+			        cFeature.properties.existing = $scope.existSDI;
+			
+			        // Update displayed Leaflet layer
+			        updateLineStyle('sdilines', cFeature);
+			    }
 			};
+			
+			function updateLineStyle(layerName, feature) {
+
+			    leafletData.getMap().then(function(map) {
+			
+			        map.eachLayer(function(layer) {
+			
+			            if (layer instanceof L.GeoJSON) {
+			
+			                layer.eachLayer(function(subLayer) {
+			
+			                    if (subLayer.feature &&
+			                        subLayer.feature.id === feature.id &&
+			                        subLayer.feature.properties.name === layerName) {
+			
+			                        // Synchronize feature property
+			                        subLayer.feature.properties.existing =
+			                            feature.properties.existing;
+			
+			                        // Apply updated style
+			                        subLayer.setStyle(style(subLayer.feature));
+			                    }
+			                });
+			            }
+			        });
+			    });
+			}
 			
 			var priPhase='';
 			$scope.priPhChange = function() {
@@ -1862,45 +2176,110 @@
 			  var pID=getID('prilines',l_frompole,l_topole);
 			  overlays['prilines'].data.features[pID].properties.phase=priPhase;
 			};
+			var sdiPhase='';
+			$scope.sdiPhChange = function() {
+			  sdiPhase = '';
+			  if ($scope.sdiPh1) sdiPhase += 'A';
+			  if ($scope.sdiPh2) sdiPhase += 'B';
+			  if ($scope.sdiPh3) sdiPhase += 'C';
+			  sdiPhase += 'N';
+			  var sdiID=getID('sdilines',l_frompole,l_topole);
+			  overlays['sdilines'].data.features[sdiID].properties.phase=sdiPhase;
+			};
 			
 			$scope.linetype="C";
-			$scope.linetypeChange = function(){
-				lastpole=l_frompole;
-				currentpole=l_topole;
-				var pID=getID('prilines',l_frompole,l_topole);
-				var sID=getID('seclines',l_frompole,l_topole);
-				switch($scope.linetype){
-						case 'A': //PUB   $scope.AddLine('prilines')
-						if(pID==null){$scope.AddLine('prilines');overlays['prilines'].data.features[pID].properties.existing=$scope.existPri;}
-						if(sID==null){$scope.AddLine('seclines');overlays['seclines'].data.features[pID].properties.existing=$scope.existSec;}
-						break;
-						case 'B'://SS
-						if(pID!=null){
-							removeFeatureById('prilines',pID);
-							if(sID==null){$scope.AddLine('seclines');overlays['seclines'].data.features[pID].properties.existing=$scope.existSec;}
-						
-						}
-						break;
-						case 'C'://Primary only
-						if(sID!=null){
-							removeFeatureById('seclines',sID);
-							if(pID==null){$scope.AddLine('prilines');overlays['prilines'].data.features[pID].properties.existing=$scope.existPri;}
-						
-						}
-						break;
-						
-					}
+			$scope.linetypeChange = function () {
+
+			    lastpole = l_frompole;
+			    currentpole = l_topole;
+			
+			    var pID = getID('prilines', l_frompole, l_topole);
+			    var sID = getID('seclines', l_frompole, l_topole);
+				console.log("linetype:", $scope.linetype);
+			    console.log("Primary ID:", pID);
+			    console.log("Secondary ID:", sID);
+			
+			    switch ($scope.linetype) {
+			
+			        case 'A': // PUB - Primary + Secondary
+			
+			            if (pID == null) {
+			                pID = $scope.AddLine('prilines');
+			
+			                if (pID != null) {
+			                    overlays['prilines'].data.features[pID]
+			                        .properties.existing = $scope.existPri;
+			                }
+			            }
+			
+			            if (sID == null) {
+			                sID = $scope.AddLine('seclines');
+			
+			                if (sID != null) {
+			                    overlays['seclines'].data.features[sID]
+			                        .properties.existing = $scope.existSec;
+			                }
+			            }
+			
+			            break;
+			
+			
+			        case 'B': // SS - Secondary only
+			
+			            if (pID != null) {
 				
-			}
+			                removeFeatureById('prilines', pID);
+			            }
+			
+			            if (sID == null) {
+			                sID = $scope.AddLine('seclines');
+			
+			                if (sID != null) {
+			                    overlays['seclines'].data.features[sID]
+			                        .properties.existing = $scope.existSec;
+			                }
+			            }
+			
+			            break;
+			
+			
+			        case 'C': // Primary only
+			
+			            if (sID != null) {
+			                removeFeatureById('seclines', sID);
+			            }
+			
+			            if (pID == null) {
+			                pID = $scope.AddLine('prilines');
+			
+			                if (pID != null) {
+			                    overlays['prilines'].data.features[pID]
+			                        .properties.existing = $scope.existPri;
+			                }
+			            }
+			
+			            break;
+			    }
+				$scope.lineexistChange();
+			};
 			$scope.priChange = function(){
 				var pID=getID('prilines',l_frompole,l_topole);
-				overlays['prilines'].data.features[pID].properties.size=$scope.priSize.wire_size;
+				if(pID!=null){
+					overlays['prilines'].data.features[pID].properties.size=$scope.priSize.wire_size;
+				}
 			}
 			
 			$scope.secChange = function(){
 				var sID=getID('seclines',l_frompole,l_topole);
-				overlays['seclines'].data.features[sID].properties.size=$scope.secSize.wire_size;
-				
+				if(sID!=null){
+					overlays['seclines'].data.features[sID].properties.size=$scope.secSize.wire_size;
+				}
+			}
+			$scope.sdiChange = function(){
+				var sdiID=getID('sdilines',l_frompole,l_topole);
+				if(sdiID!=null){
+					overlays['sdilines'].data.features[sdiID].properties.size=$scope.sdiSize.wire_size;
+				}
 			}
 			$scope.neuChange = function(){
 				var pID=getID('prilines',l_frompole,l_topole);
@@ -1920,6 +2299,7 @@
 				$scope.conLength=Math.round(currentLength*100/Math.cos(toRadians($scope.anglechange)))/100;
 				var pID=getID('prilines',l_frompole,l_topole);
 				var sID=getID('seclines',l_frompole,l_topole);
+				var sdiID=getID('sdilines',l_frompole,l_topole);
 				if(pID!=null){
 					overlays['prilines'].data.features[pID].properties.inclination=$scope.anglechange;
 					overlays['prilines'].data.features[pID].properties.length=$scope.conLength;
@@ -1927,6 +2307,10 @@
 				if(sID!=null){
 					overlays['seclines'].data.features[sID].properties.inclination=$scope.anglechange;
 					overlays['seclines'].data.features[sID].properties.length=$scope.conLength;
+				}
+				if(sdiID!=null){
+					overlays['sdilines'].data.features[sdiID].properties.inclination=$scope.anglechange;
+					overlays['sdilines'].data.features[sdiID].properties.length=$scope.conLength;
 				}
 			}
 			$scope.oldpolenoChange = function(){
@@ -1950,6 +2334,36 @@
 			}
 			$scope.existChange = function(){
 				overlays['poles'].data.features[findIndexByPoleno(overlays['poles'],currentpole)].properties.existing=$scope.existPole;
+				if (currentpoleLayer instanceof L.Marker && currentpole) {
+			        var currentFeature = polenoFeatureMap[currentpole];
+			        if (currentFeature) {
+			            currentpoleLayer.setIcon(defaultIcon(currentFeature));
+			        }
+			    }
+			}
+			$scope.custChange = function(){
+				
+				overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.cust_class=$scope.CustClass;
+				overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.cust_type=$scope.CustType;
+				overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.account_no=$scope.acctNo;
+				overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.account_name=$scope.acctName;
+				overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.meter_no=$scope.meterNo;
+				overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.multiplier=$scope.meterMult;
+				overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.meter_phase=$scope.meterPhase;
+				overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.meter_brand=$scope.meterBrand;
+				overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.meter_model=$scope.meterModel;
+				overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.meter_rating=$scope.meterRating;
+				overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.remarks=$scope.cRemarks;
+				overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.existing=$scope.existBldg;
+				
+				if (currentpoleLayer instanceof L.Marker && sdipole) {
+					console.log('safcsavsdvasdv');
+					var currentFeature = polenoFeatureMap[sdipole];
+			        if (currentFeature) {
+			            currentpoleLayer.setIcon(custIcon(currentFeature));
+			        }
+			    }
+				console.log(overlays['buildings']);
 			}
 			
 			$scope.existAssy = false;
@@ -2028,7 +2442,21 @@
 			        findIndexByPoleno(overlays['poles'], currentpole)
 			    ].properties.miscellaneous = $scope.misc;
 			};
-
+			$scope.priasChange = function(){
+				overlays['poles'].data.features[
+			        findIndexByPoleno(overlays['poles'], currentpole)
+			    ].properties.priassembly = $scope.priassembly;
+			}
+			$scope.secasChange = function(){
+				overlays['poles'].data.features[
+			        findIndexByPoleno(overlays['poles'], currentpole)
+			    ].properties.secassembly = $scope.secassembly;
+			}
+			$scope.miscChange = function(){
+				overlays['poles'].data.features[
+			        findIndexByPoleno(overlays['poles'], currentpole)
+			    ].properties.miscellaneous = $scope.misc;
+			}
 			var pDtails=function(){
 				$scope.misc= "";
 				var misc="";
@@ -2137,11 +2565,39 @@
 				}
 			}
 			var cDtails=function(){
-				$scope.cWire = $scope.wDetails[0];
-					
+				console.log(sdipole);
+				//console.log(findIndexByPoleno(overlays['buildings'],sdipole))
+				if(findIndexByPoleno(overlays['buildings'],sdipole)>0){
+					$scope.cWire = $scope.wDetails[0];
+					$scope.existBldg=overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.existing
+					$scope.acctNo=overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.account_no
+					$scope.acctName=overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.account_name
+					$scope.meterNo=overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.meter_no
+					/**/$scope.meterMult=overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.multiplier
+					$scope.CustClass=overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.cust_class
+					$scope.CustType=overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.cust_type
+					$scope.meterPhase=overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.meter_phase
+					$scope.meterBrand=overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.meter_brand
+					$scope.meterModel=overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.meter_model
+					$scope.meterRating=overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.meter_rating
+					$scope.cRemarks=overlays['buildings'].data.features[findIndexByPoleno(overlays['buildings'],sdipole)].properties.remarks
+					/**/
+				}
+				
 			}
 			var sdiDtails=function(){
-					
+				var sdiID=getID('sdilines',l_frompole,l_topole);
+				if(sdiID!=null){
+					console.log(overlays);
+					$scope.conLength= parseFloat(overlays['sdilines'].data.features[sdiID].properties.length);
+					$scope.sdiSize = $scope.wDetails[getWireIndexBySize($scope.wDetails, overlays['sdilines'].data.features[sdiID].properties.size)];
+					$scope.anglechange= overlays['sdilines'].data.features[sdiID].properties.inclination;
+					var phase =overlays['sdilines'].data.features[sdiID].properties.phase;
+					$scope.sdiPh1 = phase.includes('A');
+					$scope.sdiPh2 = phase.includes('B');
+					$scope.sdiPh3 = phase.includes('C');
+					$scope.existSDI = overlays['sdilines'].data.features[sdiID].properties.existing;				
+				}
 			}
 			function summarizeEntries(input) {
 			    if (typeof input !== 'string') {
@@ -2186,11 +2642,11 @@
 					
 					var created=localStorage.getItem("unique_id");
 					var _id=1;
-					var features={"type":"Feature","id": _id,"properties":{"name":'transformer',"poleno":e_poleno,"bearing":0,"qty":qty,"rating":rating},"geometry":{type: 'Point', coordinates: [e_currentpole.latlng.lng,e_currentpole.latlng.lat]}};
+					var features={"type":"Feature","id": _id,"properties":{"name":'transformer',"poleno":e_poleno,"bearing":0,"qty":qty,"rating":rating,"existing":$scope.existAssy},"geometry":{type: 'Point', coordinates: [e_currentpole.latlng.lng,e_currentpole.latlng.lat]}};
 					var data ={"type":"FeatureCollection","features":[]}
 					if(overlays['transformer']!=null){
 						_id=getMax(overlays['transformer'].data.features, 'id')+1;
-						features={"type":"Feature","id": _id,"properties":{"name":'transformer',"poleno":e_poleno,"bearing":0,"qty":qty,"rating":rating},"geometry":{type: 'Point', coordinates: [e_currentpole.latlng.lng,e_currentpole.latlng.lat]}};
+						features={"type":"Feature","id": _id,"properties":{"name":'transformer',"poleno":e_poleno,"bearing":0,"qty":qty,"rating":rating,"existing":$scope.existAssy},"geometry":{type: 'Point', coordinates: [e_currentpole.latlng.lng,e_currentpole.latlng.lat]}};
 						overlays['transformer'].data.features.push(features);
 					}else{
 						data.features.push(features);
@@ -2375,14 +2831,33 @@
 			    };
 			}
 
-			$scope.clearDtails = function(){
-				$scope.priassembly = "";
-				$scope.secassembly = "";
-				$scope.misc = "";
+			$scope.clearDtails = function(type){
+				switch(type){
+					case 'pole':
+						$scope.priassembly = "";
+						$scope.secassembly = "";
+						$scope.misc = "";
+						overlays['poles'].data.features[findIndexByPoleno(overlays['poles'],currentpole)].properties.priassembly="";
+						overlays['poles'].data.features[findIndexByPoleno(overlays['poles'],currentpole)].properties.secassembly="";
+						overlays['poles'].data.features[findIndexByPoleno(overlays['poles'],currentpole)].properties.miscellaneous="";
+				
+						break;
+					case 'cust':
+					break;
+				}
 			}
+			var str_name = localStorage.getItem("str_name");
+
+				if (!str_name || str_name === "undefined" || str_name === "null") {
+				    str_name = "user";
+				}
+				
 			$scope.initialize=function (){ 
 				$scope.instDate=moment();
-				$http.get('Main?uname='+localStorage.getItem("str_name")).then(function mySuccs(response){
+				
+				console.log("str_name:", str_name);
+				$http.get('Main?uname='+str_name).then(function mySuccs(response){
+					
 					$scope.Creator=JSON.parse(JSON.stringify(response.data))[0].phone;
 				})
 				$scope.Unique_id=$scope.Creator+$scope.instDate.format("YYMMDDHHmmss");
@@ -2547,7 +3022,7 @@
 				$scope.Type=Type;
 				
 				$scope.Followed=moment($scope.Followed1).format("MM/DD/YY")+"  "+moment($scope.Time1).format("hh:mm:ss A");
-				$http.get('Main?uname='+localStorage.getItem("str_name")).then(function mySuccs(response){
+				$http.get('Main?uname='+str_name).then(function mySuccs(response){
 					$scope.Follower=JSON.parse(JSON.stringify(response.data))[0].phone;
 				})
 				$scope.newType = function(x) {
@@ -2609,6 +3084,14 @@
 				})
 				
 			}
+			$scope.deleteBldg=function (){ 
+				$http.post(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS?table=deletePole',$scope.poleno)
+				.then(function mySuccs(response){
+					console.log(response);
+					removeFeatureById('buildings',getPoleID('buildings',$scope.poleno))
+				})
+				
+			}
 			$scope.deletePole=function (){ 
 				$http.post(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS?table=deletePole',$scope.poleno)
 				.then(function mySuccs(response){
@@ -2618,19 +3101,21 @@
 					removeFeatureById('jumper',getPoleID('jumper',$scope.poleno))
 					removeFeatureById('guy',getPoleID('guy',$scope.poleno))
 					removeFeatureById('dead_end',getPoleID('dead_end',$scope.poleno))
-					removeFeatureById('sdilines',getPoleID('sdilines',$scope.poleno))
+					removeFeatureById('sdilines',getPoleID('sdilines',l_frompole))
 				})
 				
 			}
 			$scope.deleteLine=function (){ 
 				
-				$http.post(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS?table=deleteLine',$scope.poleno)
+				$http.post(window.APP_CONFIG.API_BASE_URL +'/Joblist/iGIS?table=deleteLine',l_topole)
 				.then(function mySuccs(response){
 					console.log(response);
 					var pID=getID('prilines',l_frompole,l_topole);
 					var sID=getID('seclines',l_frompole,l_topole);
+					var cID=getID('sdilines',l_frompole,l_topole);
 					if(pID!=null){removeFeatureById('prilines',[pID])}
 					if(sID!=null){removeFeatureById('seclines',[sID])}
+					if(cID!=null){removeFeatureById('sdilines',[cID])}
 				})
 				
 			}
@@ -2824,11 +3309,11 @@ const familyTree = [
 							}
 						break;
 						case 'buildings':
-							var features={"type":"Feature","id": _id,"properties":{"name":table,"poleno":poleno,"created":created},"geometry":{type: 'Point', coordinates: [e.latlng.lng, e.latlng.lat]}}
+							var features={"type":"Feature","id": _id,"properties":{"name":table,"poleno":poleno,"bearing":"0", "created":created,"cust_class":"Residential","cust_type":"Residential_BAPA","remarks":"","account_no":"","account_name":"","meter_no":"","multiplier":1,"meter_phase":"","meter_brand":"","meter_model":"","meter_rating":"","existing":false},"geometry":{type: 'Point', coordinates: [e.latlng.lng, e.latlng.lat]}}
 							var data ={"type":"FeatureCollection","features":[]}
 							if(overlays[table]!=null){
 								_id=getMax(overlays[table].data.features, 'id')+1;
-								features={"type":"Feature","id": _id,"properties":{"name":table,"poleno":poleno,"created":created},"geometry":{type: 'Point', coordinates: [e.latlng.lng, e.latlng.lat]}}
+								features={"type":"Feature","id": _id,"properties":{"name":table,"poleno":poleno,"bearing":0, "created":created,"cust_class":"Residential","cust_type":"Residential_BAPA","remarks":"","account_no":"","account_name":"","meter_no":"","multiplier":1,"meter_phase":"","meter_brand":"","meter_model":"","meter_rating":"","existing":false},"geometry":{type: 'Point', coordinates: [e.latlng.lng, e.latlng.lat]}}
 								overlays[table].data.features.push(features);
 							}else{
 								data.features.push(features);
@@ -3043,25 +3528,27 @@ const familyTree = [
 							}
 						break;
 						case 'sdilines':
-							var features={"type":"Feature","id": _id,"properties":{"name":table,"bearing":180, "topole":sdipole,"frompole":currentpole,"created":created,"size":$scope.cWire,"phase":"ABCN","inclination":0,"existing":$scope.existLine},"geometry":geojson}
+						
+							var features={"type":"Feature","id": _id,"properties":{"name":table,"topole":sdipole,"frompole":currentpole,"created":created,"size":$scope.cWire.wire_size,"phase":"ABCN","inclination":0,"length":S,"existing":$scope.existBldg},"geometry":geojson}
 							var data ={"type":"FeatureCollection","features":[]}
 							if(overlays[table]!=null){
 								_id=getMax(overlays[table].data.features, 'id')+1;
-								features={"type":"Feature","id": _id,"properties":{"name":table,"bearing":180, "topole":sdipole,"frompole":currentpole,"created":created,"size":$scope.cWire,"phase":"ABCN","inclination":0,"existing":$scope.existLine},"geometry":geojson}
+								features={"type":"Feature","id": _id,"properties":{"name":table,"topole":sdipole,"frompole":currentpole,"created":created,"size":$scope.cWire.wire_size,"phase":"ABCN","inclination":0,"length":S,"existing":$scope.existBldg},"geometry":geojson}
 								overlays[table].data.features.push(features);
 							}else{
 								data.features.push(features);
 								overlays[table] =createOverlays(data);	
 							}
+							//console.log(overlays[table]);
 						break;
 					}
 					
-					console.log(overlays);
+					//console.log(overlays);
 					localStorage.setItem('overlays',JSON.stringify(overlays));
 						
 					UpdateOverlays(table);
 					Overlays();
-					console.log(overlays);
+					//console.log(overlays);
 			}
 			var tableName;
 			var poleno0;
@@ -3140,8 +3627,9 @@ const familyTree = [
 							var x=getDistance(frompoint.coordinates,topoint.coordinates)
 							var a=overlays[table].data.features[i].properties.inclination;
 							
-							console.log(overlays[table].data.features[i].properties.inclination);
+							//console.log(a);
 							overlays[table].data.features[i].properties.length=Math.round(x*100/Math.cos(toRadians(a)))/100;
+							console.log(overlays[table]);
 						}
 						//console.log(affectedPoles);
 						   if(affectedPoles){
@@ -3346,7 +3834,7 @@ const familyTree = [
 					//console.log(overlays);
 					localStorage.setItem('overlays',JSON.stringify(overlays));
 					UpdateOverlays(table);
-					Overlays();
+					//Overlays();
 				}
 			}
 			proj4.defs("EPSG:32651","+proj=utm +zone=51 +ellps=WGS84 +datum=WGS84 +units=m +no_defs ");
@@ -3426,28 +3914,32 @@ const familyTree = [
 				//$scope.layers.overlays[table].doRefresh=true;
 			}
 			function removeFeatureById(table, ids) {
+
 			    console.log(table + ":", ids);
 			
-			    if (!Array.isArray(ids) ||
-				    !overlays[table] ||
-				    !overlays[table].data ||
-				    !overlays[table].data.features) {
-				    return;
-				}
-
+			    if (!overlays[table] ||
+			        !overlays[table].data ||
+			        !Array.isArray(overlays[table].data.features)) {
+			        return;
+			    }
+			
+			    // Allow single ID/index
+			    if (!Array.isArray(ids)) {
+			        ids = [ids];
+			    }
 			
 			    const features = overlays[table].data.features;
 			
-			    // Sort descending to avoid index shifting
-			    ids.sort((a, b) => b - a);
+			    // Remove null/undefined/invalid indexes
+			    ids = ids
+			        .filter(id => id != null && id >= 0 && id < features.length)
+			        .sort((a, b) => b - a);
 			
 			    ids.forEach(id => {
-			        if (id >= 0 && id < features.length) {
-			            features.splice(id, 1);
-			        }
+			        features.splice(id, 1);
 			    });
 			
-			    // If no features left, remove the whole overlay
+			    // If no features remain, remove overlay
 			    if (features.length === 0) {
 			        delete overlays[table];
 			    } else {
@@ -3852,11 +4344,28 @@ const familyTree = [
 				    if (nonDraggable.includes(targetTag)) {
 				      return; // Skip dragging for form controls
 				    }
-				
-				    isDragging = true;
-				    offsetX = e.clientX - el.getBoundingClientRect().left;
-				    offsetY = e.clientY - el.getBoundingClientRect().top;
-				    el.classList.add('dragging');
+					if (window.matchMedia("(max-width: 768px)").matches) {
+					    return;
+					}
+									
+				    const rect = el.getBoundingClientRect();
+
+			        // Calculate mouse offset from actual position
+			        offsetX = e.clientX - rect.left;
+			        offsetY = e.clientY - rect.top;
+			
+			        // Preserve current displayed position
+			        el.style.position = 'fixed';
+			        el.style.left = rect.left + 'px';
+			        el.style.top = rect.top + 'px';
+			
+			        // Remove centering transform to prevent jumping
+			        el.style.transform = 'none';
+			
+			        isDragging = true;
+			        el.classList.add('dragging');
+			
+			        e.preventDefault();
 				  });
 				
 				  document.addEventListener('mousemove', (e) => {

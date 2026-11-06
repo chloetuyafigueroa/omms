@@ -5,10 +5,15 @@
 		padding: 5px 10px 5px 5px;
 		columns: 2;
 		left: 50%;
+    	transform: translateX(-50%);
 		z-index:2;
 		font: 500 15px Arial;	
 		cursor: grab;
     	position: absolute;
+		}
+		#modals.dragging {
+		    cursor: grabbing;
+		    user-select: none;
 		}
 		 
 		#creator {
@@ -62,7 +67,7 @@
 		text-align: left;
 		vertical-align: top;
 		overflow-wrap:break-word;
-		resize:none;
+		resize: vertical;
 		font: 400 20px Arial}
 		#actiontaken {
 		width: 100%; 
@@ -73,20 +78,14 @@
 		text-align: left;
 		vertical-align: top;
 		overflow-wrap:break-word;
-		resize:none;
+		resize: vertical;
 		font: 400 20px Arial}
 		#type {
 		width: 100%; 
 		padding: 5px 10px;	
 		margin: 10% auto 10% auto;
 		border: 1px solid #008000; } 
-		#town {
-		width: 100%; 
-		padding: 5px 10px;	
-		margin: .05% auto 1% auto;
-		background-color: #ffff80; /*Optional*/
-		border: 1px solid #008000; 
-		}
+		
 		.row {
 	    display: table;
 	    width: 100%; /*Optional*/
@@ -202,4 +201,171 @@
 		height:10px;
 		font: 400 12px Arial;
 		}
+		.modal-navigation {
+		    display: none;
+		}
+		#modals #save {
+        background-color: #198754;
+        color: white;
+        border: 1px solid #198754;
+    }
+
+    #modals #delete {
+        background-color: #dc3545;
+        color: white;
+        border: 1px solid #dc3545;
+    }
+
+    #modals #exit {
+        background-color: #495057;
+        color: white;
+        border: 1px solid #6c757d;
+    }
+    #modals #save,
+	#modals #delete,
+	#modals #exit {
+	    font-size: 16px;
+	    font-weight: 600;
+	    font-family: Arial, sans-serif;
 	
+	    border-radius: 10px;
+	    padding: 10px 15px;
+	
+	    min-height: 42px;
+	    cursor: pointer;
+	}
+	/* ==================================
+   OMMS MOBILE MODAL VIEW
+   ================================== */
+
+@media screen and (max-width: 768px) {
+
+    #modals {
+    	position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        width: calc(100% - 20px);
+        max-width: 500px;
+        height: calc(100dvh - 20px);
+		color:#ffffff;
+        padding: 5px;
+        border: 4px solid #000000;
+        background: #3d3d3d;
+
+        column-count: 1;
+        display: flex;
+        flex-direction: column;
+
+        overflow: hidden;
+        box-sizing: border-box;
+        z-index: 2500;
+    }
+
+    #modals .modal-pages {
+        display: flex;
+        flex-direction: row;
+
+        width: 100%;
+        flex: 1 1 auto;
+        min-height: 0;
+
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        touch-action: pan-x;
+
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #modals .modal-pages::-webkit-scrollbar {
+        display: none;
+    }
+
+    #modals .modal-page {
+        flex: 0 0 100%;
+        min-width: 0;
+        width: 100%;
+        height: 100%;
+
+        padding: 5px;
+        box-sizing: border-box;
+
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        scroll-snap-align: start;
+        touch-action: pan-y;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Navigation always visible at bottom */
+    #modals .modal-navigation {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+
+        flex: 0 0 45px;
+        width: 100%;
+
+        background: #000000;
+        border-top: 1px solid #000000;
+    }
+
+    #modals .modal-navigation button {
+        width: 45px;
+        height: 35px;
+
+        background: #ffffff;
+        border: 1px solid #808080;
+        border-radius: 5px;
+
+        color: #808080;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    #modals #modalPageIndicator {
+        font: bold 15px Arial;
+        color: #808080;
+    }
+
+    #modals input,
+    #modals select,
+    #modals textarea {
+        max-width: 100%;
+        box-sizing: border-box;
+        background-color: #000000; 
+        overflow-wrap:break-word;
+		color:#ffffff;	
+		resize:vertical;	
+    }
+    #modals input::placeholder,
+    #modals textarea::placeholder {
+        color: #808080;	
+        opacity: 1;
+    }
+    #creator,#town,#brgy,#section,.col,.col3,.col5,.col6,#landmark,#contact,#particulars,#actiontaken {
+		background-color: #000000; 
+		color:#ffffff;
+		border: 1px solid #808080;
+		}
+	.job-labels {
+	    display: flex;
+	    flex-direction: column;
+	    gap: 5px;
+	}
+	
+	.job-labels .label1 {
+	    height: auto;
+	    font: 400 12px Arial;
+	    line-height: 1.4;
+	    margin: 0;
+	}
+	
+}
